@@ -295,7 +295,7 @@ class SecurityProperty(object):
     @confidentiality.setter
     def confidentiality(self, val: str) -> None:
         if val:
-            self.__confidentiality = self.Property[c.upper()]
+            self.__confidentiality = self.Property[val.upper()]
 
     @property
     def integrity(self) -> Property:
