@@ -15,13 +15,20 @@ Each week, we'd like the following to be done for the Wednesday meeting:
 - All code that needs to be reviewed either to be merged in `dev` or at least have a pull request.
 - A version of the web app available for testing via Docker. We understand that this may not change every week, but we would like to ensure that we are able to test the app/play around with it at our leisure, i.e. there's a working build available.
 
-### DSL (bang_pytm.core)
-Team member(s): @zenw00kie, @mrtoaf
+Before our first meeting on January 24, please make sure all the following items (and any other related items) are added as issues in this project and/or the [web app](https://github.com/mirarj/nltm_tool). Also update this document to reflect who's working on which section (and assign the issues to these team members). There are several issues currently logged that can be used as a starting point. 
 
-- Create `Actor` object
-- Create the children objects for `Asset` (all should be found in `asset.py`)
+### DSL (bang_pytm.core)
+Team member(s): @mrtoaf
+
+- Create `Actor` object ([Issue 3](https://github.com/ZenW00kie/bang_pytm/issues/3)) and `Boundary` ([Issue 8](https://github.com/ZenW00kie/bang_pytm/issues/8))
+- Create the children objects for `Asset` (all should be found in `asset.py`) - Issues [4](https://github.com/ZenW00kie/bang_pytm/issues/4), [5](https://github.com/ZenW00kie/bang_pytm/issues/5), [6](https://github.com/ZenW00kie/bang_pytm/issues/6), [7](https://github.com/ZenW00kie/bang_pytm/issues/7)
 - Modify the following object referencing the To Dos for each: `TM`, 
 - Modify an other objects as needed
+
+### DSL Utils (bang_pytm.core)
+Team member(s): @mrtoaf
+
+- Create object relationships when data is being loaded in `bang_pytm.utils.source`, for example after calling `load_cwes()`, the `relationships` attribute should contain objects rather than dicts specifying the relationships ([Issue 2](https://github.com/ZenW00kie/bang_pytm/issues/2))
 
 ### Recommendation Engines (bang_pytm.engine)
 Team member(s): To Be Assigned (Recommend 2)
