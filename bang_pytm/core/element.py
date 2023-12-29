@@ -21,12 +21,13 @@ class Element(object):
     To Do
     -----
     1. Add forced type checking
+    2. Prevent users from assigning a parent as a child (and vice versa)
     """
 
     __id : uuid.UUID = None
     __name : str = None
     __desc : str = None
-    __parent : object = None
+    __parent : list = []
     __children : list = []
 
     def __init__(self, 
@@ -37,12 +38,10 @@ class Element(object):
         self.__desc = desc
 
     def __repr__(self):
-        return "<{0}.{1}({2}) at {3}>".format(
-            self.__module__, type(self).__name__, self.name, hex(id(self))
-        )
+        return f"<{type(self).__name__}.({self.name}) - {self.eid}>"
 
-    def __str__(self):
-        return "{0}({1})".format(type(self).__name__, self.name)
+    def __str__(self) -> str:
+        return f"{type(self).__name__}({self.name})"
 
     @property
     def eid(self) -> uuid.UUID:
@@ -72,18 +71,18 @@ class Element(object):
     @property
     def parent(self) -> object:
         """
-        Parent Element for the Element
+        Parent Elements for the Element
 
-        The parent must be a different element (of any type) or it could be None
+        The parent(s) must be a different element (of any type) or it could be 
+        None
         """
         return self.__parent
     
-    @parent.setter
-    def parent(self, val: object) -> None:
-        if self == val:
-            err = "You cannot assign an element to be it's own parent."
-            raise AttributeError(err)
-        self.__parent = val
+    def add_parent(self, parent: object) -> None:
+        self.__add_elem(parent, self.__parent)
+
+    def remove_parent(self, parent: object) -> None:
+        self.__remove_elem(parent, self.__parent)
 
     @property
     def children(self) -> object:
@@ -93,24 +92,28 @@ class Element(object):
         Children can be any type of element, but they must be unique and an 
         element cannot be its own child.
         """
-        return self.__parent
+        return self.__children
     
     def add_child(self, child: object) -> None:
-        if self == child:
-            err = "You cannot assign an element to be it's own child."
-            raise AttributeError(err)
-        elif child in self.__children:
-            err = f"{child} has already been assigned as a child for {self}."
-            raise AttributeError(err)
-        self.__children.append(child)
+        self.__add_elem(child, self.__children)
 
     def remove_child(self, child: object) -> None:
-        if child not in self.__children:
-            err = f"{child} has not been assigned as a child for {self}."
-            raise AttributeError(err)
-        self.__children.remove(child)
+        self.__remove_elem(child, self.__children)
 
-    
+    def __add_elem(self, elem: object, elems: list) -> None:
+        if self == elem:
+            err = "You cannot assign an element to itself."
+            raise AttributeError(err)
+        elif elem in elems:
+            err = f"{elem} has already been assigned to {self}."
+            raise AttributeError(err)
+        elems.append(elem)
+
+    def __remove_elem(self, elem: object, elems:list) -> None:
+        if elem not in elems:
+            err = f"{elem} has not been assigned to {self}."
+            raise AttributeError(err)
+        elems.remove(elem)
 
 
 

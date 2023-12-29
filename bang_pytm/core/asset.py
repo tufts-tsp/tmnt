@@ -39,18 +39,10 @@ class Asset(Element):
         return self.__threats
     
     def add_threat(self, threat:Threat) -> None:
-        if threat not in self.__threats:
-            self.__threats.append(threat)
-        else:
-            err = f"{threat} has already been added to {self.name}"
-            raise AttributeError(err)
+        self.__add_elem(threat, self.__threats)
         
     def remove_threat(self, threat:Threat) -> None:
-        if threat in self.__threats:
-            self.__threats.remove(threat)
-        else:
-            err = f"{threat} has not been assigned to {self.name}"
-            raise AttributeError(err)
+        self.__remove_elem(threat, self.__threats)
         
     @property
     def controls(self) -> list[Control]:
@@ -63,19 +55,10 @@ class Asset(Element):
         return self.__controls
     
     def add_control(self, control:Control) -> None:
-        if control not in self.__controls:
-            self.__controls.append(control)
-        else:
-            err = f"{control} has already been added to {self.name}"
-            raise AttributeError(err)
+        self.__add_elem(control, self.__controls)
         
     def remove_control(self, control:Control) -> None:
-        if control in self.__controls:
-            self.__threats.remove(control)
-        else:
-            err = f"{control} has not been assigned to {self.name}"
-            raise AttributeError(err)
-
+        self.__remove_elem(control, self.__controls)
 
 
 class Lambda(Asset):
