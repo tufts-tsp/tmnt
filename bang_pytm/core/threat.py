@@ -3,7 +3,7 @@ from .element import Element
 from bang_pytm.util.requirement import STRIDE
 
 
-class Vulnerability(object):
+class Vulnerability(Element):
     """
     A vulnerability is a previously known weakness in a piece of software,
     generally associated with a CVE. This is used in the context of a threat
@@ -19,7 +19,8 @@ class Vulnerability(object):
     SOURCE : NICCS CISA
     """
 
-    pass
+    def __init__(self, name: str, **kwargs):
+        super().__init__(name, **kwargs)
 
 
 class Weakness(Element):
@@ -40,34 +41,76 @@ class Weakness(Element):
     ----------
     name : str
         Name of the weakness, can be a short hand.
+    ref_id : str, default None
+        Alternative ID to reference, such as CWE-XX.
     desc : str, default None
         A short description of the weakness to help understand it's
         applicability.
+    long_desc : str, default None
+        A longer descripiton about the weakness
+    mode_introduction : list, default None
+        What development phase this weakness is introduced. Valid options are:
+        `Policy`, `Requirements`, `Architecture and Design`, `Implementation`,
+        `Build and Compilation`, `Testing`, `Documentation`, `Bundling`,
+        `Distribution`, `Installation`, `System Configuration`, `Operation`,
+        `Patching and Maintenance`, `Porting`, `Integration`, `Manufacturing`,
+        `Decommissioning and End-of-Life`.
 
+        SOURCE: PhaseEnumeration
+        `MITRE CWE <https://cwe.mitre.org/data/xsd/cwe_schema_latest.xsd>`
+    exploitable : str, default "Unknown"
+        Likelihood of this weakness being exploited. Valid options are: `High`,
+        `Medium`, `Low`, `Unknown`.
 
-    stride : list, default None
+        SOURCE: LikelihoodEnumeration
+        `MITRE CWE <https://cwe.mitre.org/data/xsd/cwe_schema_latest.xsd>`
+    consequences : list, default None
+        Consequences refers to the potential impact of a weakness. A consequence
+        should (although it is not enforced) be a dict that can include the
+        following keys: `scope`, `impact`, `likelihood`, `note`. Scope
+        identifies the security property that is violated. Impact describes the
+        technical impact that arises if an adversary succeeds in exploiting this
+        weakness. Likelihood identifies how likely the specific consequence is
+        expected to be seen relative to the other consequences. Note provides
+        additional commentary about a consequence.
 
+        SOURCE: CommonConsequencesType
+        `MITRE CWE <https://cwe.mitre.org/data/xsd/cwe_schema_latest.xsd>`
+    relationships : dict, default None
+        To Do - Should be removed and instead we use parent/children
+    conditions : list, default None
+        To Do
+    mitigations : list, default None
+        To Do
+    detection_methods : list, default None
+        To Do
+    related_cves : list, default None
+        To Do
+    related_threats : list, default None
+        To Do
+    references : list, default None
+        To Do
     """
 
-    __long_desc: str = None
     __stride = STRIDE()
 
     def __init__(
         self,
         name: str,
-        ref_id: int = -1,
+        ref_id: str = None,
         alt_name: str = None,
         desc: str = None,
         long_desc: str = None,
         mode_introduction: list = None,
-        exploitable: str = None,
+        exploitable: str = "Unknown",
         consequences: list = None,
-        relationships: dict = None,
+        relationships: list = None,
         conditions: list = None,
         mitigations: list = None,
         detection_methods: list = None,
         related_cves: list = None,
-        related_threats: list = None
+        related_threats: list = None,
+        references: list = None,
     ) -> None:
         super().__init__(name, desc)
         self.long_desc = long_desc
@@ -82,14 +125,7 @@ class Weakness(Element):
         self.detection_methods = detection_methods
         self.related_cves = related_cves
         self.related_threats = related_threats
-
-    @property
-    def long_desc(self) -> str:
-        return self.__long_desc
-
-    @long_desc.setter
-    def long_desc(self, val: str) -> None:
-        self.__long_desc = val
+        self.references = references
 
     @property
     def stride(self) -> STRIDE:
@@ -135,8 +171,40 @@ class Threat(Element):
     desc : str, default None
         A short description of the threat to help understand it's
         applicability.
-
+    TO FINISH
     """
-    def __init__(self, name: str, desc: str = None) -> None:
+
+    def __init__(
+        self,
+        name: str,
+        ref_id: str = None,
+        desc: str = None,
+        long_desc: str = None,
+        conditions: list = None,
+        likelihood: str = "Unknown",
+        severity: str = None,
+        consequences: list = None,
+        required_skills: str = "Unknown",
+        required_resources: str = "Unknown",
+        mitigations: list = None,
+        examples: list = None,
+        steps: list = None,
+        relationships: list = None,
+        related_weaknesses: list = None,
+        references: list = None,
+    ) -> None:
         super().__init__(name, desc)
-        pass
+        self.long_desc = long_desc
+        self.ref_id = ref_id
+        self.conditions = conditions
+        self.likelihood = likelihood
+        self.severity = severity
+        self.consequences = consequences
+        self.required_skills = required_skills
+        self.required_resources = required_resources
+        self.mitigations = mitigations
+        self.examples = examples
+        self.steps = steps
+        self.relationships = relationships
+        self.related_weaknesses = related_weaknesses
+        self.references = references

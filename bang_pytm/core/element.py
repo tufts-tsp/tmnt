@@ -1,39 +1,36 @@
 import uuid
 
+
 class Element(object):
     """
-    An element of a threat model, which can be an asset, control, flow, or 
+    An element of a threat model, which can be an asset, control, flow, or
     threat.
 
-    Each element should be unique within the system, and it will consist of a 
+    Each element should be unique within the system, and it will consist of a
     name and unique ID. Additionally, elements can have a description to help
-    identify what the element is as well as the potential map to a parent 
-    element or children elements. 
+    identify what the element is as well as the potential map to a parent
+    element or children elements.
 
     Parameters
     ----------
     name : str
         The name of the element
     desc : str or None, default None
-        A short description about the element that helps to identify it's 
+        A short description about the element that helps to identify it's
         purpose and role within the threat model.
-
-    To Do
-    -----
-    1. Add forced type checking
-    2. Prevent users from assigning a parent as a child (and vice versa)
     """
 
-    __id : uuid.UUID = None
-    __name : str = None
-    __desc : str = None
-    __parent : list = []
-    __children : list = []
+    __id: uuid.UUID = None
+    __name: str = None
+    __desc: str = None
+    __parent: list = []
+    __children: list = []
 
-    def __init__(self, 
-                 name: str, 
-                 desc: str = None,
-                 ):
+    def __init__(
+        self,
+        name: str,
+        desc: str = None,
+    ):
         self.name = name
         self.__desc = desc
 
@@ -58,12 +55,12 @@ class Element(object):
     @name.setter
     def name(self, val: str) -> None:
         self.__name = val
-    
+
     @property
     def description(self) -> str:
         """Description of the Element"""
         return self.__desc
-    
+
     @description.setter
     def description(self, val: str) -> None:
         self.__desc = val
@@ -73,11 +70,11 @@ class Element(object):
         """
         Parent Elements for the Element
 
-        The parent(s) must be a different element (of any type) or it could be 
+        The parent(s) must be a different element (of any type) or it could be
         None
         """
         return self.__parent
-    
+
     def add_parent(self, parent: object) -> None:
         self.__add_elem(parent, self.__parent)
 
@@ -88,12 +85,12 @@ class Element(object):
     def children(self) -> object:
         """
         Children for the Element
-        
-        Children can be any type of element, but they must be unique and an 
+
+        Children can be any type of element, but they must be unique and an
         element cannot be its own child.
         """
         return self.__children
-    
+
     def add_child(self, child: object) -> None:
         self.__add_elem(child, self.__children)
 
@@ -109,13 +106,8 @@ class Element(object):
             raise AttributeError(err)
         elems.append(elem)
 
-    def __remove_elem(self, elem: object, elems:list) -> None:
+    def __remove_elem(self, elem: object, elems: list) -> None:
         if elem not in elems:
             err = f"{elem} has not been assigned to {self}."
             raise AttributeError(err)
         elems.remove(elem)
-
-
-
-
-

@@ -1,27 +1,44 @@
-from enum import Enum
+"""
+Requirements and other properties relevant for threat modeling.
+
+StrideToProperty : Mapping of STRIDE category to Security Property
+
+PropertyToStride : Mapping of Security Property to STRIDE category
+
+STRIDE : Specify which parts of STRIDE apply to a threat
+
+SecurityProperty : Specify what security properties are relevant
+
+SafetyRequirement : Specify the severity of harm that is possible
+"""
+
+from enum import Enum, IntEnum
+
 
 class StrideToProperty(Enum):
-    SPOOFING="AUTHENTICITY"
-    TAMPERING="INTEGRITY"
-    REPUDIATION="NON_REPUDIATION"
-    INFORMATION_DISCLOSURE="CONFIDENTIALITY"
-    DENIAL_OF_SERVICE="AVAILABILITY"
-    ELEVATION_OF_PRIVILEGE="AUTHORIZATION"
+    SPOOFING = "AUTHENTICITY"
+    TAMPERING = "INTEGRITY"
+    REPUDIATION = "NON_REPUDIATION"
+    INFORMATION_DISCLOSURE = "CONFIDENTIALITY"
+    DENIAL_OF_SERVICE = "AVAILABILITY"
+    ELEVATION_OF_PRIVILEGE = "AUTHORIZATION"
+
 
 class PropertyToStride(Enum):
-    AUTHENTICITY="SPOOFING"
-    INTEGRITY="TAMPERING"
-    NON_REPUDIATION="REPUDIATION"
-    CONFIDENTIALITY="INFORMATION_DISCLOSURE"
-    AVAILABILITY="DENIAL_OF_SERVICE"
-    AUTHORIZATION="ELEVATION_OF_PRIVILEGE"
+    AUTHENTICITY = "SPOOFING"
+    INTEGRITY = "TAMPERING"
+    NON_REPUDIATION = "REPUDIATION"
+    CONFIDENTIALITY = "INFORMATION_DISCLOSURE"
+    AVAILABILITY = "DENIAL_OF_SERVICE"
+    AUTHORIZATION = "ELEVATION_OF_PRIVILEGE"
+
 
 class STRIDE(object):
     """
     A STRIDE object is assigned to a threat, whereby the user determines, which
     aspects of STRIDE apply to this particular threat.
 
-    STRIDE has a 1-1 match with SecurityProperty. See each property for more 
+    STRIDE has a 1-1 match with SecurityProperty. See each property for more
     information.
 
     Parameters
@@ -66,9 +83,9 @@ class STRIDE(object):
     @property
     def spoofing(self) -> bool:
         """
-        Spoofing requirement. Maps to 
+        Spoofing requirement. Maps to
         :func:`~bang_pytm.util.requirement.SecurityProperty.authenticity`
-        
+
         Definition
         ----------
         Breaching the user's authentication information. In this case, the
@@ -77,7 +94,7 @@ class STRIDE(object):
         associated with a wily hacker being able to impersonate a valid system
         user or resource to get access to the system and thereby compromise
         system security.
-        
+
         SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
         Microsoft. April 1999.
         """
@@ -90,9 +107,9 @@ class STRIDE(object):
     @property
     def tampering(self) -> bool:
         """
-        Tampering threat. Maps to 
+        Tampering threat. Maps to
         :func:`~bang_pytm.util.requirement.SecurityProperty.integrity`
-        
+
         Definition
         ----------
         Modifying system or user data with or without detection. An unauthorized
@@ -100,7 +117,7 @@ class STRIDE(object):
         malicious intruder introducing an undetectable network packet in a
         communication, and making an undetectable change to a sensitive file are
         all tampering threats.
-        
+
         SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
         Microsoft. April 1999.
         """
@@ -113,15 +130,15 @@ class STRIDE(object):
     @property
     def repudiation(self) -> bool:
         """
-        Repudiation threat. Maps to 
+        Repudiation threat. Maps to
         :func:`~bang_pytm.util.requirement.SecurityProperty.non_repudiation`
-        
+
         Definition
         ----------
         An untrusted user performing an illegal operation without the ability to
         be traced. Repudiability threats are associated with users (malicious or
         otherwise) who can deny a wrongdoing without any way to prove otherwise.
-        
+
         SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
         Microsoft. April 1999.
         """
@@ -134,9 +151,9 @@ class STRIDE(object):
     @property
     def information_disclosure(self) -> bool:
         """
-        Information Disclosure threat. Maps to 
+        Information Disclosure threat. Maps to
         :func:`~bang_pytm.util.requirement.SecurityProperty.confidentiality`
-        
+
         Definition
         ----------
         Compromising the user's private or business-critical information.
@@ -147,7 +164,7 @@ class STRIDE(object):
         threats. Note that this threat differs from a spoofing threat in that
         here the perpetrator gets access to the information directly rather than
         by having to spoof a legitimate user.
-        
+
         SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
         Microsoft. April 1999.
         """
@@ -160,9 +177,9 @@ class STRIDE(object):
     @property
     def denial_of_service(self) -> bool:
         """
-        Denial of Service threat. Maps to 
+        Denial of Service threat. Maps to
         :func:`~bang_pytm.util.requirement.SecurityProperty.availability`
-        
+
         Definition
         ----------
         Making the system temporarily unavailable or unusable, such as those
@@ -173,7 +190,7 @@ class STRIDE(object):
         improved system availability and reliability. However, some types of
         D.o.S. threats are very hard to protect against, so at a minimum, we
         must identify and rationalize such threats.
-        
+
         SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
         Microsoft. April 1999.
         """
@@ -186,9 +203,9 @@ class STRIDE(object):
     @property
     def elevation_of_privilege(self) -> bool:
         """
-        Elevation of Privilege threat. Maps to 
+        Elevation of Privilege threat. Maps to
         :func:`~bang_pytm.util.requirement.SecurityProperty.authorization`
-        
+
         Definition
         ----------
         An unprivileged user gains privileged access and thereby has sufficient
@@ -201,7 +218,7 @@ class STRIDE(object):
         the security of the entire system and causing extreme system damage.
         Here the attacker has effectively penetrated all system defenses and
         become part of the trusted system itself and can do anything.
-        
+
         SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
         Microsoft. April 1999.
         """
@@ -220,7 +237,7 @@ class SecurityProperty(object):
     of elements in a threat model as well as provides more granularity on
     evaluating threats.
 
-    SecurityProperty has a 1-1 match with STRIDE. See each property for more 
+    SecurityProperty has a 1-1 match with STRIDE. See each property for more
     information.
 
     Parameters
@@ -243,10 +260,6 @@ class SecurityProperty(object):
     authorization : str, default None
         Authorization requirement for the element. Valid value are: `NONE`,
         `LOW`, `HIGH`. Case-insensitive.
-
-    To Do
-    -----
-    1. Add forced type checking
     """
 
     class Property(Enum):
@@ -280,13 +293,13 @@ class SecurityProperty(object):
     @property
     def confidentiality(self) -> Property:
         """
-        Confidentiality requirement. Maps to 
+        Confidentiality requirement. Maps to
         :func:`~bang_pytm.util.requirement.STRIDE.information_disclosure`
-        
+
         Definition
         ----------
         A property that information is not disclosed to users, processes, or
-        devices unless they have been authorized to access the information. 
+        devices unless they have been authorized to access the information.
 
         SOURCE: NICCS CISA
         """
@@ -300,14 +313,14 @@ class SecurityProperty(object):
     @property
     def integrity(self) -> Property:
         """
-        Integrity requirement. Maps to 
+        Integrity requirement. Maps to
         :func:`~bang_pytm.util.requirement.STRIDE.tampering`
 
         Definition
         ----------
         The property whereby information, an information system, or a component
         of a system has not been modified or destroyed in an unauthorized
-        manner. 
+        manner.
 
         SOURCE: NICCS CISA
         """
@@ -317,11 +330,11 @@ class SecurityProperty(object):
     def integrity(self, i: str) -> None:
         if i:
             self.__integrity = self.Property[i.upper()]
-        
+
     @property
     def availability(self) -> Property:
         """
-        Availability requirement. Maps to 
+        Availability requirement. Maps to
         :func:`~bang_pytm.util.requirement.STRIDE.denial_of_service`
 
         Definition
@@ -336,11 +349,11 @@ class SecurityProperty(object):
     def availability(self, a: str) -> None:
         if a:
             self.__availability = self.Property[a.upper()]
-        
+
     @property
     def authenticity(self) -> Property:
         """
-        Authenticity requirement. Maps to 
+        Authenticity requirement. Maps to
         :func:`~bang_pytm.util.requirement.STRIDE.spoofing`
 
         Definition
@@ -362,7 +375,7 @@ class SecurityProperty(object):
     @property
     def non_repudiation(self) -> Property:
         """
-        Non-Repudiation requirement. Maps to 
+        Non-Repudiation requirement. Maps to
         :func:`~bang_pytm.util.requirement.STRIDE.repudiation`
 
         Definition
@@ -383,7 +396,7 @@ class SecurityProperty(object):
     @property
     def authorization(self) -> Property:
         """
-        Authorization requirement. Maps to 
+        Authorization requirement. Maps to
         :func:`~bang_pytm.util.requirement.STRIDE.elevation_of_privilege`
 
         Definition
@@ -400,4 +413,39 @@ class SecurityProperty(object):
     def authorization(self, a: str) -> None:
         if a:
             self.__authorization = self.Property[a.upper()]
-        
+
+
+class SafetyRequirement(IntEnum):
+    """
+    `SafetyRequirement` is for systems that need to evaluate safety as part of
+    the threat model. These are ranked in order of potential severity. For each
+    option, you can also see a description of these categories by calling
+    `description` for an instance of `SafetyRequirement`.
+
+    SOURCE: ANSI/AAMI/ISO 14971: 2007/(R)2010: Medical Devices - Application of
+    Risk Management to Medical Devices.
+    """
+
+    NEGLIGIBLE = 1
+    MINOR = 2
+    SERIOUS = 3
+    CRITICAL = 4
+    CATASTROPHIC = 5
+
+    def description(self):
+        """A description of the severity of harm"""
+        if self.value == 1:
+            return """Inconvenience or temporary discomfort"""
+        elif self.value == 2:
+            return """Results in temporary injury or impairment not requiring 
+            professional medical intervention"""
+        elif self.value == 3:
+            return """Results in injury or impairment requiring professional 
+            medical intervention"""
+        elif self.value == 4:
+            return """Results in permanent impairment or life-threatening 
+            injury"""
+        elif self.value == 5:
+            return """Results in patient death"""
+        else:
+            raise AttributeError

@@ -1,7 +1,7 @@
 from .element import Element
 
-class Control:
 
+class Control:
     def __init__(self):
         # TO DO
         pass
