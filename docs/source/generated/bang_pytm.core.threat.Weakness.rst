@@ -15,7 +15,9 @@
    
       ~Weakness.__init__
       ~Weakness.add_child
+      ~Weakness.add_parent
       ~Weakness.remove_child
+      ~Weakness.remove_parent
    
    
 
@@ -30,5 +32,6 @@
       ~Weakness.eid
       ~Weakness.name
       ~Weakness.parent
+      ~Weakness.stride
    
    

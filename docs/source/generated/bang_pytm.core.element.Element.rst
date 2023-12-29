@@ -15,7 +15,9 @@
    
       ~Element.__init__
       ~Element.add_child
+      ~Element.add_parent
       ~Element.remove_child
+      ~Element.remove_parent
    
    
 

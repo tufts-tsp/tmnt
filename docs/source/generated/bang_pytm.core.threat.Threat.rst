@@ -15,7 +15,9 @@
    
       ~Threat.__init__
       ~Threat.add_child
+      ~Threat.add_parent
       ~Threat.remove_child
+      ~Threat.remove_parent
    
    
 
