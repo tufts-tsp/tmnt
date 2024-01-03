@@ -14,6 +14,7 @@ setup(name='bang_pytm',
               "reference_data/cwe.xml",
               "reference_data/capec.xml",
               "reference_data/asvs.xml",
+              "reference_data/asvs_ref.json",
           ]
       }
       )
