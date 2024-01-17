@@ -13,7 +13,7 @@ class Finding:
     which case the residual risk would be negligible.
 
     Finding is modeled off of the templates given in Table I-5 and Table I-7 of
-    NIST 800-30. Use this document as guidance for filling in your finding. 
+    NIST 800-30. Use this document as guidance for filling in your finding.
 
     Parameters
     ----------

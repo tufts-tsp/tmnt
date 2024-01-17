@@ -5,8 +5,8 @@ from .finding import Finding
 
 from bang_pytm import Engine
 
+
 class TM(object):
-    
     __components: List[Component] = []
     __findings: List[Finding] = []
 
@@ -17,11 +17,11 @@ class TM(object):
     @property
     def components(self) -> List[Component]:
         return self.__components
-    
+
     @property
     def findings(self) -> List[Finding]:
         return self.__findings
-    
+
     def generate_threats(self, engine: Engine):
         pass
 
