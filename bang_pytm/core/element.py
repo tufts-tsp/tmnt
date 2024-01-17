@@ -3,8 +3,8 @@ import uuid
 
 class Element(object):
     """
-    An element of a threat model, which can be an asset, control, flow, or
-    threat.
+    The basic primitive of a threat model, which can be an asset, control, flow,
+    or threat.
 
     Each element should be unique within the system, and it will consist of a
     name and unique ID. Additionally, elements can have a description to help
@@ -35,7 +35,7 @@ class Element(object):
         self.__desc = desc
 
     def __repr__(self):
-        return f"<{type(self).__name__}.({self.name}) - {self.eid}>"
+        return f"<{type(self).__name__}({self.name}) - {self.eid}>"
 
     def __str__(self) -> str:
         return f"{type(self).__name__}({self.name})"

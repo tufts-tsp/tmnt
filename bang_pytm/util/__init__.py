@@ -1,3 +1,3 @@
-__all__ = ['STRIDE', 'SecurityProperty']
+__all__ = ["STRIDE", "SecurityProperty"]
 
 from .requirement import STRIDE, SecurityProperty
