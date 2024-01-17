@@ -63,6 +63,7 @@ class STRIDE(object):
     __information_disclosure = False
     __denial_of_service = False
     __elevation_of_privilege = False
+    __information = None
 
     def __init__(
         self,
@@ -228,6 +229,14 @@ class STRIDE(object):
     def elevation_of_privilege(self, val: bool) -> None:
         self.__elevation_of_privilege = val
 
+    @property
+    def info(self) -> str:
+        return self.__information
+
+    @info.setter
+    def info(self, val: str) -> None:
+        self.__information = val
+
 
 class SecurityProperty(object):
     """
@@ -273,6 +282,7 @@ class SecurityProperty(object):
     __authenticity = Property.NONE
     __non_repudiation = Property.NONE
     __authorization = Property.NONE
+    __information = None
 
     def __init__(
         self,
@@ -282,13 +292,21 @@ class SecurityProperty(object):
         authenticity: str = None,
         non_repudiation: str = None,
         authorization: str = None,
-    ):
+    ) -> None:
         self.confidentiality = confidentiality
         self.integrity = integrity
         self.availability = availability
         self.authenticity = authenticity
         self.non_repudiation = non_repudiation
         self.authorization = authorization
+
+    @classmethod
+    def __properties__(cls):
+        return [
+            k
+            for k in vars(cls).keys()
+            if k.startswith("_") == False and k != "Property"
+        ]
 
     @property
     def confidentiality(self) -> Property:
@@ -414,13 +432,21 @@ class SecurityProperty(object):
         if a:
             self.__authorization = self.Property[a.upper()]
 
+    @property
+    def info(self) -> str:
+        return self.__information
 
-class SafetyRequirement(IntEnum):
+    @info.setter
+    def info(self, val: str) -> None:
+        self.__information = val
+
+
+class PatientHarm(IntEnum):
     """
-    `SafetyRequirement` is for systems that need to evaluate safety as part of
+    `PatientHarm` is for systems that need to evaluate safety as part of
     the threat model. These are ranked in order of potential severity. For each
     option, you can also see a description of these categories by calling
-    `description` for an instance of `SafetyRequirement`.
+    `description` for an instance of `PatientHarm`.
 
     SOURCE: ANSI/AAMI/ISO 14971: 2007/(R)2010: Medical Devices - Application of
     Risk Management to Medical Devices.
@@ -449,3 +475,140 @@ class SafetyRequirement(IntEnum):
             return """Results in patient death"""
         else:
             raise AttributeError
+
+
+class SafetyImpact(object):
+    __harm: PatientHarm = PatientHarm.CATASTROPHIC
+    __meta: dict = {
+        "assessed_by": None,
+        "assessment_date": None,
+        "additional_info": None,
+    }
+    __exploitability: str = None
+    __risk: bool = None
+
+    def __init__(
+        self, harm: str, exploitability: str = None, **kwargs
+    ) -> None:
+        if harm:
+            self.harm = harm
+        if exploitability:
+            self.exploitability = exploitability
+        self.meta(**kwargs)
+
+    @property
+    def meta(self) -> dict:
+        """
+        meta is the meta data for this SafetyImpact analysis.
+
+        Parameters
+        ----------
+        assessed_by : str
+            Who conducted the impact assessment
+        assessment_date : str
+            When this impact assessment was done
+        additional_info : str
+            Any other relevant information related to this assessment
+
+        To Do
+        -----
+        1. Have assessment_date be a dt object (should still accept a string)
+        """
+        return self.__meta
+
+    @meta.setter
+    def meta(
+        self,
+        assessed_by: str = None,
+        assessment_date: str = None,
+        additional_info: str = None,
+    ) -> None:
+        if assessed_by:
+            self.__meta["assessed_by"] = assessed_by
+        if assessment_date:
+            self.__meta["assessment_date"] = assessment_date
+        if additional_info:
+            self.__meta["additional_info"] = additional_info
+
+    @property
+    def harm(self) -> PatientHarm:
+        return self.__harm
+
+    @harm.setter
+    def harm(self, val: str) -> None:
+        self.__harm = getattr(PatientHarm, val.upper())
+
+    @property
+    def exploitability(self) -> str:
+        return self.__exploitability
+
+    @exploitability.setter
+    def exploitability(self, val: str) -> None:
+        val = val.upper()
+        options = ["HIGH", "MEDIUM", "LOW", "UNKNOWN"]
+        if val not in options:
+            err = f"""Exploitability must be one of the following: 
+            {[o for o in options]}"""
+            raise AttributeError()
+        self.__exploitability = val
+
+    @property
+    def controlled_risk(self) -> bool:
+        """
+        Definition
+        ----------
+        A key purpose of conducting the cyber-vulnerability risk assessment is
+        to evaluate whether the risk of patient harm is controlled (acceptable)
+        or uncontrolled (unacceptable). One method of assessing the
+        acceptability of risk involves using a matrix with combinations of
+        "exploitability" and "severity of patient harm" to determine whether the
+        risk of patient harm is controlled or uncontrolled. A manufacturer can
+        then conduct assessments of the exploitability and severity of patient
+        harm and then use such a matrix to assess the risk of patient harm for
+        the identified cybersecurity vulnerabilities.
+
+        For risks that remain uncontrolled, additional remediation should be
+        implemented.
+
+        Source: FDA. Postmarket Management of Cybersecurity in Medical Devices.
+        2016. pp 17-18.
+        """
+        if self.__risk != None:
+            return self.__risk
+
+        ### CONTROLLED RISK AS RECOMMENDED BY FDA GUIDANCE
+        if self.exploitability == "LOW" and (
+            self.harm == PatientHarm.NEGLIGIBLE
+            or self.harm == PatientHarm.Minor
+        ):
+            return True
+        elif (
+            self.exploitability == "MEDIUM"
+            and self.harm == PatientHarm.NEGLIGIBLE
+        ):
+            return True
+
+        ### UNCONTROLLED RISK AS RECOMMENDED BY FDA GUIDANCE
+        elif self.exploitability == "HIGH" and (
+            self.harm == PatientHarm.CATASTROPHIC
+            or self.harm == PatientHarm.CRITICAL
+            or self.harm == PatientHarm.SERIOUS
+        ):
+            return False
+        elif self.exploitability == "MEDIUM" and (
+            self.harm == PatientHarm.CATASTROPHIC
+            or self.harm == PatientHarm.CRITICAL
+        ):
+            return False
+        elif self.exploitability == "LOW" and (
+            self.harm == PatientHarm.CATASTROPHIC
+        ):
+            return False
+
+        ### RECOMMENDATION UNCLEAR FROM FDA GUIDANCE
+        else:
+            print("Please evaluate the risk.")
+
+    @controlled_risk.setter
+    def controlled_risk(self, val: bool) -> None:
+        self.__risk = val

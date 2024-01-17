@@ -5,10 +5,12 @@ Data Sources used to pre-populate TM recomendations
 from bs4 import BeautifulSoup as bs
 from bs4.element import NavigableString
 import os
+import json
 
 from bang_pytm.core.threat import Weakness, Threat
 
-def load_owasp_asvs():
+
+def load_owasp_asvs() -> list:
     """
     OWASP Application Security Verification Standard
 
@@ -16,7 +18,10 @@ def load_owasp_asvs():
     """
     results = []
     data = load_xml("asvs.xml")
+    ref = load_json("asvs_ref.json")
+    # TO DO
     return results
+
 
 def load_capec() -> list:
     """
@@ -34,16 +39,21 @@ def load_capec() -> list:
         results.append(
             Threat(
                 name=pattern.attrs["name"],
-                ref_id="CAPEC-" + pattern.attrs["id"],
                 desc=pattern.find("description"),
-                long_desc=pattern.find("extended_description"),
-                conditions=[
+                prerequisites=[
                     val.text for val in pattern.find_all("prerequisite")
                 ],
+                mitigations=[
+                    val.text for val in pattern.find_all("mitigations")
+                ],
+                ref_id="CAPEC-" + pattern.attrs["id"],
+                long_desc=pattern.find("extended_description"),
                 likelihood=__get_text_val(
                     pattern.find("likelihood_of_attack")
                 ),
                 severity=__get_text_val(pattern.find("typical_severity")),
+                related=[__get_related_capec(related) for related in pattern.find_all("related_attack_pattern")] + [__get_related_cwes(related) for related in pattern.find_all("related_weakness")]
+                references=__get_references(pattern.find("references"), ref)
                 consequences=__get_consequences(pattern.find("consequences")),
                 required_skills=[
                     {"level": val.attrs["level"], "info": val.text}
@@ -52,20 +62,12 @@ def load_capec() -> list:
                 required_resources=[
                     val.text for val in pattern.find_all("resource")
                 ],
-                mitigations=[
-                    val.text for val in pattern.find_all("mitigations")
-                ],
+                
                 examples=[val.text for val in pattern.find_all("example")],
                 steps=__get_attack(pattern.find("execution_flow")),
-                relationships=[
-                    __get_related_capec(related)
-                    for related in pattern.find_all("related_attack_pattern")
-                ],
-                related_weaknesses=[
-                    __get_related_cwes(related)
-                    for related in pattern.find_all("related_weakness")
-                ],
-                references=__get_references(pattern.find("references"), ref),
+                relationships=,
+                related_weaknesses=,
+                ,
             )
         )
     return results
@@ -126,12 +128,20 @@ def load_cwes() -> list:
     return results
 
 
-def load_xml(fn: str, fpath: str = None):
+def load_xml(fn: str, fpath: str = None) -> bs:
     if fpath == None:
         fpath = os.path.dirname(__file__) + "/reference_data/"
     with open(fpath + fn, "r") as f:
         data = f.read()
-    data = bs(data, "lxml")
+    return bs(data, "lxml")
+
+
+def load_json(fn: str, fpath: str = None) -> list:
+    if fpath == None:
+        fpath = os.path.dirname(__file__) + "/reference_data/"
+    with open(fpath + fn, "r") as f:
+        data = json.load(f)
+    return data
 
 
 ############################## CAPEC/CWE HELPERS ##############################
@@ -272,3 +282,8 @@ def __get_capec(threats):
         return None
     threats = threats.find_all("related_attack_pattern")
     return ["CAPEC-" + threat.attrs["capec_id"] for threat in threats]
+
+
+################################# ASVS HELPERS #################################
+
+# PLACE YOUR HELPER FUNCTIONS HERE FOR ASVS
