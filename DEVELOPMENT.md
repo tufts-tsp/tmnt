@@ -42,14 +42,14 @@ weaknesses (and in turn threats and mitigations) to various `Asset` and `Flow` o
     - This implementation should ensure that it follows the natural pattern that we have previously discussed, i.e. an user specifies if they want to identify threats, add current controls, generate a finding, or look at/edit another part of the threat model
 
 ### Visualizations (bang_pytm.visual)
-Team member(s): To Be Assigned (Recommend 1)
+Team member(s): @Rz2750 (+ anyone working on the Web App?)
 
 - Create `Diagram` object, this should serve as a parent for additional objects that cover all the diagrams that `pytm` can generate i.e., a dataflow diagram and a sequence diagram. 
 - Create `Report` object that produces skeleton HTML code that can be loaded into a web browser (and be leveraged by the web application you are developing). This should also be able to generate a pdf version of the report as well, similar to `pytm`.
 - For both `Diagram` and `Report`, the user should be able to specify what parts of the TM they want to generate these for, whether that's specify specific objects or different levels of the diagram. 
 
 ### Web App ([repo](https://github.com/mirarj/nltm_tool))
-Team member(s): To Be Assigned (Recommend 2)
+Team member(s): @Rz2750 and To Be Assigned (Recommend 1)
 
 Requirements:
 - Place application in a container such that the application can be run in its own environment
