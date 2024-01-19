@@ -32,6 +32,7 @@ Team member(s): @mrtoaf
 
 ### Recommendation Engines (bang_pytm.engine)
 Team member(s): To Be Assigned (Recommend 2)
+Mira Jain (@mirarj)
 
 - Create initial `rules` that are set of deterministic rules based on the current data loaded in `bang_pytm.utils.sources`. These rules should assign 
 weaknesses (and in turn threats and mitigations) to various `Asset` and `Flow` objects that are created by the user. 
