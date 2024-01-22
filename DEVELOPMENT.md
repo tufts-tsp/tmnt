@@ -42,7 +42,7 @@ weaknesses (and in turn threats and mitigations) to various `Asset` and `Flow` o
     - This implementation should ensure that it follows the natural pattern that we have previously discussed, i.e. an user specifies if they want to identify threats, add current controls, generate a finding, or look at/edit another part of the threat model
 
 ### Visualizations (bang_pytm.visual)
-Team member(s): To Be Assigned (Recommend 1)
+Team member(s): Richard (+ anyone working on the Web App?)
 
 Here you'll need to generate SVG objects (or something similar) that will allow the web app to visualize the threat model as well as allow the user to export the threat model as a report including the DFDs and other diagrams. 
 
@@ -52,7 +52,7 @@ Tasks:
 - For both `Diagram` and `Report`, the user should be able to specify what parts of the TM they want to generate these for, whether that's specify specific objects or different levels of the diagram. 
 
 ### Web App ([repo](https://github.com/mirarj/nltm_tool))
-Team member(s): Madison
+Team member(s): Madison and Richard
 
 Recommend looking at the following applications for some inspiration about how to design the UI: [threat-composer](https://github.com/awslabs/threat-composer), [OWASP Threat Dragon](https://www.threatdragon.com/#/), [Microsoft Threat Modeling Tool](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool), [Deciduous](https://www.deciduous.app/).
 
