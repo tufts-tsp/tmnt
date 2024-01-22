@@ -10,7 +10,7 @@
 
 We have provided detailed to do's for each part of `bang_pytm` that need to be built/modified as well as recommended number of team members. Additionally, we have given more detailed requirements for the Web Application, but we are not specifying the exact steps needed to be taken. Feel free to use your own organizational methods to assign tasks, track progress etc. 
 
-Each week, we'd like the following to be done for the Wednesday meeting:
+Each week, we'd like the following to be done for the Monday meeting:
 - An updated waterfall of where the project stands across each of the four workflows (specified below)
 - All code that needs to be reviewed either to be merged in `dev` or at least have a pull request.
 - A version of the web app available for testing via Docker. We understand that this may not change every week, but we would like to ensure that we are able to test the app/play around with it at our leisure, i.e. there's a working build available.
@@ -52,7 +52,7 @@ Tasks:
 - For both `Diagram` and `Report`, the user should be able to specify what parts of the TM they want to generate these for, whether that's specify specific objects or different levels of the diagram. 
 
 ### Web App ([repo](https://github.com/mirarj/nltm_tool))
-Team member(s): To Be Assigned (Recommend 2)
+Team member(s): Madison
 
 Recommend looking at the following applications for some inspiration about how to design the UI: [threat-composer](https://github.com/awslabs/threat-composer), [OWASP Threat Dragon](https://www.threatdragon.com/#/), [Microsoft Threat Modeling Tool](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool), [Deciduous](https://www.deciduous.app/).
 
