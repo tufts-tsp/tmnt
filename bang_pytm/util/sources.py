@@ -52,8 +52,10 @@ def load_capec() -> list:
                     pattern.find("likelihood_of_attack")
                 ),
                 severity=__get_text_val(pattern.find("typical_severity")),
-                related=[__get_related_capec(related) for related in pattern.find_all("related_attack_pattern")] + [__get_related_cwes(related) for related in pattern.find_all("related_weakness")]
-                references=__get_references(pattern.find("references"), ref)
+                related=[
+                    __get_related_capec(related) for related in pattern.find_all("related_attack_pattern")] + [__get_related_cwes(related) for related in pattern.find_all("related_weakness")
+                ],
+                references=__get_references(pattern.find("references"), ref),
                 consequences=__get_consequences(pattern.find("consequences")),
                 required_skills=[
                     {"level": val.attrs["level"], "info": val.text}
@@ -65,9 +67,9 @@ def load_capec() -> list:
                 
                 examples=[val.text for val in pattern.find_all("example")],
                 steps=__get_attack(pattern.find("execution_flow")),
-                relationships=,
-                related_weaknesses=,
-                ,
+                relationships=None,
+                related_weaknesses=None
+                
             )
         )
     return results

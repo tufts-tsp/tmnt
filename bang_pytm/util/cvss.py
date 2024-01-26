@@ -3,7 +3,7 @@
 ### CAN USE https://github.com/RedHatProductSecurity/cvss as starting point
 
 from decimal import Decimal
-
+from typing import Self
 
 class CVSS(object):
     def __init__(self) -> None:
@@ -21,5 +21,5 @@ class CVSS(object):
     def vector_string(self, level: str = "overall") -> str:
         pass
 
-    def convert(self, version: str) -> CVSS:
+    def convert(self, version: str) -> Self:
         pass
