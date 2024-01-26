@@ -9,6 +9,10 @@ class TestTM(unittest.TestCase):
 
     def test_tm_init(self):
         self.assertEqual(self.tm.name, "test_tm")
+
+    def test_changing_name(self):
+        with self.assertRaises(ValueError):
+            self.tm.name = "test2_tm"
     
     def tearDown(self):
         TM.reset()

@@ -7,7 +7,7 @@ class immutableVar(object):
     """ensures that certain settings/ descriptors are never changed after setting them"""
     def __init__(self, default, required=False, doc=""):
         self.default = default
-        self._is_set = False
+        self.is_set = WeakKeyDictionary()
         self.required = required
         self.doc = doc
         self.values = WeakKeyDictionary()
@@ -18,11 +18,11 @@ class immutableVar(object):
         return self.values.get(instance, self.default)
     
     def __set__(self, instance, new_value):
-        if self._is_set:
+        if self.is_set.get(instance, False):
             raise ValueError("Already set!")
         else:
             self.values[instance] = new_value
-            self._is_set = True
+            self.is_set[instance] = True
 
 
 
