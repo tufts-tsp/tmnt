@@ -133,7 +133,7 @@ def load_cwes() -> list:
 def load_xml(fn: str, fpath: str = None) -> bs:
     if fpath == None:
         fpath = os.path.dirname(__file__) + "/reference_data/"
-    with open(fpath + fn, "r") as f:
+    with open(fpath + fn, "r", encoding="utf8") as f:
         data = f.read()
     return bs(data, "lxml")
 
