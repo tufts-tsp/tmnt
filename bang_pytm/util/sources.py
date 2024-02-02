@@ -12,6 +12,7 @@ from bang_pytm.core.threat import Weakness, Threat
 
 def load_owasp_asvs() -> list:
     """
+    Initial set of Controls
     OWASP Application Security Verification Standard
 
     Download URL https://github.com/OWASP/ASVS/releases
@@ -25,6 +26,7 @@ def load_owasp_asvs() -> list:
 
 def load_capec() -> list:
     """
+    Initial set of Threats. 
     CAPEC Data from MITRE. Ignore Deprecated CAPEC.
 
     Download URL https://capec.mitre.org/data/xml/capec_latest.xml
@@ -32,7 +34,7 @@ def load_capec() -> list:
     results = []
     data = load_xml("capec.xml")
     ref = data.find("external_references").find_all("external_reference")
-    data = data.find_all("attack_patterns")
+    data = data.find("attack_patterns").find_all('attack_pattern')
     for pattern in data:
         if pattern.attrs["status"] == "Deprecated":
             continue
@@ -53,7 +55,12 @@ def load_capec() -> list:
                 ),
                 severity=__get_text_val(pattern.find("typical_severity")),
                 related=[
-                    __get_related_capec(related) for related in pattern.find_all("related_attack_pattern")] + [__get_related_cwes(related) for related in pattern.find_all("related_weakness")
+                    __get_related_capec(related)
+                    for related in pattern.find_all("related_attack_pattern")
+                ]
+                + [
+                    __get_related_cwes(related)
+                    for related in pattern.find_all("related_weakness")
                 ],
                 references=__get_references(pattern.find("references"), ref),
                 consequences=__get_consequences(pattern.find("consequences")),
@@ -64,12 +71,9 @@ def load_capec() -> list:
                 required_resources=[
                     val.text for val in pattern.find_all("resource")
                 ],
-                
                 examples=[val.text for val in pattern.find_all("example")],
-                steps=__get_attack(pattern.find("execution_flow")),
-                relationships=None,
-                related_weaknesses=None
-                
+                # Need to add this back in when Issue #34 is resolved. 
+                # attack_steps=__get_attack(pattern.find("execution_flow")),
             )
         )
     return results
@@ -77,6 +81,7 @@ def load_capec() -> list:
 
 def load_cwes() -> list:
     """
+    Initial set of Weaknesses
     CWE Data from MITRE. Ignore Deprecated CWEs.
 
     Download URL https://cwe.mitre.org/data/xml/cwec_latest.xml.zip
@@ -173,7 +178,7 @@ def __get_children(val):
 
 def __get_consequences(consequences):
     if consequences == None:
-        return None
+        return []
     return [
         __get_consequence(consequence)
         for consequence in consequences.find_all("consequence")
@@ -192,10 +197,15 @@ def __get_consequence(consequence):
 
 
 def __get_related_cwes(related):
-    return {
-        "cweid": related.attrs["cwe_id"],
-        "relation": related.attrs["nature"],
-    }
+    if 'nature' in related.attrs:
+        return {
+            "cweid": related.attrs["cwe_id"],
+            "relation": related.attrs["nature"],
+        }
+    else:
+        return {
+            "cweid": related.attrs["cwe_id"],
+        }
 
 
 def __get_text_val(txt):
@@ -212,20 +222,26 @@ def __get_attack(flow):
         return None
     steps = [
         {
-            "step": step.find("step").text,
+            "order": step.find("step").text,
             "phase": step.find("phase").text,
             "desc": step.find("description").text,
-            "techniques": [val.text for val in step.find_all("technique")],
+            "technique": [val.text for val in step.find_all("technique")],
         }
         for step in flow.find_all("attack_step")
     ]
+    return steps
 
 
 def __get_related_capec(related):
-    return {
-        "capecid": related.attrs["capec_id"],
-        "relation": related.attrs["nature"],
-    }
+    if 'nature' in related.attrs:
+        return {
+            "capecid": related.attrs["capec_id"],
+            "relation": related.attrs["nature"],
+        }
+    else:
+        return {
+            "capecid": related.attrs["capec_id"],
+        }
 
 
 ################################# CWE HELPERS #################################

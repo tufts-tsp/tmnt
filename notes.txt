@@ -1,0 +1,7 @@
+what is asvs_ref?
+
+what is assigning to different attributes
+
+github vscode comnmit
+
+github main branch ahead of dev
