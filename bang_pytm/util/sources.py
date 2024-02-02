@@ -12,6 +12,7 @@ from bang_pytm.core.threat import Weakness, Threat
 
 def load_owasp_asvs() -> list:
     """
+    Initial set of Controls
     OWASP Application Security Verification Standard
 
     Download URL https://github.com/OWASP/ASVS/releases
@@ -25,6 +26,7 @@ def load_owasp_asvs() -> list:
 
 def load_capec() -> list:
     """
+    Initial set of Threats. 
     CAPEC Data from MITRE. Ignore Deprecated CAPEC.
 
     Download URL https://capec.mitre.org/data/xml/capec_latest.xml
@@ -79,6 +81,7 @@ def load_capec() -> list:
 
 def load_cwes() -> list:
     """
+    Initial set of Weaknesses
     CWE Data from MITRE. Ignore Deprecated CWEs.
 
     Download URL https://cwe.mitre.org/data/xml/cwec_latest.xml.zip
