@@ -106,28 +106,27 @@ def load_cwes() -> list:
                     intro.find("phase").text
                     for intro in weakness.find_all("introduction")
                 ],
-                exploitable=__get_text_val(
+                likelihood=__get_text_val(
                     weakness.find("likelihood_of_exploit")
                 ),
                 consequences=__get_consequences(
                     weakness.find("common_consequences")
                 ),
-                relationships=[
+                related=[
                     __get_related_cwes(related)
                     for related in weakness.find_all("related_weakness")
-                ],
-                conditions=__get_conditions(
-                    weakness.find("applicable_platforms")
-                ),
+                        ]
+                    + __get_cves(weakness.find("observed_examples"))
+                    + __get_capec(weakness.find("related_attack_patterns"))
+                ,
+                # conditions=__get_conditions(
+                #     weakness.find("applicable_platforms")
+                # ),
                 mitigations=__get_mitigations(
                     weakness.find("potential_mitigations")
                 ),
                 detection_methods=__get_detection(
                     weakness.find("detection_methods")
-                ),
-                related_cves=__get_cves(weakness.find("observed_examples")),
-                related_threats=__get_capec(
-                    weakness.find("related_attack_patterns")
                 ),
                 references=__get_references(weakness.find("references"), ref),
             )
@@ -269,7 +268,7 @@ def __get_applicable(child):
 
 def __get_cves(cves):
     if cves == None:
-        return None
+        return []
     return [
         ex.find("reference").text.strip("\n")
         for ex in cves.find_all("observed_example")
@@ -297,7 +296,7 @@ def __get_detection(mthds):
 
 def __get_capec(threats):
     if threats == None:
-        return None
+        return []
     threats = threats.find_all("related_attack_pattern")
     return ["CAPEC-" + threat.attrs["capec_id"] for threat in threats]
 
