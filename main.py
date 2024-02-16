@@ -1,1 +1,0 @@
-import bang_pytm as ss
