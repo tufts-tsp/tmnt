@@ -8,6 +8,7 @@ import os
 import json
 
 from bang_pytm.core.threat import Weakness, Threat
+from bang_pytm.core.control import Control
 
 
 def load_owasp_asvs() -> list:
@@ -20,7 +21,36 @@ def load_owasp_asvs() -> list:
     results = []
     data = load_xml("asvs.xml")
     ref = load_json("asvs_ref.json")
-    # TO DO
+
+    # format v<version>-<chapter>.<section>.<requirement>
+    version = data.find("version").text
+
+    # class attrs not used - assumptions, development_phase, parent, children
+    # asvs.xml not used - L1, L2, L3
+    chapters = data.find("requirements").find_all('item', recursive=False)
+    for chapter in chapters: #Vx
+        chapter_name = chapter.find('shortname').text
+        sections = chapter.find('items').find_all('item', recursive=False)
+        
+        for section in sections: #Vx.x
+            section_name = section.find('name').text
+            requirements = section.find('items').find_all('item', recursive=False)
+            # not all sections have requirements
+            if len(requirements)==0:
+                sc = section.find('shortcode').text[1:]
+                c = Control()
+                c.name = "v" + version + "-" + sc
+                c.description = chapter_name + "\n" + section_name
+                results.append(c)
+            
+            for requirement in requirements: #Vx.x.x
+                sc = requirement.find('shortcode').text[1:]
+                desc = requirement.find("description").text
+                c = Control()
+                c.name = "v" + version + "-" + sc
+                c.description = chapter_name + "\n" + section_name + "\n" + desc
+                results.append(c)
+
     return results
 
 
