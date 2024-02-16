@@ -70,6 +70,8 @@ def load_capec() -> list:
             continue
         results.append(
             Threat(
+                # class attrs not used - threat_source_desc, avenue, attack_steps
+                # capec.xml not used - Categories, Views, Taxonomy_Mappings 
                 name=pattern.attrs["name"],
                 desc=pattern.find("description"),
                 prerequisites=[
@@ -125,6 +127,8 @@ def load_cwes() -> list:
             continue
         results.append(
             Weakness(
+                # class attrs not used - prerequisites, severity
+                # cwe.xml not used - Applicable_Platforms, Background_Details, Demonstrative_Examples, Mapping_Notes
                 name=weakness.attrs["name"],
                 ref_id="CWE-" + weakness.attrs["id"],
                 alt_name=[
