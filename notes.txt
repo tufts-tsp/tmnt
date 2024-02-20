@@ -1,0 +1,4 @@
+- github main branch ahead of dev
+- control doesn't use init 
+- attributes in xml and in class not in load functions
+- go over classes

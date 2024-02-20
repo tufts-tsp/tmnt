@@ -4,7 +4,6 @@
 
 from decimal import Decimal
 
-
 class CVSS(object):
     def __init__(self) -> None:
         pass
@@ -21,5 +20,5 @@ class CVSS(object):
     def vector_string(self, level: str = "overall") -> str:
         pass
 
-    def convert(self, version: str) -> CVSS:
+    def convert(self, version: str):
         pass

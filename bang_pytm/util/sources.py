@@ -8,10 +8,12 @@ import os
 import json
 
 from bang_pytm.core.threat import Weakness, Threat
+from bang_pytm.core.control import Control
 
 
 def load_owasp_asvs() -> list:
     """
+    Initial set of Controls
     OWASP Application Security Verification Standard
 
     Download URL https://github.com/OWASP/ASVS/releases
@@ -19,12 +21,42 @@ def load_owasp_asvs() -> list:
     results = []
     data = load_xml("asvs.xml")
     ref = load_json("asvs_ref.json")
-    # TO DO
+
+    # format v<version>-<chapter>.<section>.<requirement>
+    version = data.find("version").text
+
+    # class attrs not used - assumptions, development_phase, parent, children
+    # asvs.xml not used - L1, L2, L3
+    chapters = data.find("requirements").find_all('item', recursive=False)
+    for chapter in chapters: #Vx
+        chapter_name = chapter.find('shortname').text
+        sections = chapter.find('items').find_all('item', recursive=False)
+        
+        for section in sections: #Vx.x
+            section_name = section.find('name').text
+            requirements = section.find('items').find_all('item', recursive=False)
+            # not all sections have requirements
+            if len(requirements)==0:
+                sc = section.find('shortcode').text[1:]
+                c = Control()
+                c.name = "v" + version + "-" + sc
+                c.description = chapter_name + "\n" + section_name
+                results.append(c)
+            
+            for requirement in requirements: #Vx.x.x
+                sc = requirement.find('shortcode').text[1:]
+                desc = requirement.find("description").text
+                c = Control()
+                c.name = "v" + version + "-" + sc
+                c.description = chapter_name + "\n" + section_name + "\n" + desc
+                results.append(c)
+
     return results
 
 
 def load_capec() -> list:
     """
+    Initial set of Threats. 
     CAPEC Data from MITRE. Ignore Deprecated CAPEC.
 
     Download URL https://capec.mitre.org/data/xml/capec_latest.xml
@@ -32,12 +64,14 @@ def load_capec() -> list:
     results = []
     data = load_xml("capec.xml")
     ref = data.find("external_references").find_all("external_reference")
-    data = data.find_all("attack_patterns")
+    data = data.find("attack_patterns").find_all('attack_pattern')
     for pattern in data:
         if pattern.attrs["status"] == "Deprecated":
             continue
         results.append(
             Threat(
+                # class attrs not used - threat_source_desc, avenue, attack_steps
+                # capec.xml not used - Categories, Views, Taxonomy_Mappings 
                 name=pattern.attrs["name"],
                 desc=pattern.find("description"),
                 prerequisites=[
@@ -52,8 +86,15 @@ def load_capec() -> list:
                     pattern.find("likelihood_of_attack")
                 ),
                 severity=__get_text_val(pattern.find("typical_severity")),
-                related=[__get_related_capec(related) for related in pattern.find_all("related_attack_pattern")] + [__get_related_cwes(related) for related in pattern.find_all("related_weakness")]
-                references=__get_references(pattern.find("references"), ref)
+                related=[
+                    __get_related_capec(related)
+                    for related in pattern.find_all("related_attack_pattern")
+                ]
+                + [
+                    __get_related_cwes(related)
+                    for related in pattern.find_all("related_weakness")
+                ],
+                references=__get_references(pattern.find("references"), ref),
                 consequences=__get_consequences(pattern.find("consequences")),
                 required_skills=[
                     {"level": val.attrs["level"], "info": val.text}
@@ -62,12 +103,9 @@ def load_capec() -> list:
                 required_resources=[
                     val.text for val in pattern.find_all("resource")
                 ],
-                
                 examples=[val.text for val in pattern.find_all("example")],
-                steps=__get_attack(pattern.find("execution_flow")),
-                relationships=,
-                related_weaknesses=,
-                ,
+                # Need to add this back in when Issue #34 is resolved. 
+                # attack_steps=__get_attack(pattern.find("execution_flow")),
             )
         )
     return results
@@ -75,6 +113,7 @@ def load_capec() -> list:
 
 def load_cwes() -> list:
     """
+    Initial set of Weaknesses
     CWE Data from MITRE. Ignore Deprecated CWEs.
 
     Download URL https://cwe.mitre.org/data/xml/cwec_latest.xml.zip
@@ -88,6 +127,8 @@ def load_cwes() -> list:
             continue
         results.append(
             Weakness(
+                # class attrs not used - prerequisites, severity
+                # cwe.xml not used - Applicable_Platforms, Background_Details, Demonstrative_Examples, Mapping_Notes
                 name=weakness.attrs["name"],
                 ref_id="CWE-" + weakness.attrs["id"],
                 alt_name=[
@@ -99,28 +140,27 @@ def load_cwes() -> list:
                     intro.find("phase").text
                     for intro in weakness.find_all("introduction")
                 ],
-                exploitable=__get_text_val(
+                likelihood=__get_text_val(
                     weakness.find("likelihood_of_exploit")
                 ),
                 consequences=__get_consequences(
                     weakness.find("common_consequences")
                 ),
-                relationships=[
+                related=[
                     __get_related_cwes(related)
                     for related in weakness.find_all("related_weakness")
-                ],
-                conditions=__get_conditions(
-                    weakness.find("applicable_platforms")
-                ),
+                        ]
+                    + __get_cves(weakness.find("observed_examples"))
+                    + __get_capec(weakness.find("related_attack_patterns"))
+                ,
+                # conditions=__get_conditions(
+                #     weakness.find("applicable_platforms")
+                # ),
                 mitigations=__get_mitigations(
                     weakness.find("potential_mitigations")
                 ),
                 detection_methods=__get_detection(
                     weakness.find("detection_methods")
-                ),
-                related_cves=__get_cves(weakness.find("observed_examples")),
-                related_threats=__get_capec(
-                    weakness.find("related_attack_patterns")
                 ),
                 references=__get_references(weakness.find("references"), ref),
             )
@@ -131,7 +171,7 @@ def load_cwes() -> list:
 def load_xml(fn: str, fpath: str = None) -> bs:
     if fpath == None:
         fpath = os.path.dirname(__file__) + "/reference_data/"
-    with open(fpath + fn, "r") as f:
+    with open(fpath + fn, "r", encoding="utf8") as f:
         data = f.read()
     return bs(data, "lxml")
 
@@ -171,7 +211,7 @@ def __get_children(val):
 
 def __get_consequences(consequences):
     if consequences == None:
-        return None
+        return []
     return [
         __get_consequence(consequence)
         for consequence in consequences.find_all("consequence")
@@ -190,10 +230,15 @@ def __get_consequence(consequence):
 
 
 def __get_related_cwes(related):
-    return {
-        "cweid": related.attrs["cwe_id"],
-        "relation": related.attrs["nature"],
-    }
+    if 'nature' in related.attrs:
+        return {
+            "cweid": related.attrs["cwe_id"],
+            "relation": related.attrs["nature"],
+        }
+    else:
+        return {
+            "cweid": related.attrs["cwe_id"],
+        }
 
 
 def __get_text_val(txt):
@@ -210,20 +255,26 @@ def __get_attack(flow):
         return None
     steps = [
         {
-            "step": step.find("step").text,
+            "order": step.find("step").text,
             "phase": step.find("phase").text,
             "desc": step.find("description").text,
-            "techniques": [val.text for val in step.find_all("technique")],
+            "technique": [val.text for val in step.find_all("technique")],
         }
         for step in flow.find_all("attack_step")
     ]
+    return steps
 
 
 def __get_related_capec(related):
-    return {
-        "capecid": related.attrs["capec_id"],
-        "relation": related.attrs["nature"],
-    }
+    if 'nature' in related.attrs:
+        return {
+            "capecid": related.attrs["capec_id"],
+            "relation": related.attrs["nature"],
+        }
+    else:
+        return {
+            "capecid": related.attrs["capec_id"],
+        }
 
 
 ################################# CWE HELPERS #################################
@@ -251,7 +302,7 @@ def __get_applicable(child):
 
 def __get_cves(cves):
     if cves == None:
-        return None
+        return []
     return [
         ex.find("reference").text.strip("\n")
         for ex in cves.find_all("observed_example")
@@ -279,7 +330,7 @@ def __get_detection(mthds):
 
 def __get_capec(threats):
     if threats == None:
-        return None
+        return []
     threats = threats.find_all("related_attack_pattern")
     return ["CAPEC-" + threat.attrs["capec_id"] for threat in threats]
 

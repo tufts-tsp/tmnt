@@ -1,9 +1,12 @@
 # bang_pytm
 
 ## Installation
+python -m pipreqs.pipreqs
+pip install requirements.txt
 
 ## Usage
-
+import bang_pytm.util.sources
+sources.load_capec() # etc
 
 ## Standards Mapping
 - TM : [CSAF](https://oasis-open.github.io/csaf-documentation/index.html)

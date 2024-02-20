@@ -488,13 +488,13 @@ class SafetyImpact(object):
     __risk: bool = None
 
     def __init__(
-        self, harm: str, exploitability: str = None, **kwargs
+        self, harm: str = None, exploitability: str = None, **kwargs
     ) -> None:
         if harm:
             self.harm = harm
         if exploitability:
             self.exploitability = exploitability
-        self.meta(**kwargs)
+        self.meta = None # (**kwargs)
 
     @property
     def meta(self) -> dict:
