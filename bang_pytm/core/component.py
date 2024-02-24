@@ -2,6 +2,7 @@ from .element import Element
 from .data import Data
 from .threat import Threat
 from .control import Control
+from typing import Dict, List
 
 
 class Component(Element):
@@ -12,12 +13,15 @@ class Component(Element):
     threat model), i.e. assets and flows.
     """
 
-    __controls: [Control] = []
-    __threats: [Threat] = []
-    __data: Data = None
+    __controls: List[Control] = []
+    __threats: List[Threat] = []
+    __data: List[Data] = None
 
-    def __init__(self, name: str, desc: str = None, data: Data = None):
-        data: Data = None
+    def __init__(self, name: str, desc: str = None, data: List[Data] = None) -> None:
+        if data != None and type(data) == list:
+            self.data = data
+        elif data!= None:
+            self.data = [data]
         super().__init__(name, desc)
 
     @property
@@ -26,7 +30,10 @@ class Component(Element):
 
     @data.setter
     def data(self, val: Data) -> None:
-        self.__data = val
+        self.__data.append(val)
+
+    def remove_data(self, val: Data) -> None:
+        self.__data.remove(val)
 
     @property
     def threats(self) -> list[Threat]:

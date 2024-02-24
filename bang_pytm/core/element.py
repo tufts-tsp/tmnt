@@ -1,5 +1,6 @@
 import uuid
 
+from bang_pytm.util import SecurityProperty
 
 class Element(object):
     """
@@ -25,6 +26,7 @@ class Element(object):
     __desc: str = None
     __parent: list = []
     __children: list = []
+    __security_property: SecurityProperty = None
 
     def __init__(
         self,
@@ -111,3 +113,11 @@ class Element(object):
             err = f"{elem} has not been assigned to {self}."
             raise AttributeError(err)
         elems.remove(elem)
+
+    @property
+    def security_property(self) -> SecurityProperty:
+        return self.__security_property
+    
+    @security_property.setter
+    def security_property(self, val: SecurityProperty) -> None:
+        self.__security_property = val

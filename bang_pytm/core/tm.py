@@ -1,11 +1,15 @@
 import random
 import logging
+from typing import List
 
+from bang_pytm.engine import Engine
 
-from bang_pytm.core.descriptors import varString, varFindings, varStrings
+from .descriptors import varString, varFindings, varStrings
+from .data import Data
+from .component import Component
+from .finding import Finding
 
 logger = logging.getLogger(__name__)
-
 
 class TM:
     """Describes the threat model administratively,
@@ -52,4 +56,9 @@ class TM:
         pass
 
     def remove_component(self, component: Component = None):
+        pass
+
+    def describe_data(self, data: Data = None):
+        # Provide user with the components that process, send, receive, store
+        # this data
         pass
