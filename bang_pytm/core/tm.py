@@ -3,7 +3,7 @@ from typing import List
 from .component import Component
 from .finding import Finding
 
-from bang_pytm.engine.engine import Engine
+from bang_pytm.core.descriptors import varString, varFindings, varStrings
 
 class TM(object):
     
