@@ -2,7 +2,7 @@ import random
 import logging
 
 
-from .var import varString, varFindings, varStrings
+from bang_pytm.core.descriptors import varString, varFindings, varStrings
 
 logger = logging.getLogger(__name__)
 
