@@ -77,7 +77,13 @@ class Element(object):
         """
         return self.__parent
 
-    def add_parent(self, parent: object) -> None:
+    def set_parent(self, parent: object) -> None:
+
+        if parent is self:
+            raise ValueError("An element cannot be a parent of itself")
+        if parent in self.__children:
+            raise ValueError("An element cannot be both a parent and a child")
+        
         self.__add_elem(parent, self.__parent)
 
     def remove_parent(self, parent: object) -> None:
@@ -94,10 +100,18 @@ class Element(object):
         return self.__children
 
     def add_child(self, child: object) -> None:
+
+        if child is self:
+            raise ValueError("An element cannot be a child of itself")
+        if child is self.__parent:
+            raise ValueError("An element cannot be both a parent and a child")
+    
         self.__add_elem(child, self.__children)
 
     def remove_child(self, child: object) -> None:
-        self.__remove_elem(child, self.__children)
+
+        if child in self.__children:
+            self.__remove_elem(child, self.__children)
 
     def __add_elem(self, elem: object, elems: list) -> None:
         if self == elem:
