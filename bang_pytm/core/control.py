@@ -2,19 +2,38 @@ from .element import Element
 
 
 class Control(Element):
+
+    __id: str = None
+    __title: str = None
+    __description: str = None
     __assumptions: list = []
     __development_phase: list = []
 
-    def __init__(self):
-        pass
+    def __init__(
+            self, 
+            id: str,
+            title: str,
+            description: str
+    ):
+        self.__id = id
+        self.__title = title
+        self.__description = description    
 
     @property
     def assummptions(self) -> list:
         return self.__assumptions
 
     @assummptions.setter
-    def assummptions(self) -> None:
-        pass
+    def assummptions(self, assumption_list: list) -> None:
+
+        if not isinstance(assumption_list, list):
+            raise ValueError("Assumptions must be provided as a list")
+        
+        for item in assumption_list:
+            if not isinstance(item, str):
+                raise ValueError("Assumptions must be strings")
+        
+        self.__assumptions = assumption_list
 
     @property
     def development_phase(self) -> str:

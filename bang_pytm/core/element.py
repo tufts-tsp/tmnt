@@ -33,7 +33,7 @@ class Element(object):
         name: str,
         desc: str = None,
     ):
-        self.name = name
+        self.__name = name
         self.__desc = desc
         self.__children = []
         self.__parent = None

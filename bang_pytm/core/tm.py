@@ -10,6 +10,7 @@ from .component import Component
 from .finding import Finding
 from .flow import Flow
 from .asset import Asset
+from .element import Element
 
 logger = logging.getLogger(__name__)
 
