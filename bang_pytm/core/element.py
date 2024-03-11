@@ -24,7 +24,7 @@ class Element(object):
     __id: uuid.UUID = None
     __name: str = None
     __desc: str = None
-    __parent: list = []
+    __parent: "Element" = None
     __children: list = []
     __security_property: SecurityProperty = None
 
@@ -35,6 +35,8 @@ class Element(object):
     ):
         self.name = name
         self.__desc = desc
+        self.__children = []
+        self.__parent = None
 
     def __repr__(self):
         return f"<{type(self).__name__}({self.name}) - {self.eid}>"
@@ -77,17 +79,22 @@ class Element(object):
         """
         return self.__parent
 
-    def set_parent(self, parent: object) -> None:
-
+    @parent.setter
+    def parent(self, parent: object) -> None:
         if parent is self:
             raise ValueError("An element cannot be a parent of itself")
         if parent in self.__children:
             raise ValueError("An element cannot be both a parent and a child")
-        
-        self.__add_elem(parent, self.__parent)
+        if self.__parent is not None:
+            raise ValueError("Element already has a parent, please remove the old parent first")
+        if parent.parent is not None:
+            raise ValueError("No grandparents/children allowed.")
+        self.__parent = parent
+        if self not in parent.children:
+            parent.add_child(self)
 
-    def remove_parent(self, parent: object) -> None:
-        self.__remove_elem(parent, self.__parent)
+    def remove_parent(self) -> None:
+        self.__parent = None
 
     @property
     def children(self) -> object:
@@ -100,12 +107,16 @@ class Element(object):
         return self.__children
 
     def add_child(self, child: object) -> None:
-
         if child is self:
             raise ValueError("An element cannot be a child of itself")
         if child is self.__parent:
             raise ValueError("An element cannot be both a parent and a child")
-    
+        if child.children is not []:
+            raise ValueError("No grandparents/children allowed")
+        if child.parent is None:
+            child.parent = self
+        elif child.parent is not self:
+            raise ValueError("A different parent has already been assigned")
         self.__add_elem(child, self.__children)
 
     def remove_child(self, child: object) -> None:

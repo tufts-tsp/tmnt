@@ -8,6 +8,14 @@ pip install requirements.txt
 import bang_pytm.util.sources
 sources.load_capec() # etc
 
+### Parent / Child
+
+Only support parent / child, no grandparents right now
+
+### Flow
+
+Flow assignments should only happen on the parent level
+
 ## Standards Mapping
 - TM : [CSAF](https://oasis-open.github.io/csaf-documentation/index.html)
     - A TM object should export to a CSAF format and this is what can be easily 
@@ -15,35 +23,3 @@ sources.load_capec() # etc
 - Threat : [STIX](https://oasis-open.github.io/cti-documentation/stix/intro)
 - Vulnerability : 
 
-
-
-AWS:
-Threat Source + Prerequisites -> Action -> Impact (Requirements + Components)
-
-Threat Source
-- Actor
-- Avenue
-
-Prerequisites
-- Desc
-
-Action
-- Desc
-- Steps
-
-Outcome
-- Desc
-- Requirements
-- Elements
-
-Scenario/Threat
-- Threat Actor - Optional
-- Avenue ([Theatre](https://pages.nist.gov/vulntology/specification/values/theater/)) - Optional 
-- Weakness/Prerequisite - Required
-- Action - 
-- Outcome
-- Impacted Requirements
-- Impacted Assets/Flows/Actors
-
-Requirement [Security, Safety, Physical]
-Component

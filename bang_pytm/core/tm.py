@@ -8,6 +8,8 @@ from .descriptors import varString, varFindings, varStrings
 from .data import Data
 from .component import Component
 from .finding import Finding
+from .flow import Flow
+from .asset import Asset
 
 logger = logging.getLogger(__name__)
 
@@ -61,4 +63,23 @@ class TM:
     def describe_data(self, data: Data = None):
         # Provide user with the components that process, send, receive, store
         # this data
+        pass
+
+    def enumerate_all_flows(self, kind: Flow) -> List[Flow]:
+        # Give a list of all the flows, able to filter with kind
+        pass
+
+    def enumerate_all_assets(self, kind: Asset) -> List[Asset]:
+        ## Give a list of all the assets, able to filter with kind
+        pass
+
+    def find_related_attack_vectors(self, asset: Asset):
+        # Find all the flows where the asset is the destination, then grab 
+        # assets and then recurse 
+        pass
+
+    def simulate_attack(self, component: Component):
+        # If someone were to attack and breach, what things could they hop to
+        # or otherwise get access to - reverse of find_related_attack_vectors, 
+        # i.e. start with initial attack surface how far they can go
         pass

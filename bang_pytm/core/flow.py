@@ -22,14 +22,15 @@ class Flow(Component):
         authentication : 
 
         """
-        self.src = src
-        self.dst = dst
+        self.src = self.__check_parent(src)
+        self.dst = self.__check_parent(dst)
         self.authentication = authentication
         self.multifactor_authentication = multifactor_authentication
         if path == []:
             self.path = [src, dst]
+        else:
+            self.path = path
         super().__init__(name, **kwargs)
-        # TO DO
 
     @property
     def src(self) -> Element:
@@ -53,7 +54,13 @@ class Flow(Component):
 
     @path.setter
     def path(self, vals: list[Element]) -> None:
-        self.__path = vals
+        self.__path = [self.__check_parent(val) for val in vals]
+
+    def __check_parent(self, obj):
+        if obj.parent is None:
+            return obj
+        else:
+            return obj.parent
 
 
 class DataFlow(Flow):
