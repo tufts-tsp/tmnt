@@ -20,7 +20,7 @@ class Control(Element):
         self.__description = description    
 
     @property
-    def assummptions(self) -> list:
+    def assumptions(self) -> list:
         return self.__assumptions
 
     @assummptions.setter
