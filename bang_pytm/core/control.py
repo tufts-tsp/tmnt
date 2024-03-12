@@ -9,11 +9,11 @@ class Control(Element):
         pass
 
     @property
-    def assummptions(self) -> list:
+    def assumptions(self) -> list:
         return self.__assumptions
 
-    @assummptions.setter
-    def assummptions(self) -> None:
+    @assumptions.setter
+    def assumptions(self) -> None:
         pass
 
     @property
