@@ -2,7 +2,7 @@ from .element import Element
 
 from bang_pytm.util.requirement import STRIDE, SecurityProperty, SafetyImpact
 from bang_pytm.util.cvss import CVSS
-
+from typing import Union
 
 class Issue(Element):
     """
@@ -197,7 +197,7 @@ class Issue(Element):
 
     def add_consequence(
         self,
-        scope: str | list,
+        scope: Union[str, list],
         impact: str,
         likelihood: str = None,
         note: str = None,

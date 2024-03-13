@@ -1,7 +1,6 @@
 import unittest
 
 from bang_pytm.core.tm import TM
-from bang_pytm.core.element import Element
 
 class TestTM(unittest.TestCase):
 
@@ -14,6 +13,25 @@ class TestTM(unittest.TestCase):
     def test_changing_name(self):
         with self.assertRaises(ValueError):
             self.tm.name = "test2_tm"
+    
+    def test_adding_removing_component(self):
+        
+        component_list = []
+        
+        component1 = Component("test1")
+
+        self.tm.add_component(component1)
+        component_list = self.tm.components
+        print(component_list)
+
+        self.tm.remove_component(component1)
+        component_list = self.tm.components
+        print(component_list) 
+
+    def tearDown(self):
+        TM.reset()
+
+class TestElement(unittest.TestCase):
     
     def test_parent_child_assignments(self):
 
@@ -34,14 +52,6 @@ class TestTM(unittest.TestCase):
         # a node should not overwrite its parent node without removing it
         with self.assertRaises(ValueError):
             elem1.parent = elem3
-
-        # 
-
-        elem1.add_child(elem2)
-
-    def tearDown(self):
-        TM.reset()
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -55,24 +55,71 @@ class TM:
     def remove_finding(self, finding: Finding = None):
         pass
 
+
     def add_component(self, component: Component = None):
-        pass
+        
+        if component is None:
+            raise ValueError("No component specified to add")
+        
+        if not isinstance(component, Component):
+            raise TypeError("Specified component is not of type 'Component")
+        
+        if component in self.__components:
+            print("Component is already in the model")
+        else:
+            self.__components.append(component)
+
+        
+        self.__components.append(component)
+
 
     def remove_component(self, component: Component = None):
-        pass
+        
+        if component is None:
+            raise ValueError("No component specified to remove")
+        
+        self.__components.remove(component)
+
 
     def describe_data(self, data: Data = None):
         # Provide user with the components that process, send, receive, store
         # this data
-        pass
+
+        if data is None:
+            raise ValueError("Data object must be provided")
+        
+        associated_components = []
+
+        for component in self.__components:
+            if data in component.data:
+                associated_components.append(data)
+        
+        return associated_components
+
 
     def enumerate_all_flows(self, kind: Flow) -> List[Flow]:
         # Give a list of all the flows, able to filter with kind
-        pass
+        
+        flow_list = []
+        
+        if kind is not None:
+            for flow in self._flows:
+                if isinstance(flow, kind):
+                    flow_list.append(flow)
+        else:
+            return self._flows.copy()
 
     def enumerate_all_assets(self, kind: Asset) -> List[Asset]:
         ## Give a list of all the assets, able to filter with kind
-        pass
+        
+        asset_list = []
+
+        if kind is not None:
+            for asset in self._assets:
+                if isinstance(asset, kind):
+                    asset_list.append(asset)
+        else:
+            return self._assets.copy()
 
     def find_related_attack_vectors(self, asset: Asset):
         # Find all the flows where the asset is the destination, then grab 
