@@ -1,5 +1,4 @@
 from bang_pytm.core.descriptors import varString
-from bang_pytm.core.tm import TM
 from .element import Element
 
 class Actor(Element):
