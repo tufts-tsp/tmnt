@@ -81,19 +81,33 @@ class Element(object):
 
     @parent.setter
     def parent(self, parent: object) -> None:
-        if parent is self:
-            raise ValueError("An element cannot be a parent of itself")
-        if parent in self.__children:
-            raise ValueError("An element cannot be both a parent and a child")
-        if self.__parent is not None:
-            raise ValueError("Element already has a parent, please remove the old parent first")
-        if parent.parent is not None:
-            raise ValueError("No grandparents/children allowed.")
-        self.__parent = parent
-        if self not in parent.children:
-            parent.add_child(self)
+        # If this assignment is from `add_child` it will be a tuple, and
+        # we shouldn't assign a child as this will cause issues - user could 
+        # also specify using a tuple
+        if type(parent) == tuple:
+            assign_child = parent[1]
+            parent = parent[0]
+        else:
+            assign_child = True
+        if assign_child:
+            parent.add_child(self, assign_parent=False)
 
-    def remove_parent(self) -> None:
+        if parent is self:
+            err = f"{parent} is self, an element cannot be a parent of itself."
+            raise ValueError(err)
+        if parent in self.__children:
+            err = f"{parent} cannot be both a child and parent of {self}."
+            raise ValueError(err)
+        if self.__parent != None:
+            err = f"{self} already has a parent, {self.__parent}. Please remove if you want to replace it."
+            raise ValueError(err)
+        if parent.parent != None:
+            raise ValueError("No grandparents allowed.")
+        self.__parent = parent
+
+    def remove_parent(self, remove_child=True) -> None:
+        if remove_child:
+            self.parent.remove_child(self, remove_parent=False)
         self.__parent = None
 
     @property
@@ -106,38 +120,33 @@ class Element(object):
         """
         return self.__children
 
-    def add_child(self, child: object) -> None:
+    def add_child(self, child: object, assign_parent=True) -> None:
+        if assign_parent and child.parent != None:
+            raise AttributeError("A different parent has already been assigned")
+        elif assign_parent:
+            child.parent = (self, False)
+
         if child is self:
-            raise ValueError("An element cannot be a child of itself")
-        if child is self.__parent:
-            raise ValueError("An element cannot be both a parent and a child")
-        if child.children is not []:
-            raise ValueError("No grandparents/children allowed")
-        if child.parent is None:
-            child.parent = self
-        elif child.parent is not self:
-            raise ValueError("A different parent has already been assigned")
-        self.__add_elem(child, self.__children)
-
-    def remove_child(self, child: object) -> None:
-
-        if child in self.__children:
-            self.__remove_elem(child, self.__children)
-
-    def __add_elem(self, elem: object, elems: list) -> None:
-        if self == elem:
-            err = "You cannot assign an element to itself."
+            err = f"{child} cannot be a child of itself"
+            raise AttributeError("An element cannot be a child of itself")
+        elif child is self.__parent:
+            err = f"{child} is already assigned as the parent of {self}"
             raise AttributeError(err)
-        elif elem in elems:
-            err = f"{elem} has already been assigned to {self}."
+        elif child.children != []:
+            err = f"{child} has children, meaning {self} would be a grandparent"
+            raise AttributeError(err)            
+        elif child in self.__children:
+            err = f"{child} has already been assigned to {self}."
             raise AttributeError(err)
-        elems.append(elem)
-
-    def __remove_elem(self, elem: object, elems: list) -> None:
-        if elem not in elems:
-            err = f"{elem} has not been assigned to {self}."
+        self.__children.append(child)
+        
+    def remove_child(self, child: object, remove_parent=True) -> None:
+        if child not in self.__children:
+            err = f"{child} has not been assigned to {self}."
             raise AttributeError(err)
-        elems.remove(elem)
+        if remove_parent:
+            child.remove_parent(remove_child=False)
+        self.__children.remove(child)
 
     @property
     def security_property(self) -> SecurityProperty:
