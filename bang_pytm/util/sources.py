@@ -38,17 +38,18 @@ def load_owasp_asvs() -> list:
             # not all sections have requirements
             if len(requirements)==0:
                 sc = section.find('shortcode').text[1:]
-                c = Control()
-                c.name = "v" + version + "-" + sc
-                c.description = chapter_name + "\n" + section_name
+                # ID as described in https://owasp.org/www-project-application-security-verification-standard/
+                id = "v" + version + "-" + sc
+                title = chapter_name + ": " + section_name
+                c = Control(id=id, title=title, description="")
                 results.append(c)
             
             for requirement in requirements: #Vx.x.x
                 sc = requirement.find('shortcode').text[1:]
                 desc = requirement.find("description").text
-                c = Control()
-                c.name = "v" + version + "-" + sc
-                c.description = chapter_name + "\n" + section_name + "\n" + desc
+                id = "v" + version + "-" + sc
+                title = chapter_name + ": " + section_name
+                c = Control(id=id, title=title, description=desc)
                 results.append(c)
 
     return results

@@ -2,7 +2,7 @@ import json
 import re
 from bang_pytm.core.asset import Asset, Lambda, ExternalEntity, Datastore, Process
 from bang_pytm.core.control import Control
-from bang_pytm.core.flow import Flow
+from bang_pytm.core.flow import DataFlow
 from bang_pytm.util import sources
 from bang_pytm.core.tm import TM
 
@@ -30,25 +30,25 @@ def parse_pytm_threatlib():
         
         # EXAMPLE EXPRESSION: s = "(target.hasDataLeaks() or any(d.isCredentials or d.isPII for d in target.data)) and (not target.controls.isEncrypted or (not target.isResponse and any(d.isStored and d.isDestEncryptedAtRest for d in target.data)) or (target.isResponse and any(d.isStored and d.isSourceEncryptedAtRest for d in target.data)))"
         # "condition": "target.usesEnvironmentVariables is True and target.controls.sanitizesInput is False and target.controls.checksInputBounds is False"
-        # control_conditions = re.findall('(and|or)', d["condition"])
-        # filtered_control_conditions = []
-        # for i in range(len(controls_list) - 1):
-        #     if control_conditions[i] in ['and', 'or']:
-        #     filtered_control_conditions.append(control_conditions[i])
+        control_conditions = re.findall('(and|or)', d["condition"])
+        filtered_control_conditions = []
+        for i in range(len(controls_list) - 1):
+            if control_conditions[i] in ['and', 'or']:
+                filtered_control_conditions.append(control_conditions[i])
         
         # create separate rules object for each target
         for t in d['target']:
-            if t in ["Lambda", "Process", "Datastore", "ExternalEntity"]:
+            if t in ["Process", "Datastore", "ExternalEntity"]:
                 pytm_rules.append({
                     'component': globals()[t],
                     'threat': threat,
                     'controls': controls_list})
             elif t == "Dataflow":
                 pytm_rules.append({
-                    'component': Flow,
+                    'component': DataFlow,
                     'threat': threat,
                     'controls': controls_list})
-            elif t == "Server":
+            elif t in ["Server", "Lambda"]:
                 pytm_rules.append({
                     'component': Asset,
                     'threat': threat,

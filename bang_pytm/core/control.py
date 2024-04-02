@@ -20,11 +20,38 @@ class Control(Element):
         self.__description = description    
 
     @property
+    def id(self) -> str:
+        """ID of the Control"""
+        return self.__id
+
+    @id.setter
+    def id(self, val: str) -> None:
+        self.__id = val
+
+    @property
+    def title(self) -> str:
+        """Title of the Control"""
+        return self.__title
+
+    @title.setter
+    def title(self, val: str) -> None:
+        self.__title = val
+
+    @property
+    def description(self) -> str:
+        """Description of the Control"""
+        return self.__description
+
+    @description.setter
+    def description(self, val: str) -> None:
+        self.__description = val
+
+    @property
     def assumptions(self) -> list:
         return self.__assumptions
 
-    @assummptions.setter
-    def assummptions(self, assumption_list: list) -> None:
+    @assumptions.setter
+    def assumptions(self, assumption_list: list) -> None:
 
         if not isinstance(assumption_list, list):
             raise ValueError("Assumptions must be provided as a list")

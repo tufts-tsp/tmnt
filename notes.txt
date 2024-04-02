@@ -1,8 +1,5 @@
-- github main branch ahead of dev
+- rebase dev into main (main branch 2-3 commits ahead of dev)
 - attributes in xml and class attrs not in load functions
-- edit control class - doesn't use init
 - rules.py class for threats.json
-
-
-[INP17, SC05, AC22, DR01, DS06] don't have a capec, only cwe
-missing Server and Dataflow objects
+- type annotation for different python versions
+- [INP17, SC05, AC22, DR01, DS06] don't have a capec, only cwe
