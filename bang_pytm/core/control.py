@@ -49,8 +49,7 @@ class Control(Element):
 
     # properties have a label and a textual context which defines
     # the property's value
-    ######### how to init this?????
-    __prop: dict = {}
+    __prop: dict[str, str] = {}
 
     # in this case, it must have name statement
     __part: Part = None
@@ -72,7 +71,16 @@ class Control(Element):
             raise ValueError(err)
         self.__part = part
         
-        self.__description = description    
+        self.__description = description
+
+    @property
+    def prop(self) -> dict:
+        return self.__prop
+
+    @prop.setter
+    def prop(self, **kwargs):
+        for kwarg, val in kwargs.items():
+            self.__likelihood[kwarg] = val    
 
     @property
     def assumptions(self) -> list:
@@ -185,7 +193,7 @@ class ControlCatalog(Element):
         # properties have a label and a textual context which defines
         # the property's value
         ######### how to init this?????
-        __prop: dict = {}
+        __prop: dict[str, str] = {}
 
         # list of other Group objects
         __subgroups: list = []
@@ -205,7 +213,15 @@ class ControlCatalog(Element):
             self.__subgroup_part = subgroup_part
             self.__controls = controls
                 
-    
+        @property
+        def prop(self) -> dict:
+            return self.__prop
+
+        @prop.setter
+        def prop(self, **kwargs):
+            for kwarg, val in kwargs.items():
+                self.__likelihood[kwarg] = val      
+
     __metadata: Metadata = None
     __groups: list[Group] = []
     __controls: list[Control] = []

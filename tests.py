@@ -3,6 +3,27 @@ import unittest
 from bang_pytm.core.tm import TM
 from bang_pytm.core.component import Component
 from bang_pytm.core.element import Element
+from bang_pytm.util.oscal_parser import OSCALParser
+
+class TestControls(unittest.TestCase):
+    
+    def setUp(self):
+        pass
+
+    def test_parse_metadata(self):
+        
+
+
+
+
+
+
+
+
+
+
+
+
 
 class TestTM(unittest.TestCase):
 

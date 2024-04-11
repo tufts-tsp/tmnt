@@ -18,5 +18,6 @@ class Actor(Element):
             it as well
         """
         self.physical_access = physical_access
+        self.actor_type = actor_type
         super().__init__(name, **kwargs)
         
