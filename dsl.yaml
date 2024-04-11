@@ -61,14 +61,47 @@ TM:
 
 definitions:
 
-  # this one is a class, and inside the class is an enum
+  Property:
+    type: string
+    enum:
+      - HIGH
+      - LOW
+      - NONE
+
+
   Security-Property:
     type: object
     properties:
       confidentiality:
+        $ref: '#/definitions/Property'
       integrity:
+        $ref: '#/definitions/Property'
       availability:
-      
+        $ref: '#/definitions/Property'
+      authenticity:
+        $ref: '#/definitions/Property'
+      non_repudiation:
+        $ref: '#/definitions/Property'
+      authorizatoin:
+        $ref: '#/definitions/Property'
+  
+  Machine:
+    type: string
+    enum:
+      - PHYSICAL
+      - VIRTUAL
+      - CONTAINER
+      - SERVERLESS
+  
+  DATASTORE_TYPE:
+    type: string
+    enum:
+      - UNKNOWN
+      - FILE_SYSTEM
+      - SQL
+      - LDAP
+      - BUCKET
+      - OTHER
 
 
   Element:
@@ -104,3 +137,116 @@ definitions:
         type: boolean
         description: 'Does this actor have physical access to the system?'
   
+  Asset:
+    allOf:
+      - $ref: '#/definitions/Component'
+    type: Component
+    properties:
+      name:
+        type: string
+      open_ports:
+        type: array
+        items:
+          type: integer
+      trust_boundaries:
+        type: array
+        items:
+          $ref: '#/definitions/Boundary'
+      machine:
+        $ref: '#/definitions/Machine'
+  
+  ExternalEntity:
+    allOf:
+      - $ref: '#/definitions/Asset'
+    type: Asset
+    properties:
+      physical_access:
+        type: boolean
+  
+  Datastore:
+    allOf:
+      - $ref: '#/definitions/Asset'    
+    type: Asset
+    properties:
+      ds_type:
+        $ref: '#/definitions/DATASTORE_TYPE'
+  
+  Process:
+    allOf:
+      - $ref: '#/definitions/Asset'
+    type: Asset
+  
+  Boundary:
+    allOf:
+      - $ref: '#/definitions/Element'
+    type: Element
+    properties:
+      boundary_owner:
+        type: string
+  
+  Component:
+    allOf:
+      - $ref: '#/definitions/Element'
+      - type: Element
+        properties:
+          controls:
+            type: array
+            items:
+              $ref: '#/definitions/Control'
+          threats:
+            type: array
+            items:
+              $ref: '#/definitions/Threat'
+          data:
+            type: array
+            items:
+              $ref: '#/definitions/Data'
+
+  # controls omitted for now because it already has its own schema
+
+  Data:
+    allOf:
+      - $ref: '#/definitions/Element'
+    type: Element
+    properties:
+      name:
+        type: string
+      is_pii:
+        type: boolean
+      is_phi:
+        type: boolean
+      format:
+        type: string
+      is_credentials:
+        type: boolean
+      lifetime:
+        type: string
+  
+
+  # findings omitted for now because it already has its own schema
+
+
+  Flow:
+  allOf:
+    - $ref: '#/definitions/Component'
+  type: Component
+  properties:
+    name:
+      type: string
+    src:
+      $ref: '#/definitions/Element'
+    dst:
+      $ref: '#/definitions/Element'
+    path:
+      type: array
+      items:
+        $ref: '#/definitions/Element'
+    authentication:
+      type: string
+    multifactor_authentication:
+      type: boolean
+
+
+
+    
+
