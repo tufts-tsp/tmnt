@@ -1,7 +1,0 @@
-[
-    {
-        "component":["Lambda", "Process"],
-        "capec":10,
-        "controls":["sanitizesInput","checksInputBounds"]
-    }
-]

@@ -1,6 +1,6 @@
 import json
 import re
-from bang_pytm.core.asset import Asset, Lambda, ExternalEntity, Datastore, Process
+from bang_pytm.core.asset import Asset, ExternalEntity, Datastore, Process
 from bang_pytm.core.control import Control
 from bang_pytm.core.flow import DataFlow
 from bang_pytm.util import sources
@@ -57,7 +57,7 @@ def parse_pytm_threatlib():
                 raise Exception("Unknown Asset type")
     return pytm_rules
 
-# Given a rule (containing a threat and the controls needed to mitigate that threat), and an Asset with some controls, use the rule to determine whether the threat applies on this Asset. Return the threat, whether it was mitigated, and the controls that were found to apply/not apply.
+# Given a rule (containing a threat and the controls needed to mitigate that threat), and an Asset with some controls, use the rule to determine whether the threat applies on this Asset. Return the threat, True iff it was mitigated, and the controls that were found to apply/not apply.
 def mitigated_threat(component:Asset, rule:dict):
     applied_controls = []
     not_applied_controls = []

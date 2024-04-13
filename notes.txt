@@ -3,3 +3,7 @@
 - rules.py class for threats.json
 - type annotation for different python versions
 - [INP17, SC05, AC22, DR01, DS06] don't have a capec, only cwe
+
+- test parent child
+- test all functions of all elements
+- __init__.py imports

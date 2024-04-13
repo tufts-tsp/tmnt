@@ -31,7 +31,7 @@ class TestTM(unittest.TestCase):
         print(component_list) 
 
     def tearDown(self):
-        TM.reset()
+        self.tm.reset()
 
 class TestElement(unittest.TestCase):
     

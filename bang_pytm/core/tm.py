@@ -81,6 +81,10 @@ class TM:
         self.__components.remove(component)
 
 
+    def reset(self):
+        for c in self.__components:
+            self.remove_component(c)
+
     def describe_data(self, data: Data = None):
         # Provide user with the components that process, send, receive, store
         # this data
