@@ -75,7 +75,35 @@ class OSCALParser:
     
     # tie it all together!
 
-    
+    def parse_catalog(self, data):
+
+        group_list = []
+        control_list = []
+
+        parsed_metadata = self.parse_metadata(data['metadata'])
+
+        for group_data in data['groups']:
+            group = self.parse_group(group_data)
+            group_list.append(group)
+        
+        if 'controls' in data:
+            for control_data in data['controls']:
+                control = self.parse_control(control_data)
+                control_list.append(control)
+        
+        catalog = ControlCatalog(
+            metadata = parsed_metadata,
+            groups = group_list,
+            controls = control_list
+        )
+
+        return catalog
+
+    def load_yaml(self, file_path):
+        with open(file_path, 'r') as file:
+            data = yaml.safe_load(file)
+            return self.parse_catalog(data['catalog'])
+
 
 
 
