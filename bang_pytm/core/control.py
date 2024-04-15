@@ -60,13 +60,10 @@ class Control(Element):
             self, 
             id: str,
             title: str,
-            description: str
     ):
         self.__id = id
         self.__title = title
 
-        
-        self.__description = description
     
     @property
     def parts(self) -> list[Part]:
@@ -205,22 +202,33 @@ class ControlCatalog(Element):
 
         # list of other Group objects
         __subgroups: list = []
-        __subgroup_part: Part = None
+        __parts: list[Part] = []
         __controls: list[Control] = None
 
         def __init__(self, 
                      id: str, 
                      title: str, 
                      subgroups: list, 
-                     subgroup_part: Part, 
                      controls: list[Control]) -> None:
             
             self.__id = id
             self.__title = title
             self.__subgroups = subgroups
-            self.__subgroup_part = subgroup_part
             self.__controls = controls
-                
+        
+        @property
+        def parts(self) -> list[Part]:
+            return self.__parts
+
+        @parts.setter
+        def parts(self, parts: list[Part]) -> None:
+            if not isinstance(parts, list):
+                raise ValueError("Parts must be provided as a list of Part objects.")
+            self.__parts = parts
+
+        def add_part(self, part: Part) -> None:
+            self.__parts.append(part)
+
         @property
         def prop(self) -> dict:
             return self.__prop
