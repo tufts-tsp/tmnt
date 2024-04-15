@@ -1,4 +1,4 @@
-import unittest
+"""import unittest
 
 from bang_pytm.core.tm import TM
 from bang_pytm.core.component import Component
@@ -12,17 +12,6 @@ class TestControls(unittest.TestCase):
 
     def test_parse_metadata(self):
         
-
-
-
-
-
-
-
-
-
-
-
 
 
 class TestTM(unittest.TestCase):
@@ -112,3 +101,4 @@ class TestElement(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+"""

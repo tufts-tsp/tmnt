@@ -1,18 +1,18 @@
 import yaml
-from bang_pytm.core.control import Control, ControlCatalog, Part
+from bang_pytm.core.control import Control, ControlCatalog, Part, Metadata
 
 class OSCALParser:
     
     # CREATE CONTROL CATALOG
 
     # get metadata for control catalog
-    def parse_metadata(data):
-        return ControlCatalog.Metadata(
+    def parse_metadata(self, data):
+        return Metadata(
             title=data['title'],
             published=data['published'],
-            last_modified=data['last_modified'],
+            last_modified = data['last-modified'],
             version=data['version'],
-            oscal_version=['oscal_version']
+            oscal_version=data["oscal-version"]
         )
     
     def parse_part(self, part_data):

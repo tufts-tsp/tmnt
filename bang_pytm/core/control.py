@@ -140,7 +140,51 @@ class Control(Element):
             raise ValueError(err)
         self.__development_phase = phase
 
+class Metadata:
+    """
+    The metadata section of the control catalog contains data about the
+    catalog document. This section has identical structure which is used
+    consistently across all OSCAL models.
+
+    Source: 'CREATING A CONTROL CATALOG <https://pages.nist.gov/OSCAL/learn/tutorials/control/basic-catalog/>'
+    """
+    __title: str = None
+
+    # RFC 3339 format for date/time
+    __published: str = None
+    __last_modified: str = None
+
+    __version: str = None
+    __oscal_version: str = None
+
+    def __init__(self,
+                 title: str, 
+                 published: str, 
+                 last_modified: str, 
+                 version: str, 
+                 oscal_version: str) -> None:
+            
+            self.__title = title
+            self.__published = published
+            self.__last_modified = last_modified
+            self.__version = version
+            self.__oscal_version = oscal_version
     
+    def get_title(self):
+        return self.__title
+    
+    def get_published(self):
+        return self.__published
+    
+    def get_last_modified(self):
+        return self.__last_modified
+    
+    def get_version(self):
+        return self.__version
+    
+    def get_oscal_version(self):
+        return self.__oscal_version
+
 class ControlCatalog(Element):
     """
     A Control Catalog is a set of controls that are from some standardized set
@@ -148,36 +192,6 @@ class ControlCatalog(Element):
 
     Source: `OSCAL CATALOG <https://pages.nist.gov/OSCAL/resources/concepts/layer/control/catalog/>`
     """
-            
-    class Metadata:
-        """
-        The metadata section of the control catalog contains data about the
-        catalog document. This section has identical structure which is used
-        consistently across all OSCAL models.
-
-        Source: 'CREATING A CONTROL CATALOG <https://pages.nist.gov/OSCAL/learn/tutorials/control/basic-catalog/>'
-        """
-        __title: str = None
-
-        # RFC 3339 format for date/time
-        __published: str = None
-        __last_modified: str = None
-
-        __version: str = None
-        __oscal_version: str = None
-
-        def __init__(self,
-                     title: str, 
-                     published: str, 
-                     last_modified: str, 
-                     version: str, 
-                     oscal_version: str) -> None:
-            
-            self.__title = title
-            self.__published = published
-            self.__last_modified = last_modified
-            self.__version = version
-            self.__oscal_version = version
         
     class Group:
         """
