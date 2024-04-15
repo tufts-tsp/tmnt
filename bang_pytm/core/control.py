@@ -1,9 +1,5 @@
 from .element import Element
 
-#### Based on the OSCAL stuff, is it appropriate to have this Part class here?
-######### How would this work for the init?
-##### I guess a better question would be is this a good way to set it up if we
-##### are parsing an OSCAL catalog??
 class Part:
     __part_id: str = None
     __part_name: str = None
