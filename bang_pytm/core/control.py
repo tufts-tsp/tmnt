@@ -52,7 +52,7 @@ class Control(Element):
     __prop: dict[str, str] = {}
 
     # in this case, it must have name statement
-    __part: Part = None
+    __parts: list[Part] = []
     __assumptions: list = []
     __development_phase: list = []
 
@@ -60,19 +60,27 @@ class Control(Element):
             self, 
             id: str,
             title: str,
-            part: Part,
             description: str
     ):
         self.__id = id
         self.__title = title
 
-        if part.part_name() is not "statement":
-            err = "Name of part must be statement"
-            raise ValueError(err)
-        self.__part = part
         
         self.__description = description
+    
+    @property
+    def parts(self) -> list[Part]:
+        return self.__parts
 
+    @parts.setter
+    def parts(self, parts: list[Part]) -> None:
+        if not isinstance(parts, list):
+            raise ValueError("Parts must be provided as a list of Part objects.")
+        self.__parts = parts
+
+    def add_part(self, part: Part) -> None:
+        self.__parts.append(part)
+    
     @property
     def prop(self) -> dict:
         return self.__prop
