@@ -33,7 +33,7 @@ class TestOSCALParser(unittest.TestCase):
                                 "prose": "Statement of the nested control."
                             }, {
                                 "id": "part1.2",
-                                "name": "guidance",
+                                "name": "fake_name",
                                 "prose": "Guidance for the nested control."
                             }]
                         }]
@@ -72,5 +72,25 @@ class TestOSCALParser(unittest.TestCase):
         self.assertEqual(version, "2.0")
         self.assertEqual(oscal_version_text, "1.0.0")
     
+
     def test_parse_part(self):
-        pass
+
+        good_part_data = self.example_data["catalog"]['groups'][0]['groups'][0]['controls'][0]['parts'][0]
+        faulty_part_data = self.example_data["catalog"]['groups'][0]['groups'][0]['controls'][0]['parts'][1]
+        
+        print("Part Data: " + str(good_part_data))
+        print("Faulty Part Data: " + str(faulty_part_data))
+        
+        good_part = self.parser.parse_part(good_part_data)
+
+        good_part_name = good_part.part_name
+        good_part_id = good_part.part_id
+        good_part_prose = good_part.part_prose
+
+        self.assertEqual(good_part_name, "statement")
+        self.assertEqual(good_part_id, "part1.1")
+        self.assertEqual(good_part_prose, "Statement of the nested control.")
+
+        # does not have a valid name
+        with self.assertRaises(ValueError):
+            faulty_part = self.parser.parse_part(faulty_part_data)

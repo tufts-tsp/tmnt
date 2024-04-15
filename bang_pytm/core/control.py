@@ -10,6 +10,14 @@ class Part:
         self.__part_prose = prose
 
     @property
+    def part_id(self) -> str:
+        return self.__part_id
+    
+    @property
+    def part_prose(self) -> str:
+        return self.__part_prose
+    
+    @property
     def part_name(self) -> str:
         return self.__part_name
     
@@ -60,6 +68,13 @@ class Control(Element):
         self.__id = id
         self.__title = title
 
+    @property
+    def id(self) -> str:
+        return self.__id
+    
+    @property
+    def title(self) -> str:
+        return self.__title
     
     @property
     def parts(self) -> list[Part]:
@@ -170,19 +185,19 @@ class Metadata:
             self.__version = version
             self.__oscal_version = oscal_version
     
-    def get_title(self):
+    def get_title(self) -> str:
         return self.__title
     
-    def get_published(self):
+    def get_published(self) -> str:
         return self.__published
     
-    def get_last_modified(self):
+    def get_last_modified(self) -> str:
         return self.__last_modified
     
-    def get_version(self):
+    def get_version(self) -> str:
         return self.__version
     
-    def get_oscal_version(self):
+    def get_oscal_version(self) -> str:
         return self.__oscal_version
 
 class ControlCatalog(Element):
