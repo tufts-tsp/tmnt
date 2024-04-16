@@ -3,6 +3,7 @@ import unittest
 from bang_pytm.core.tm import TM
 from bang_pytm.core.component import Component
 from bang_pytm.core.element import Element
+from bang_pytm.util.sources import *
 
 class TestTM(unittest.TestCase):
 
@@ -54,6 +55,16 @@ class TestElement(unittest.TestCase):
         # a node should not overwrite its parent node without removing it
         # with self.assertRaises(ValueError):
         #    elem1.parent = elem3
+
+class TestSources(unittest.TestCase):
+    def test_load_asvs(self):
+        asvs = load_owasp_asvs()
+        # assertEqual
+    def test_load_capec(self):
+        capec = load_capec()
+    def test_load_cwes(self):
+        cwes = load_cwes()
+
 
 if __name__ == '__main__':
     unittest.main()
