@@ -5,7 +5,7 @@ class Control(Element):
 
     __id: str = None
     __title: str = None
-    __description: str = None
+    __desc: str = None
     __assumptions: list = []
     __development_phase: list = []
 
@@ -13,11 +13,11 @@ class Control(Element):
             self, 
             id: str,
             title: str,
-            description: str
+            desc: str
     ):
         self.__id = id
         self.__title = title
-        self.__description = description    
+        self.__desc = desc    
 
     @property
     def id(self) -> str:
@@ -38,13 +38,13 @@ class Control(Element):
         self.__title = val
 
     @property
-    def description(self) -> str:
+    def desc(self) -> str:
         """Description of the Control"""
-        return self.__description
+        return self.__desc
 
-    @description.setter
-    def description(self, val: str) -> None:
-        self.__description = val
+    @desc.setter
+    def desc(self, val: str) -> None:
+        self.__desc = val
 
     @property
     def assumptions(self) -> list:
