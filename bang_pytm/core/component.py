@@ -37,7 +37,7 @@ class Component(Element):
 
     def add_data(self, val: Data) -> None:
         self.__data.add(val)
-        
+
     @property
     def threats(self) -> list[Threat]:
         """
@@ -49,10 +49,10 @@ class Component(Element):
         return self.__threats
 
     def add_threat(self, threat: Threat) -> None:
-        self.__add_elem(threat, self.__threats)
+        self.__threats.append(threat)
 
     def remove_threat(self, threat: Threat) -> None:
-        self.__remove_elem(threat, self.__threats)
+        self.__threats.remove(threat)
 
     @property
     def controls(self) -> list[Control]:
@@ -65,7 +65,7 @@ class Component(Element):
         return self.__controls
 
     def add_control(self, control: Control) -> None:
-        self.__add_elem(control, self.__controls)
+        self.__controls.append(control)
 
     def remove_control(self, control: Control) -> None:
-        self.__remove_elem(control, self.__controls)
+        self.__controls.remove(control)
