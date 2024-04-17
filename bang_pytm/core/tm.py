@@ -26,7 +26,7 @@ class TM:
     _boundaries = []
     _data = []
     name = varString("", required=True, doc="Model name")
-    description = varString("", required=True, doc="Model description")
+    desc = varString("", required=True, doc="Model description")
     findings = varFindings([], doc="threats found for elements of this model")
     assumptions = varStrings(
         [],
