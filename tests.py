@@ -65,6 +65,37 @@ class TestSources(unittest.TestCase):
     def test_load_cwes(self):
         cwes = load_cwes()
 
+class TestComponent(unittest.TestCase):
+    def setUp(self):
+        self.component = Component(
+            name="Test Component",
+            desc="Description",
+            data = []
+        )
+
+    def test_component_init(self):
+        self.assertEqual(self.component.name, "Test Component")
+        self.assertEqual(self.component.desc, "Description")
+        self.assertEqual(len(self.component.data), 0)
+        
+    def test_add_control(self):
+        control = Control(id="1", title="Test", description="Description")
+        self.component.add_control(control)
+
+    def test_add_threat(self):
+        threat = Threat(
+            name="Test Threat",
+            desc="Threat description",
+            likelihood="High",
+            severity="Critical",
+            consequences=[]
+        )
+
+        self.component.add_threat(threat)
+
+    def tearDown(self):
+        self.tm.reset()
+
 
 if __name__ == '__main__':
     unittest.main()
