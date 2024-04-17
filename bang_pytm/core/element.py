@@ -61,12 +61,12 @@ class Element(object):
         self.__name = val
 
     @property
-    def description(self) -> str:
+    def desc(self) -> str:
         """Description of the Element"""
         return self.__desc
 
-    @description.setter
-    def description(self, val: str) -> None:
+    @desc.setter
+    def desc(self, val: str) -> None:
         self.__desc = val
 
     @property
