@@ -17,7 +17,7 @@ class Component(Element):
     __threats: List[Threat] = []
     __data: List[Data] = None
 
-    def __init__(self, name: str, desc: str = None, data: List[Data] = None) -> None:
+    def __init__(self, name: str, desc: str = None, data: List[Data] = []) -> None:
         if data != None and type(data) == list:
             self.data = data
         elif data!= None:
@@ -29,12 +29,15 @@ class Component(Element):
         return self.__data
 
     @data.setter
-    def data(self, val: Data) -> None:
-        self.__data.append(val)
+    def data(self, data: List[Data]) -> None:
+        self.__data = data
 
     def remove_data(self, val: Data) -> None:
         self.__data.remove(val)
 
+    def add_data(self, val: Data) -> None:
+        self.__data.add(val)
+        
     @property
     def threats(self) -> list[Threat]:
         """
