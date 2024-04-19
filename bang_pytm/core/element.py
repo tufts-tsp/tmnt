@@ -36,7 +36,7 @@ class Element(object):
         self.__name = name
         self.__desc = desc
         self.__children = []
-        self.__parent = None
+        self.__parent = []
 
     def __repr__(self):
         return f"<{type(self).__name__}({self.name}) - {self.eid}>"
@@ -98,10 +98,10 @@ class Element(object):
         if parent in self.__children:
             err = f"{parent} cannot be both a child and parent of {self}."
             raise ValueError(err)
-        if self.__parent != None:
+        if self.__parent != []:
             err = f"{self} already has a parent, {self.__parent}. Please remove if you want to replace it."
             raise ValueError(err)
-        if parent.parent != None:
+        if parent.parent != []:
             raise ValueError("No grandparents allowed.")
         self.__parent = parent
 
@@ -121,7 +121,7 @@ class Element(object):
         return self.__children
 
     def add_child(self, child: object, assign_parent=True) -> None:
-        if assign_parent and child.parent != None:
+        if assign_parent and child.parent != []:
             raise AttributeError("A different parent has already been assigned")
         elif assign_parent:
             child.parent = (self, False)
