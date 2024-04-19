@@ -36,7 +36,7 @@ class Component(Element):
         self.__data.remove(val)
 
     def add_data(self, val: Data) -> None:
-        self.__data.add(val)
+        self.__data.append(val)
 
     @property
     def threats(self) -> list[Threat]:
