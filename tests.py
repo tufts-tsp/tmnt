@@ -3,6 +3,7 @@ import unittest
 from bang_pytm.core.tm import TM
 from bang_pytm.core.component import Component
 from bang_pytm.core.element import Element
+from bang_pytm.core.data import Data
 from bang_pytm.util.sources import *
 
 class TestTM(unittest.TestCase):
@@ -79,7 +80,7 @@ class TestComponent(unittest.TestCase):
         self.assertEqual(len(self.component.data), 0)
         
     def test_add_control(self):
-        control = Control(id="1", title="Test", description="Description")
+        control = Control(id="1", title="Test", desc="Description")
         self.component.add_control(control)
 
     def test_add_threat(self):
@@ -93,8 +94,36 @@ class TestComponent(unittest.TestCase):
 
         self.component.add_threat(threat)
 
-    def tearDown(self):
-        self.tm.reset()
+    def test_add_data(self):
+        data = Data(name="Test Data")
+        self.component.add_data(data)
+
+    def test_remove_control(self):
+        control = Control(id="1", title="Test", desc="Description")
+        self.component.add_control(control)
+        self.component.remove_control(control)
+
+    def test_remove_threat(self):
+        threat = Threat(
+            name="Test Threat",
+            desc="Threat description",
+            likelihood="High",
+            severity="Critical",
+            consequences=[]
+        )
+
+        self.component.add_threat(threat)
+        self.component.remove_threat(threat)
+
+    def test_remove_data(self):
+        data = Data(name="Test Data")
+        self.component.add_data(data)
+        self.component.remove_data(data)
+
+    # def tearDown(self):
+    #     self.component.reset()
+    # AttributeError: 'Component' object has no attribute 'reset'
+    # is there supposed to be a reset function 
 
 
 if __name__ == '__main__':
