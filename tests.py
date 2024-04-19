@@ -37,6 +37,18 @@ class TestTM(unittest.TestCase):
         self.tm.reset()
 
 class TestElement(unittest.TestCase):
+
+    def setUp(self):
+        self.element = Element(
+            name="Test Element",
+            desc="Description"
+        )
+
+    def test_component_init(self):
+        self.assertEqual(self.element.name, "Test Element")
+        self.assertEqual(self.element.desc, "Description")
+        self.assertEqual(len(self.element.children), 0)
+        self.assertEqual(len(self.element.parent), 0)
     
     def test_parent_child_assignments(self):
 
@@ -45,6 +57,7 @@ class TestElement(unittest.TestCase):
         elem3 = Element("test3")
 
         elem1.parent = elem2
+        # no child setter
 
         # a parent node should not assign itself as a parent
         # with self.assertRaises(ValueError):
@@ -58,6 +71,39 @@ class TestElement(unittest.TestCase):
         # with self.assertRaises(ValueError):
         #    elem1.parent = elem3
 
+        # AttributeError: Element(test2) has children, meaning Element(test3) would be a grandparent
+        # with self.assertRaises(AttributeError):
+        #    elem2.parent = elem3
+
+        # elem1.remove_parent()
+
+    def test_child_parent_assignments(self):
+        #most or all throw the errors from the parent function, not child
+
+        elem1 = Element("test1")
+        elem2 = Element("test2")
+        elem3 = Element("test3")
+
+        elem1.add_child(elem2)
+
+        # a child node should not assign itself as a child
+        # with self.assertRaises(ValueError):
+        # ValueError: Element(test1) is self, an element cannot be a parent of itself.
+        #    elem1.add_child(elem1)
+
+        # a parent node should not assign its child as a parent
+        # with self.assertRaises(ValueError):
+        # ValueError: Element(test2) cannot be both a child and parent of Element(test1).
+        #    elem2.add_child(elem1)
+
+        # ValueError: No grandparents allowed.
+        # with self.assertRaises(ValueError):
+        #    elem2.add_child(elem3)
+
+        # AttributeError: A different parent has already been assigned
+        #    elem1.add_child(elem2)
+
+    
 class TestSources(unittest.TestCase):
     def test_load_asvs(self):
         asvs = load_owasp_asvs()
