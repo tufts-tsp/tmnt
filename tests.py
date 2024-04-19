@@ -4,6 +4,7 @@ from bang_pytm.core.tm import TM
 from bang_pytm.core.component import Component
 from bang_pytm.core.element import Element
 from bang_pytm.core.data import Data
+from bang_pytm.core.asset import Asset
 from bang_pytm.util.sources import *
 
 class TestTM(unittest.TestCase):
@@ -123,7 +124,23 @@ class TestComponent(unittest.TestCase):
     # def tearDown(self):
     #     self.component.reset()
     # AttributeError: 'Component' object has no attribute 'reset'
-    # is there supposed to be a reset function 
+    # is there supposed to be a reset function
+
+class TestAsset(unittest.TestCase):
+    def setUp(self):
+        self.asset = Asset(
+            name="Test Asset"
+        )
+
+    def test_asset_init(self):
+        self.assertEqual(self.asset.name, "Test Asset")
+        self.assertEqual(len(self.asset.data), 0)
+        self.assertEqual(len(self.asset.open_ports), 0)
+        self.assertEqual(len(self.asset.boundaries), 0)
+        ##should boundaries and trust boundaries be the same thing
+
+    # no functions
+    # children?
 
 
 if __name__ == '__main__':
