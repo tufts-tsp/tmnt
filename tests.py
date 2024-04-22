@@ -5,6 +5,10 @@ from bang_pytm.core.component import Component
 from bang_pytm.core.element import Element
 from bang_pytm.core.data import Data
 from bang_pytm.core.asset import Asset
+from bang_pytm.core.asset import ExternalEntity
+from bang_pytm.core.asset import Process
+from bang_pytm.core.asset import Datastore
+from bang_pytm.core.flow import Flow
 from bang_pytm.util.sources import *
 
 class TestTM(unittest.TestCase):
@@ -185,8 +189,41 @@ class TestAsset(unittest.TestCase):
         self.assertEqual(len(self.asset.boundaries), 0)
         ##should boundaries and trust boundaries be the same thing
 
+    def test_external_entity(self):
+        external_entity = ExternalEntity(name="External Entity Name", physical_access=True)
+        self.assertIsInstance(external_entity, ExternalEntity)
+
+    def test_datastore(self):
+        datastore = Datastore(name="Datastore Name", ds_type="SQL")
+        self.assertIsInstance(datastore, Datastore)
+
+
+    def test_process(self):
+        process = Process(name="Process Name")
+        self.assertIsInstance(process, Process)
+    
     # no functions
-    # children?
+
+class TestFlow(unittest.TestCase):
+    def setUp(self):
+        elem1 = Element("test1")
+        elem2 = Element("test2")
+        self.flow = Flow(
+            name="Test Flow",
+            src=elem1,
+            dst=elem2
+        )
+
+    def test_flow_init(self):
+        elem1 = Element("test1")
+        elem2 = Element("test2")
+        self.assertEqual(self.flow.name, "Test Flow")
+        # self.assertEqual(self.flow.src, elem1)
+        # self.assertEqual(self.flow.dst, elem2)
+        self.assertEqual(len(self.flow.path), 2)
+        self.assertEqual(self.flow.authentication, None)
+        self.assertTrue(self.flow.multifactor_authentication)
+
 
 
 if __name__ == '__main__':
