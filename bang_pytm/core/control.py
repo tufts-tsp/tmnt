@@ -200,6 +200,77 @@ class Metadata:
     def get_oscal_version(self) -> str:
         return self.__oscal_version
 
+class Group:
+    """
+    An OSCAL catalog allows for the organization of related controls
+    using groups. A catalog group can represent families of controls
+    or other organizational structures, such as sections in a control
+    catalog.
+
+    Source: 'CREATING A CONTROL CATALOG <https://pages.nist.gov/OSCAL/learn/tutorials/control/basic-catalog/>'
+    """
+    __id: str = None
+    __title: str = None
+
+    # properties have a label and a textual context which defines
+    # the property's value
+    ######### how to init this?????
+    __prop: dict[str, str] = {}
+
+    # list of other Group objects
+    __subgroups: list = []
+    __parts: list[Part] = []
+    __controls: list[Control] = None
+
+    def __init__(self, 
+                 id: str, 
+                 title: str, 
+                 subgroups: list, 
+                 controls: list[Control]) -> None:
+            
+            self.__id = id
+            self.__title = title
+            self.__subgroups = subgroups
+            self.__controls = controls
+    
+    @property
+    def id(self) -> str:
+        return self.__id
+    
+    @property
+    def title(self) -> str:
+        return self.__title
+    
+    @property
+    def subgroups(self) -> list:
+        return self.__subgroups
+    
+    @property
+    def controls(self) -> list[Control]:
+        return self.__controls
+
+    @property
+    def parts(self) -> list[Part]:
+        return self.__parts
+
+    @parts.setter
+    def parts(self, parts: list[Part]) -> None:
+        if not isinstance(parts, list):
+            raise ValueError("Parts must be provided as a list of Part objects.")
+        self.__parts = parts
+
+    def add_part(self, part: Part) -> None:
+        self.__parts.append(part)
+
+    @property
+    def prop(self) -> dict:
+        return self.__prop
+
+    @prop.setter
+    def prop(self, **kwargs):
+        for kwarg, val in kwargs.items():
+            self.__likelihood[kwarg] = val      
+
 class ControlCatalog(Element):
     """
     A Control Catalog is a set of controls that are from some standardized set
@@ -208,61 +279,6 @@ class ControlCatalog(Element):
     Source: `OSCAL CATALOG <https://pages.nist.gov/OSCAL/resources/concepts/layer/control/catalog/>`
     """
         
-    class Group:
-        """
-        An OSCAL catalog allows for the organization of related controls
-        using groups. A catalog group can represent families of controls
-        or other organizational structures, such as sections in a control
-        catalog.
-
-        Source: 'CREATING A CONTROL CATALOG <https://pages.nist.gov/OSCAL/learn/tutorials/control/basic-catalog/>'
-        """
-        __id: str = None
-        __title: str = None
-
-        # properties have a label and a textual context which defines
-        # the property's value
-        ######### how to init this?????
-        __prop: dict[str, str] = {}
-
-        # list of other Group objects
-        __subgroups: list = []
-        __parts: list[Part] = []
-        __controls: list[Control] = None
-
-        def __init__(self, 
-                     id: str, 
-                     title: str, 
-                     subgroups: list, 
-                     controls: list[Control]) -> None:
-            
-            self.__id = id
-            self.__title = title
-            self.__subgroups = subgroups
-            self.__controls = controls
-        
-        @property
-        def parts(self) -> list[Part]:
-            return self.__parts
-
-        @parts.setter
-        def parts(self, parts: list[Part]) -> None:
-            if not isinstance(parts, list):
-                raise ValueError("Parts must be provided as a list of Part objects.")
-            self.__parts = parts
-
-        def add_part(self, part: Part) -> None:
-            self.__parts.append(part)
-
-        @property
-        def prop(self) -> dict:
-            return self.__prop
-
-        @prop.setter
-        def prop(self, **kwargs):
-            for kwarg, val in kwargs.items():
-                self.__likelihood[kwarg] = val      
-
     __metadata: Metadata = None
     __groups: list[Group] = []
     __controls: list[Control] = []

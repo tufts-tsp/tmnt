@@ -12,7 +12,7 @@ class TestOSCALParser(unittest.TestCase):
             "catalog": {
                 "id": "uuid-5678",
                 "metadata": {
-                    "title": "Catalog Test",
+                    "title": "Complex Catalog",
                     "published": "2021-01-01T12:00:00Z",
                     "last-modified": "2021-01-02T12:00:00Z",
                     "version": "2.0",
@@ -21,12 +21,15 @@ class TestOSCALParser(unittest.TestCase):
                 "groups": [{
                     "id": "grp1",
                     "title": "Top Group",
-                    "groups": [{  # nested group
+                    "props": [{"name": "priority", "value": "high"}], 
+                    "groups": [{  
                         "id": "grp1.1",
                         "title": "Nested Group",
+                        "props": [{"name": "importance", "value": "critical"}],  
                         "controls": [{
                             "id": "ctrl1.1",
                             "title": "Nested Control",
+                            "props": [{"name": "security_level", "value": "high"}], 
                             "parts": [{
                                 "id": "part1.1",
                                 "name": "statement",
@@ -38,9 +41,10 @@ class TestOSCALParser(unittest.TestCase):
                             }]
                         }]
                     }],
-                    "controls": [{  # controls in the top group
+                    "controls": [{  
                         "id": "ctrl1",
                         "title": "Top Control",
+                        "props": [{"name": "security_level", "value": "medium"}],  
                         "parts": [{
                             "id": "part1",
                             "name": "statement",
@@ -54,6 +58,7 @@ class TestOSCALParser(unittest.TestCase):
                 }]
             }
         }
+    
         
     
     def test_parse_metadata(self):
@@ -66,7 +71,7 @@ class TestOSCALParser(unittest.TestCase):
         version = metadata.get_version()
         oscal_version_text = metadata.get_oscal_version()
 
-        self.assertEqual(title, "Catalog Test")
+        self.assertEqual(title, "Complex Catalog")
         self.assertEqual(published, "2021-01-01T12:00:00Z")
         self.assertEqual(last_modified, "2021-01-02T12:00:00Z")
         self.assertEqual(version, "2.0")
@@ -75,8 +80,8 @@ class TestOSCALParser(unittest.TestCase):
 
     def test_parse_part(self):
 
-        good_part_data = self.example_data["catalog"]['groups'][0]['groups'][0]['controls'][0]['parts'][0]
-        faulty_part_data = self.example_data["catalog"]['groups'][0]['groups'][0]['controls'][0]['parts'][1]
+        good_part_data = self.example_data["catalog"]["groups"][0]["groups"][0]["controls"][0]["parts"][0]
+        faulty_part_data = self.example_data["catalog"]["groups"][0]["groups"][0]["controls"][0]["parts"][1]
         
         print("Part Data: " + str(good_part_data))
         print("Faulty Part Data: " + str(faulty_part_data))
@@ -94,3 +99,29 @@ class TestOSCALParser(unittest.TestCase):
         # does not have a valid name
         with self.assertRaises(ValueError):
             faulty_part = self.parser.parse_part(faulty_part_data)
+
+    # def test_parse_control(self):
+        
+    #     control_data = self.example_data["catalog"]["groups"][0]["controls"][0]
+    #     control = self.parser.parse_control(control_data)
+
+    #     control_id = control.id
+    #     control_title = control.title
+    #     control_props = control.prop
+    #     control_parts = control.parts
+
+    #     statement_part, guidance_part = control_parts[0], control_parts[1]
+        
+
+    #     self.assertEqual(control_id, "ctrl1")
+    #     self.assertEqual(control_title, "Top Control")
+
+    #     self.assertEqual(control_props["security_level"], "medium")
+
+    #     self.assertEqual(statement_part.part_name, "statement")
+    #     self.assertEqual(statement_part.part_id, "part1")
+    #     self.assertEqual(statement_part.part_prose, "Ensure compliance with policy.")
+
+    #     self.assertEqual(guidance_part.part_name, "guidance")
+    #     self.assertEqual(guidance_part.part_id, "part2")
+    #     self.assertEqual(guidance_part.part_prose, "Guidance on compliance.")

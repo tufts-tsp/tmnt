@@ -187,20 +187,11 @@ definitions:
   Component:
     allOf:
       - $ref: '#/definitions/Element'
-      - type: Element
-        properties:
-          controls:
-            type: array
-            items:
-              $ref: '#/definitions/Control'
-          threats:
-            type: array
-            items:
-              $ref: '#/definitions/Threat'
-          data:
-            type: array
-            items:
-              $ref: '#/definitions/Data'
+      type: Element
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Data'
 
   # controls omitted for now because it already has its own schema
 

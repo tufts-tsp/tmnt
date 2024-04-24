@@ -122,9 +122,30 @@ class TM:
             return self._assets.copy()
 
     def find_related_attack_vectors(self, asset: Asset):
-        # Find all the flows where the asset is the destination, then grab 
-        # assets and then recurse 
-        pass
+
+        # type checking
+        if not isinstance(asset, Asset):
+            raise ValueError("Provided asset is not of type 'Asset")
+        
+        related_flows = []
+        processed_assets = set()
+
+        def helper(asset):
+            if asset in processed_assets:
+                return
+            processed_assets.add(asset)
+
+            for flow in self._flows:
+                # find flows incident to this asset
+                if flow.dst == asset:
+                    related_flows.append(flow)
+                    # chainnnnnnn
+                    if flow.src in self._assets:
+                        helper(flow.src)
+        
+        helper(asset)
+        return related_flows
+
 
     def simulate_attack(self, component: Component):
         # If someone were to attack and breach, what things could they hop to
