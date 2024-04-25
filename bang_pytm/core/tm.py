@@ -45,16 +45,27 @@ class TM:
     
     @property
     def findings(self) -> List[Finding]:
-        return self.__findings
+        return self.findings
     
     def generate_threats(self, engine: Engine):
         pass
 
     def add_finding(self, finding: Finding = None):
-        pass
+        if not isinstance(finding, Finding):
+            raise ValueError("No finding specified to add")
+        
+        if finding in self.findings:
+            print("Finding is already in the model")
+        else:
+            self.findings.append(finding)
+
+
 
     def remove_finding(self, finding: Finding = None):
-        pass
+        if finding is None:
+            raise ValueError("No finding specified to remove")
+        
+        self.findings.remove(finding)
 
 
     def add_component(self, component: Component = None):
