@@ -1,12 +1,14 @@
 import json
 import re
 from bang_pytm.core.asset import Asset, ExternalEntity, Datastore, Process
+from bang_pytm.core.finding import Finding
+from bang_pytm.engine.rules import Rule
 from bang_pytm.core.control import Control
 from bang_pytm.core.flow import DataFlow
 from bang_pytm.util import sources
 from bang_pytm.core.tm import TM
 
-
+# Parses the rules found in the threats.json file of pytm, stores it as a list of Rules
 def parse_pytm_threatlib():
     with open('./bang_pytm/util/pytm_threatlib.json', 'r', encoding='utf8') as f:
         data = json.load(f)
@@ -39,59 +41,34 @@ def parse_pytm_threatlib():
         # create separate rules object for each target
         for t in d['target']:
             if t in ["Process", "Datastore", "ExternalEntity"]:
-                pytm_rules.append({
-                    'component': globals()[t],
-                    'threat': threat,
-                    'controls': controls_list})
+                pytm_rules.append(Rule(globals()[t], threat, controls_list))
             elif t == "Dataflow":
-                pytm_rules.append({
-                    'component': DataFlow,
-                    'threat': threat,
-                    'controls': controls_list})
+                pytm_rules.append(Rule(DataFlow, threat, controls_list))
             elif t in ["Server", "Lambda"]:
-                pytm_rules.append({
-                    'component': Asset,
-                    'threat': threat,
-                    'controls': controls_list})
+                pytm_rules.append(Rule(Asset, threat, controls_list))
             else:
                 raise Exception("Unknown Asset type")
     return pytm_rules
 
-# Given a rule (containing a threat and the controls needed to mitigate that threat), and an Asset with some controls, use the rule to determine whether the threat applies on this Asset. Return the threat, True iff it was mitigated, and the controls that were found to apply/not apply.
-def mitigated_threat(component:Asset, rule:dict):
-    applied_controls = []
-    not_applied_controls = []
-    for control in rule['controls']:
-        if control[0] in [c.name for c in component.controls]:
-            applied_controls.append(control)
-        else:
-            not_applied_controls.append(control)
-    # TODO
-    is_mitigated = True if len(applied_controls) > 0 else False
-    return {
-        'threat':rule, 
-        'is_mitigated': is_mitigated, 
-        'applied_controls': applied_controls,
-        'not_applied_controls': not_applied_controls
-    }
-
-# Given a set of rules and a component, return the unmitigated and mitigated threats for that component 
+# Given a Component and a list of Rules, return the unmitigated and mitigated threats for that component 
 def component_threats(component, threat_map):
     mitigated_threats = []
     unmitigated_threats = []
-    applicable_rules = [t for t in pytm_rules if type(component) == t['component']]
+    applicable_rules = [t for t in threat_map if type(component) == t.component]
     for r in applicable_rules:
-        result = mitigated_threat(component, r)
+        result = r.mitigated_threat(component)
         if result['is_mitigated']:
             mitigated_threats.append(result['threat'])
         else:
             unmitigated_threats.append(result['threat'])
     return mitigated_threats, unmitigated_threats 
 
-pytm_rules = parse_pytm_threatlib()
-tm_components = [Asset(), Asset(), Process()]
-findings = []
-for component in tm_components:
-    mt, ut = component_threats(component, pytm_rules)
-    finding = {'component':component,'mitigated_threats':mt, 'unmitigated_threats':ut}
-    findings.append(finding)
+# Given the list of Components in a TM, return Findings for each Component
+def get_findings(tm_components, threat_map):
+    findings = []
+    for component in tm_components:
+        mt, umt = component_threats(component, threat_map)
+        finding = Finding(affected_components=component, issues=umt)
+        findings.append(finding)
+    return findings
+

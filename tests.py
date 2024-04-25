@@ -6,6 +6,7 @@ from bang_pytm.core.threat import Issue, Threat, Weakness, Vulnerability
 from bang_pytm.core.finding import Finding
 from bang_pytm.core.element import Element
 from bang_pytm.util.sources import *
+from bang_pytm.util.threatlib_parse import *
 
 class TestTM(unittest.TestCase):
 
@@ -129,7 +130,9 @@ class TestFinding(unittest.TestCase):
         return super().tearDown()
 
 class TestThreatlib(unittest.TestCase):
-    pass
+    pytm_rules = parse_pytm_threatlib()
+    tm_components = [Asset("A"), Asset("B"), Process("C")]
+    findings = get_findings(tm_components, pytm_rules)
 
 if __name__ == '__main__':
     unittest.main()
