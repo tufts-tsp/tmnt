@@ -41,7 +41,7 @@ def load_owasp_asvs() -> list:
                 # ID as described in https://owasp.org/www-project-application-security-verification-standard/
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
-                c = Control(id=id, title=title, description="")
+                c = Control(id=id, title=title, desc="")
                 results.append(c)
             
             for requirement in requirements: #Vx.x.x
@@ -49,7 +49,7 @@ def load_owasp_asvs() -> list:
                 desc = requirement.find("description").text
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
-                c = Control(id=id, title=title, description=desc)
+                c = Control(id=id, title=title, desc=desc)
                 results.append(c)
 
     return results

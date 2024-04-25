@@ -2,6 +2,8 @@ import unittest
 
 from bang_pytm.core.tm import TM
 from bang_pytm.core.component import Component
+from bang_pytm.core.threat import Issue, Threat, Weakness, Vulnerability
+from bang_pytm.core.finding import Finding
 from bang_pytm.core.element import Element
 from bang_pytm.util.sources import *
 
@@ -56,15 +58,6 @@ class TestElement(unittest.TestCase):
         # with self.assertRaises(ValueError):
         #    elem1.parent = elem3
 
-class TestSources(unittest.TestCase):
-    def test_load_asvs(self):
-        asvs = load_owasp_asvs()
-        # assertEqual
-    def test_load_capec(self):
-        capec = load_capec()
-    def test_load_cwes(self):
-        cwes = load_cwes()
-
 class TestComponent(unittest.TestCase):
     def setUp(self):
         self.component = Component(
@@ -79,7 +72,7 @@ class TestComponent(unittest.TestCase):
         self.assertEqual(len(self.component.data), 0)
         
     def test_add_control(self):
-        control = Control(id="1", title="Test", description="Description")
+        control = Control(id="1", title="Test", desc="Description")
         self.component.add_control(control)
 
     def test_add_threat(self):
@@ -94,8 +87,49 @@ class TestComponent(unittest.TestCase):
         self.component.add_threat(threat)
 
     def tearDown(self):
-        self.tm.reset()
+        return super().tearDown()
 
+class TestSources(unittest.TestCase):
+    def test_load_asvs(self):
+        asvs = load_owasp_asvs()
+        # assertEqual
+    def test_load_capec(self):
+        capec = load_capec()
+    def test_load_cwes(self):
+        cwes = load_cwes()
+
+class TestIssue(unittest.TestCase):
+    def setUp(self):
+        self.issue = Issue("test_issue")
+    def tearDown(self) -> None:
+        return super().tearDown()
+
+class TestThreat(unittest.TestCase):
+    def setUp(self):
+        self.threat = Threat("test_threat")
+    def tearDown(self) -> None:
+        return super().tearDown()
+
+class TestWeakness(unittest.TestCase):
+    def setUp(self):
+        self.weakness = Weakness("test_weakness")
+    def tearDown(self) -> None:
+        return super().tearDown()
+
+class TestVulnerability(unittest.TestCase):
+    def setUp(self):
+        self.vulnerability = Vulnerability("test_vulnerability")
+    def tearDown(self) -> None:
+        return super().tearDown()
+
+class TestFinding(unittest.TestCase):
+    def setUp(self):
+        self.finding = Finding(affected_components=TestComponent, issues=TestIssue)
+    def tearDown(self) -> None:
+        return super().tearDown()
+
+class TestThreatlib(unittest.TestCase):
+    pass
 
 if __name__ == '__main__':
     unittest.main()
