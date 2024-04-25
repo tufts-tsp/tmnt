@@ -30,6 +30,7 @@ class DATASTORE_TYPE(Enum):
     LDAP="LDAP"
     BUCKET="BUCKET"
     OTHER="OTHER"
+    NOSQL="NOSQL"
 
 
 

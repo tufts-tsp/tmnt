@@ -3,7 +3,7 @@ import unittest
 from bang_pytm.core.tm import TM
 from bang_pytm.core.boundary import Boundary
 from bang_pytm.core.actor import Actor
-from bang_pytm.core.asset import Process, Datastore, ExternalEntity, DATASTORE_TYPE
+from bang_pytm.core.asset import Asset, Process, Datastore, ExternalEntity, DATASTORE_TYPE
 from bang_pytm.core.flow import DataFlow
 
 class TestInsulinDeliveryDeviceExample(unittest.TestCase):
@@ -32,6 +32,8 @@ class TestInsulinDeliveryDeviceExample(unittest.TestCase):
         # External Entities
         self.actuator_pump = ExternalEntity(name="Actuator Pump Drive", physical_access=True)
         self.phd_idd.add_child(self.actuator_pump)
+
+        self.testAsset = Asset(name="testAsset")
 
         # Datastores
         self.idd_configuration_db = Datastore(name="IDD Configuration Data Store", ds_type=DATASTORE_TYPE.SQL)
@@ -88,7 +90,9 @@ class TestInsulinDeliveryDeviceExample(unittest.TestCase):
         self.connected_controller_to_idd_controller = DataFlow(name="Connected Device Controller to Insulin Delivery Device Controller", 
                                                           src=self.connected_controller, 
                                                           dst=self.idd_controller)
-
+        self.testFlow = DataFlow(name="testFlow",
+                                 src=self.testAsset,
+                                 dst=self.phd_idd)
         # Populate TM object
         self.tm._boundaries = []  # Clear existing boundaries to prevent duplication during multiple test runs
         self.tm._boundaries.append(self.phd_idd)
@@ -109,6 +113,7 @@ class TestInsulinDeliveryDeviceExample(unittest.TestCase):
         self.tm._assets.append(self.connected_configuration_db)
         self.tm._assets.append(self.connected_therapy_setting_db)
         self.tm._assets.append(self.connected_observation_db)
+        # self.tm._assets.append(self.testAsset)
 
         self.tm._flows = []
         self.tm._flows.append(self.user_to_connected_controller)
@@ -120,6 +125,7 @@ class TestInsulinDeliveryDeviceExample(unittest.TestCase):
         self.tm._flows.append(self.idd_controller_to_mfg)
         self.tm._flows.append(self.idd_controller_to_connected_controller)
         self.tm._flows.append(self.connected_controller_to_idd_controller)
+        # self.tm._flows.append(self.testFlow)
 
     def test_actor_assignment(self):
         print("Actors:")

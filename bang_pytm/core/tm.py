@@ -141,8 +141,8 @@ class TM:
         else:
             return self._assets.copy()
 
-    def find_related_attack_vectors(self, asset: Asset):
-        #print("Analyzing asset:", asset)
+    def find_related_attack_vectors(self, asset: Asset) -> list[list[Element]]:
+
         if not isinstance(asset, (Asset, Actor)):
             raise ValueError("Provided asset is not of type 'Asset' or 'Actor'")
         
@@ -154,15 +154,18 @@ class TM:
             visited_assets.add(current_asset)
 
             for flow in self._flows:
+                # go one step upstream from asset
                 if flow.dst == current_asset:
                     new_path = [flow] + path
                     
                     # prevent oscillations
-                    if len(new_path) > 1 and new_path[0].src == new_path[1].dst:
-                        continue  # Skip adding this flow as it leads back to the previous asset
+                    if (len(new_path) > 1):
+                        if isinstance(new_path[0], Flow) and isinstance(new_path[1], Flow):
+                            if (new_path[0].src == new_path[1].dst):
+                                continue 
 
                     # Prevent the entire path from looping back to the asset
-                    if not any(f.src == asset for f in new_path):
+                    if not any((isinstance(floe, Flow) and (floe.src == asset)) for floe in new_path):
                         related_attack_vectors.append(new_path)
                         trace_backwards(flow.src, new_path, visited_assets.copy())
 
@@ -181,7 +184,7 @@ class TM:
 
     def simulate_attack(self, component: Component):
 
-        print("Analyzing asset:", component)
+        # print("Analyzing asset:", component)
         if not isinstance(component, (Asset, Actor)):
             raise ValueError("Provided asset is not of type 'Asset' or 'Actor'")
         
@@ -191,28 +194,26 @@ class TM:
             if current_component in visited_components:
                 # print("current component has been revisited in the same path")
                 return
+            
             visited_components.add(current_component)
-
+            # print(f"added: {current_component} to visited components")
             for flow in self._flows:
+                # print(f"analyzing flow with src: {flow.src} and dst: {flow.dst}")
                 if flow.src == current_component:
+                    # print(f"we matched component: {current_component}, with src: {flow.src}")
                     new_path = path + [flow]
                     
                     # prevent oscillations
-                    # print(f"Processing flow from {flow.src.name} to {flow.dst.name}")
-
-                    if len(new_path) > 1 and new_path[-1].dst == new_path[-2].src:
-                        # print("Skipping due to immediate return to previous node.")
-
-                        continue  # Skip adding this flow as it leads back to the previous asset
+                    if len(new_path) > 1:
+                        if isinstance(new_path[-1], Flow) and isinstance(new_path[-2], Flow):
+                            if new_path[-1].dst == new_path[-2].src:
+                                # print("Skipping due to immediate return to previous node.")
+                                continue 
 
                     # Prevent the entire path from looping back to the asset
-                    if not any(f.dst == component for f in new_path):
-                        # print("Adding flow to paths as it does not loop back to start.")
+                    if not any((isinstance(floe, Flow) and (floe.dst == component)) for floe in new_path):
                         related_attacks.append(new_path)
-                        # print(flow.dst)
                         trace_forwards(flow.dst, new_path, visited_components.copy())
-                    # else:
-                        # print("Skipping flow as it loops back to the start.")
 
             
             if hasattr(current_component, 'children'):
