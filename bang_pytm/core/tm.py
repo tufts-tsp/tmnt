@@ -136,13 +136,14 @@ class TM:
     def find_related_attack_vectors(self, asset: Asset):
 
         # type checking
-        if not isinstance(asset, Asset) or not isinstance(asset, Actor):
+        if not isinstance(asset, (Asset, Actor)):
             raise ValueError("Provided asset is not of type 'Element' or 'Actor'")
         
-        related_flows = []
+        related_attack_vectors = []
         processed_assets = set()
+        path = []
 
-        def helper(asset):
+        def helper(asset, path):
             if asset in processed_assets:
                 return
             processed_assets.add(asset)
@@ -150,40 +151,50 @@ class TM:
             for flow in self._flows:
                 # find flows incident to this asset
                 if flow.dst == asset:
-                    related_flows.append(flow)
+                    new_path = path + [flow]
+                    related_attack_vectors.append(new_path)
                     # chainnnnnnn
                     if flow.src in self._elements:
-                        helper(flow.src)
+                        helper(flow.src, new_path)
             
             if asset.parent in self._elements:
-                helper(asset.parent)
+                new_path = path + [asset.parent]
+                related_attack_vectors.append(new_path)
+                helper(asset.parent, new_path)
         
-        helper(asset)
-        return related_flows
+        helper(asset, path)
+        return related_attack_vectors
 
 
     def simulate_attack(self, component: Component):
 
-        if not isinstance(component, Component) or not isinstance(component, Actor):
-            raise TypeError("The provided element is not of type 'Element' or 'Actor'")
+        # type checking
+        if not isinstance(component, (Component, Actor)):
+            raise ValueError("Provided asset is not of type 'Element' or 'Actor'")
         
-        attack_paths = []
+        related_paths = []
         processed_components = set()
+        path = []
 
-        def helper(component):
-
+        def helper(component, path):
             if component in processed_components:
                 return
             processed_components.add(component)
 
             for flow in self._flows:
-                if flow.src == component:
-                    attack_paths.append(flow)
-                    helper(flow.dst)
 
-            for child in component.children:
-                helper(child)
+                if flow.src == component:
+                    new_path = path + [flow]
+                    related_paths.append(new_path)
+
+                    if flow.dst in self._elements:
+                        helper(flow.dst, new_path)
+            
+            if component.child in self._elements:
+                new_path = path + [component.child]
+                related_paths.append(new_path)
+                helper(component.child, new_path)
         
-        helper(component)
-        return attack_paths
+        helper(component, path)
+        return related_paths
 

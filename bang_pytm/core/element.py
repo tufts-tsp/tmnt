@@ -33,8 +33,15 @@ class Element(object):
         name: str,
         desc: str = None,
     ):
+        
+        if not isinstance(name, str):
+            raise ValueError("Element Name must be a string")
         self.__name = name
+
+        if not isinstance(desc, str) and desc is not None:
+            raise ValueError("Element Description must be a string")
         self.__desc = desc
+
         self.__children = []
         self.__parent = None
 
@@ -154,4 +161,6 @@ class Element(object):
     
     @security_property.setter
     def security_property(self, val: SecurityProperty) -> None:
+        if not isinstance(val, SecurityProperty):
+            raise ValueError("Security Property must be a SecurityProperty object")
         self.__security_property = val

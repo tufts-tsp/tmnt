@@ -2,8 +2,6 @@ from .element import Element
 from .data import Data
 from .threat import Threat
 from .control import Control
-from typing import Dict, List
-
 
 class Component(Element):
 
@@ -13,15 +11,19 @@ class Component(Element):
     threat model), i.e. assets and flows.
     """
 
-    __controls: List[Control] = []
-    __threats: List[Threat] = []
-    __data: List[Data] = None
+    __controls: list[Control] = []
+    __threats: list[Threat] = []
+    __data: list[Data] = None
 
-    def __init__(self, name: str, desc: str = None, data: List[Data] = None) -> None:
-        if data != None and type(data) == list:
-            self.data = data
-        elif data!= None:
-            self.data = [data]
+    def __init__(self, name: str, desc: str = None, data_list: list[Data] = None) -> None:
+
+        if (not isinstance(data_list, list) or not all(isinstance(data, Data) for data in data_list)) and data_list is not None:
+            if isinstance(data_list, Data):
+                self.data = [data_list]
+            else:
+                raise ValueError("Trust Boundaries must be a list of Data objects")        
+        self.data = data_list
+
         super().__init__(name, desc)
 
     @property
@@ -30,9 +32,20 @@ class Component(Element):
 
     @data.setter
     def data(self, val: Data) -> None:
+
+        if not isinstance(val, Data):
+            raise ValueError("Value must be a Data object")
+        
         self.__data.append(val)
 
     def remove_data(self, val: Data) -> None:
+
+        if val is None:
+            raise ValueError("No data value specified to remove")
+        
+        if not isinstance(val, Data):
+            raise ValueError("Value must be a Data object")
+        
         self.__data.remove(val)
 
     @property
@@ -46,9 +59,19 @@ class Component(Element):
         return self.__threats
 
     def add_threat(self, threat: Threat) -> None:
+
+        if not isinstance(threat, Threat):
+            raise ValueError("Threat must be a Threat object")
         self.__add_elem(threat, self.__threats)
 
     def remove_threat(self, threat: Threat) -> None:
+
+        if threat is None:
+            raise ValueError("No Threat specified to remove")
+        
+        if not isinstance(threat, Threat):
+            raise ValueError("Threat must be a Threat object")
+        
         self.__remove_elem(threat, self.__threats)
 
     @property
@@ -62,7 +85,18 @@ class Component(Element):
         return self.__controls
 
     def add_control(self, control: Control) -> None:
+        
+        if not isinstance(control, Control):
+            raise ValueError("Control must be a Control object")
+        
         self.__add_elem(control, self.__controls)
 
     def remove_control(self, control: Control) -> None:
+
+        if control is None:
+            raise ValueError("No Control specified to remove")
+        
+        if not isinstance(control, Control):
+            raise ValueError("Control must be a Control object")
+        
         self.__remove_elem(control, self.__controls)

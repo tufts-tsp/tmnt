@@ -1,12 +1,23 @@
 from .element import Element
 
-class Part:
-    __part_id: str = None
-    __part_name: str = None
-    __part_prose: str = None
 
-    def __init__(self, id: str, prose: str) -> None:
+
+class Part:
+    """
+    needs documentation
+    """
+    __part_id: str
+    __part_name: str
+    __part_prose: str
+
+    def __init__(self, id: str = None, prose: str = None) -> None:
+        
+        if not isinstance(id, str):
+            raise ValueError("Part ID must be a string")
         self.__part_id = id
+
+        if not isinstance(prose, str):
+            raise ValueError("Part Prose must be a string")
         self.__part_prose = prose
 
     @property
@@ -34,6 +45,8 @@ class Part:
             err = f"Part name must be from following: {','.join(names)}."
             raise ValueError(err)
         self.__part_name = name
+
+
 
 class Control(Element):
 
@@ -65,7 +78,13 @@ class Control(Element):
             id: str,
             title: str,
     ):
+        
+        if not isinstance(id, str):
+            raise ValueError("Control ID must be a string")
         self.__id = id
+
+        if not isinstance(title, str):
+            raise ValueError("Control title must be a string")
         self.__title = title
 
     @property
@@ -96,7 +115,11 @@ class Control(Element):
     @prop.setter
     def prop(self, **kwargs):
         for kwarg, val in kwargs.items():
-            self.__likelihood[kwarg] = val    
+            label = kwarg
+            context = val
+            if not isinstance(label, str) and not isinstance(context, str):
+                raise ValueError("Property label and context must be strings")
+            self.__prop[label] = context    
 
     @property
     def assumptions(self) -> list:
@@ -155,6 +178,8 @@ class Control(Element):
             raise ValueError(err)
         self.__development_phase = phase
 
+
+
 class Metadata:
     """
     The metadata section of the control catalog contains data about the
@@ -179,26 +204,47 @@ class Metadata:
                  version: str, 
                  oscal_version: str) -> None:
             
+            if not isinstance(title, str):
+                raise ValueError("Metadata title must be a string")
             self.__title = title
+
+            if not isinstance(published, str):
+                raise ValueError("Metadata publish date must be a string")
             self.__published = published
+
+            if not isinstance(last_modified, str):
+                raise ValueError("Metadata last modified date must be a string")
             self.__last_modified = last_modified
+
+            if not isinstance(version, str):
+                raise ValueError("Metadata version must be a string")
             self.__version = version
+
+            if not isinstance(oscal_version, str):
+                raise ValueError("Metadata OSCAL version must be a string")
             self.__oscal_version = oscal_version
     
-    def get_title(self) -> str:
+    @property
+    def title(self) -> str:
         return self.__title
     
-    def get_published(self) -> str:
+    @property
+    def published(self) -> str:
         return self.__published
     
-    def get_last_modified(self) -> str:
+    @property
+    def last_modified(self) -> str:
         return self.__last_modified
     
-    def get_version(self) -> str:
+    @property
+    def version(self) -> str:
         return self.__version
     
-    def get_oscal_version(self) -> str:
+    @property
+    def oscal_version(self) -> str:
         return self.__oscal_version
+
+
 
 class Group:
     """
@@ -212,25 +258,40 @@ class Group:
     __id: str = None
     __title: str = None
 
-    # properties have a label and a textual context which defines
-    # the property's value
-    ######### how to init this?????
+    # properties have a label and a textual context which defines the property's value
     __prop: dict[str, str] = {}
 
     # list of other Group objects
-    __subgroups: list = []
+    __subgroups: list['Group'] = []
     __parts: list[Part] = []
     __controls: list[Control] = None
 
     def __init__(self, 
                  id: str, 
                  title: str, 
-                 subgroups: list, 
+                 subgroups: list['Group'], 
                  controls: list[Control]) -> None:
             
+            if not isinstance(id, str):
+                raise ValueError("Group ID must be a string")
             self.__id = id
+
+            if not isinstance(title, str):
+                raise ValueError("Group title must be a string")
             self.__title = title
+
+            if not isinstance(subgroups, list) or not all(isinstance(subgroup, Group) for subgroup in subgroups):
+                if isinstance(subgroups, Group):
+                    self.__subgroups = [subgroups]
+                else:
+                    raise ValueError("Subgroups must be a list of Group objects")
             self.__subgroups = subgroups
+
+            if not isinstance(controls, list) or not all(isinstance(control, Control) for control in controls):
+                if isinstance(controls, Control):
+                    self.__controls = [controls]
+                else:
+                    raise ValueError("Controls must be a list of Control Objects")
             self.__controls = controls
     
     @property
@@ -255,11 +316,16 @@ class Group:
 
     @parts.setter
     def parts(self, parts: list[Part]) -> None:
-        if not isinstance(parts, list):
-            raise ValueError("Parts must be provided as a list of Part objects.")
+        if not isinstance(parts, list) or not all(isinstance(part, Part) for part in parts):
+            if isinstance(parts, Group):
+                self.__parts = [parts]
+            else:
+                raise ValueError("Parts must be a list of Part objects")
         self.__parts = parts
 
     def add_part(self, part: Part) -> None:
+        if not isinstance(part, Part):
+            raise ValueError("Part must be a Part object")
         self.__parts.append(part)
 
     @property
@@ -269,7 +335,13 @@ class Group:
     @prop.setter
     def prop(self, **kwargs):
         for kwarg, val in kwargs.items():
-            self.__likelihood[kwarg] = val      
+            label = kwarg
+            context = val
+            if not isinstance(label, str) and not isinstance(context, str):
+                raise ValueError("Property label and context must be strings")
+            self.__prop[label] = context      
+
+
 
 class ControlCatalog(Element):
     """
@@ -289,6 +361,40 @@ class ControlCatalog(Element):
                  controls: list[Control]
                  ):
         
+        if not isinstance(metadata, Metadata):
+            raise ValueError("Metadata must be a Metadata object")
         self.__metadata = metadata
+
+
+        if not isinstance(groups, list) or not all(isinstance(group, Group) for group in groups):
+            if isinstance(groups, Group):
+                self.__groups = [groups]
+            else:
+                raise ValueError("Controls must be a list of Control Objects")
         self.__groups = groups
+
+        if not isinstance(controls, list) or not all(isinstance(control, Control) for control in controls):
+            if isinstance(controls, Control):
+                self.__controls = [controls]
+            else:
+                raise ValueError("Controls must be a list of Control Objects")
         self.__controls = controls
+
+    @property
+    def metadata(self) -> Metadata:
+        return self.__metadata
+    
+    @property
+    def groups(self) -> list[Group]:
+        return self.__groups
+    
+    @property
+    def controls(self) -> list[Control]:
+        return self.__controls
+    
+    @groups.setter
+    def groups(self, group: Group):
+        if not isinstance(group, Group):
+            raise ValueError("Group must be a Group object")
+        self.__groups.append(group)
+        
