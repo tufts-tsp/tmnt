@@ -98,7 +98,8 @@ class Datastore(Asset):
     """
     
     def __init__(self, 
-                 name, ds_type: DATASTORE_TYPE = DATASTORE_TYPE.UNKNOWN,  
+                 name, 
+                 ds_type: DATASTORE_TYPE = DATASTORE_TYPE.UNKNOWN,  
                  **kwargs):
 
         if not isinstance(ds_type, DATASTORE_TYPE):
