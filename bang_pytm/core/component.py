@@ -3,6 +3,8 @@ from .data import Data
 from .threat import Threat
 from .control import Control
 
+
+
 class Component(Element):
 
     """
@@ -13,16 +15,11 @@ class Component(Element):
 
     __controls: list[Control] = []
     __threats: list[Threat] = []
-    __data: list[Data] = None
+    __data: list[Data] = []
 
     def __init__(self, name: str, desc: str = None, data_list: list[Data] = None) -> None:
-
-        if (not isinstance(data_list, list) or not all(isinstance(data, Data) for data in data_list)) and data_list is not None:
-            if isinstance(data_list, Data):
-                self.data = [data_list]
-            else:
-                raise ValueError("Trust Boundaries must be a list of Data objects")        
-        self.data = data_list
+  
+        self.data = data_list or []
 
         super().__init__(name, desc)
 
@@ -31,7 +28,12 @@ class Component(Element):
         return self.__data
 
     @data.setter
-    def data(self, val: Data) -> None:
+    def data(self, val: list[Data]) -> None:
+        if not isinstance(val, list) or not all(isinstance(item, Data) for item in val):
+            raise ValueError("Value must be a list of Data objects")
+        self.__data = val
+    
+    def add_data(self, val: Data) -> None:
 
         if not isinstance(val, Data):
             raise ValueError("Value must be a Data object")

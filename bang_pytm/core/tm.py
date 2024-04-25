@@ -42,6 +42,7 @@ class TM:
     def findings(self) -> List[Finding]:
         return self.findings
     
+
     def generate_threats(self, engine: Engine):
         pass
 
@@ -59,7 +60,10 @@ class TM:
             raise ValueError("No finding specified to remove")
         
         self.findings.remove(finding)
-
+    @property
+    def assumptions(self):
+        return self.assumptions
+    
     @assumptions.setter
     def assumptions(self, assumption_list: list) -> None:
 
@@ -138,67 +142,87 @@ class TM:
             return self._assets.copy()
 
     def find_related_attack_vectors(self, asset: Asset):
-
-        # type checking
+        #print("Analyzing asset:", asset)
         if not isinstance(asset, (Asset, Actor)):
-            raise ValueError("Provided asset is not of type 'Element' or 'Actor'")
+            raise ValueError("Provided asset is not of type 'Asset' or 'Actor'")
         
         related_attack_vectors = []
-        processed_assets = set()
-        path = []
 
-        def helper(asset, path):
-            if asset in processed_assets:
+        def trace_backwards(current_asset, path, visited_assets):
+            if current_asset in visited_assets:
                 return
-            processed_assets.add(asset)
+            visited_assets.add(current_asset)
 
             for flow in self._flows:
-                # find flows incident to this asset
-                if flow.dst == asset:
-                    new_path = path + [flow]
-                    related_attack_vectors.append(new_path)
-                    # chainnnnnnn
-                    if flow.src in self._elements:
-                        helper(flow.src, new_path)
-            
-            if asset.parent in self._elements:
-                new_path = path + [asset.parent]
-                related_attack_vectors.append(new_path)
-                helper(asset.parent, new_path)
-        
-        helper(asset, path)
+                if flow.dst == current_asset:
+                    new_path = [flow] + path
+                    
+                    # prevent oscillations
+                    if len(new_path) > 1 and new_path[0].src == new_path[1].dst:
+                        continue  # Skip adding this flow as it leads back to the previous asset
+
+                    # Prevent the entire path from looping back to the asset
+                    if not any(f.src == asset for f in new_path):
+                        related_attack_vectors.append(new_path)
+                        trace_backwards(flow.src, new_path, visited_assets.copy())
+
+            # Trace through the parent of the current asset if it exists
+            if current_asset.parent and current_asset.parent not in visited_assets:
+                parent_path = [current_asset.parent] + path  # Include parent in the path
+                related_attack_vectors.append(parent_path)
+                trace_backwards(current_asset.parent, parent_path, visited_assets.copy())
+
+        trace_backwards(asset, [], set())
+
         return related_attack_vectors
+
+
 
 
     def simulate_attack(self, component: Component):
 
-        # type checking
-        if not isinstance(component, (Component, Actor)):
-            raise ValueError("Provided asset is not of type 'Element' or 'Actor'")
+        print("Analyzing asset:", component)
+        if not isinstance(component, (Asset, Actor)):
+            raise ValueError("Provided asset is not of type 'Asset' or 'Actor'")
         
-        related_paths = []
-        processed_components = set()
-        path = []
+        related_attacks = []
 
-        def helper(component, path):
-            if component in processed_components:
+        def trace_forwards(current_component, path, visited_components):
+            if current_component in visited_components:
+                # print("current component has been revisited in the same path")
                 return
-            processed_components.add(component)
+            visited_components.add(current_component)
 
             for flow in self._flows:
-
-                if flow.src == component:
+                if flow.src == current_component:
                     new_path = path + [flow]
-                    related_paths.append(new_path)
+                    
+                    # prevent oscillations
+                    # print(f"Processing flow from {flow.src.name} to {flow.dst.name}")
 
-                    if flow.dst in self._elements:
-                        helper(flow.dst, new_path)
+                    if len(new_path) > 1 and new_path[-1].dst == new_path[-2].src:
+                        # print("Skipping due to immediate return to previous node.")
+
+                        continue  # Skip adding this flow as it leads back to the previous asset
+
+                    # Prevent the entire path from looping back to the asset
+                    if not any(f.dst == component for f in new_path):
+                        # print("Adding flow to paths as it does not loop back to start.")
+                        related_attacks.append(new_path)
+                        # print(flow.dst)
+                        trace_forwards(flow.dst, new_path, visited_components.copy())
+                    # else:
+                        # print("Skipping flow as it loops back to the start.")
+
             
-            if component.child in self._elements:
-                new_path = path + [component.child]
-                related_paths.append(new_path)
-                helper(component.child, new_path)
-        
-        helper(component, path)
-        return related_paths
+            if hasattr(current_component, 'children'):
+                for child in current_component.children:
+                    if child not in visited_components:
+                        child_path = path + ["Child: " + child.name]
+                        related_attacks.append(child_path)
+                        trace_forwards(child, child_path, visited_components.copy())
+
+        trace_forwards(component, [], set())
+
+        return related_attacks
 
