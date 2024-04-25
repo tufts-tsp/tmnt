@@ -4,7 +4,6 @@ from typing import List
 
 from bang_pytm.engine import Engine
 
-from .descriptors import varString, varFindings, varStrings
 from .data import Data
 from .component import Component
 from .finding import Finding
@@ -26,14 +25,10 @@ class TM:
     _threats = []
     _boundaries = []
     _data = []
-    name = varString("", required=True, doc="Model name")
-    description = varString("", required=True, doc="Model description")
-    findings = varFindings([], doc="threats found for elements of this model")
-    assumptions = varStrings(
-        [],
-        required=False,
-        doc="A list of assumptions about the design/model.",
-    )
+    name : str
+    description : str
+    findings : list[Finding] = []
+    assumptions : list = []
 
     def __init__(self, name: str, components: List[Component] = []):
         self.name = name
@@ -59,14 +54,23 @@ class TM:
         else:
             self.findings.append(finding)
 
-
-
     def remove_finding(self, finding: Finding = None):
         if finding is None:
             raise ValueError("No finding specified to remove")
         
         self.findings.remove(finding)
 
+    @assumptions.setter
+    def assumptions(self, assumption_list: list) -> None:
+
+        if not isinstance(assumption_list, list):
+            raise ValueError("Assumptions must be provided as a list")
+        
+        for item in assumption_list:
+            if not isinstance(item, str):
+                raise ValueError("Assumptions must be strings")
+        
+        self.assumptions = assumption_list
 
     def add_component(self, component: Component = None):
         
