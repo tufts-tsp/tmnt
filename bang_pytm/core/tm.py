@@ -11,6 +11,7 @@ from .finding import Finding
 from .flow import Flow
 from .asset import Asset
 from .element import Element
+from .actor import Actor
 
 logger = logging.getLogger(__name__)
 
@@ -124,8 +125,8 @@ class TM:
     def find_related_attack_vectors(self, asset: Asset):
 
         # type checking
-        if not isinstance(asset, Asset):
-            raise ValueError("Provided asset is not of type 'Asset")
+        if not isinstance(asset, Asset) or not isinstance(asset, Actor):
+            raise ValueError("Provided asset is not of type 'Element' or 'Actor'")
         
         related_flows = []
         processed_assets = set()
@@ -140,15 +141,38 @@ class TM:
                 if flow.dst == asset:
                     related_flows.append(flow)
                     # chainnnnnnn
-                    if flow.src in self._assets:
+                    if flow.src in self._elements:
                         helper(flow.src)
+            
+            if asset.parent in self._elements:
+                helper(asset.parent)
         
         helper(asset)
         return related_flows
 
 
     def simulate_attack(self, component: Component):
-        # If someone were to attack and breach, what things could they hop to
-        # or otherwise get access to - reverse of find_related_attack_vectors, 
-        # i.e. start with initial attack surface how far they can go
-        pass
+
+        if not isinstance(component, Component) or not isinstance(component, Actor):
+            raise TypeError("The provided element is not of type 'Element' or 'Actor'")
+        
+        attack_paths = []
+        processed_components = set()
+
+        def helper(component):
+
+            if component in processed_components:
+                return
+            processed_components.add(component)
+
+            for flow in self._flows:
+                if flow.src == component:
+                    attack_paths.append(flow)
+                    helper(flow.dst)
+
+            for child in component.children:
+                helper(child)
+        
+        helper(component)
+        return attack_paths
+
