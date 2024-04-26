@@ -58,6 +58,7 @@ class Finding:
         risk: str = None,
         residual_risk: str = None,
     ) -> None:
+        
         self.affected_components = affected_components
         self.issues = issues
         self.controls = controls

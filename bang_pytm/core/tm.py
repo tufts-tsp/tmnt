@@ -4,13 +4,13 @@ from typing import List
 
 from bang_pytm.engine import Engine
 
-from .descriptors import varString, varFindings, varStrings
 from .data import Data
 from .component import Component
 from .finding import Finding
 from .flow import Flow
 from .asset import Asset
 from .element import Element
+from .actor import Actor
 
 logger = logging.getLogger(__name__)
 
@@ -25,14 +25,10 @@ class TM:
     _threats = []
     _boundaries = []
     _data = []
-    name = varString("", required=True, doc="Model name")
-    desc = varString("", required=True, doc="Model description")
-    findings = varFindings([], doc="threats found for elements of this model")
-    assumptions = varStrings(
-        [],
-        required=False,
-        doc="A list of assumptions about the design/model.",
-    )
+    name : str
+    description : str
+    findings : list[Finding] = []
+    assumptions : list = []
 
     def __init__(self, name: str, components: List[Component] = []):
         self.name = name
@@ -44,17 +40,41 @@ class TM:
     
     @property
     def findings(self) -> List[Finding]:
-        return self.__findings
+        return self.findings
     
+
     def generate_threats(self, engine: Engine):
         pass
 
     def add_finding(self, finding: Finding = None):
-        pass
+        if not isinstance(finding, Finding):
+            raise ValueError("No finding specified to add")
+        
+        if finding in self.findings:
+            print("Finding is already in the model")
+        else:
+            self.findings.append(finding)
 
     def remove_finding(self, finding: Finding = None):
-        pass
+        if finding is None:
+            raise ValueError("No finding specified to remove")
+        
+        self.findings.remove(finding)
+    @property
+    def assumptions(self):
+        return self.assumptions
+    
+    @assumptions.setter
+    def assumptions(self, assumption_list: list) -> None:
 
+        if not isinstance(assumption_list, list):
+            raise ValueError("Assumptions must be provided as a list")
+        
+        for item in assumption_list:
+            if not isinstance(item, str):
+                raise ValueError("Assumptions must be strings")
+        
+        self.assumptions = assumption_list
 
     def add_component(self, component: Component = None):
         
@@ -125,13 +145,89 @@ class TM:
         else:
             return self._assets.copy()
 
-    def find_related_attack_vectors(self, asset: Asset):
-        # Find all the flows where the asset is the destination, then grab 
-        # assets and then recurse 
-        pass
+    def find_related_attack_vectors(self, asset: Asset) -> list[list[Element]]:
+
+        if not isinstance(asset, (Asset)):
+            raise ValueError("Provided asset is not of type 'Asset' or 'Actor'")
+        
+        related_attack_vectors = []
+
+        def trace_backwards(current_asset, path, visited_assets):
+            if current_asset in visited_assets:
+                return
+            visited_assets.add(current_asset)
+
+            for flow in self._flows:
+                # go one step upstream from asset
+                if flow.dst == current_asset:
+                    new_path = [flow] + path
+                    
+                    # prevent oscillations
+                    if (len(new_path) > 1):
+                        if isinstance(new_path[0], Flow) and isinstance(new_path[1], Flow):
+                            if (new_path[0].src == new_path[1].dst):
+                                continue 
+
+                    # Prevent the entire path from looping back to the asset
+                    if not any((isinstance(floe, Flow) and (floe.src == asset)) for floe in new_path):
+                        related_attack_vectors.append(new_path)
+                        trace_backwards(flow.src, new_path, visited_assets.copy())
+
+            # Trace through the parent of the current asset if it exists
+            if current_asset.parent and current_asset.parent not in visited_assets:
+                parent_path = [current_asset.parent] + path  # Include parent in the path
+                related_attack_vectors.append(parent_path)
+                trace_backwards(current_asset.parent, parent_path, visited_assets.copy())
+
+        trace_backwards(asset, [], set())
+
+        return related_attack_vectors
+
+
+
 
     def simulate_attack(self, component: Component):
-        # If someone were to attack and breach, what things could they hop to
-        # or otherwise get access to - reverse of find_related_attack_vectors, 
-        # i.e. start with initial attack surface how far they can go
-        pass
+
+        # print("Analyzing asset:", component)
+        if not isinstance(component, (Asset)):
+            raise ValueError("Provided asset is not of type 'Asset' or 'Actor'")
+        
+        related_attacks = []
+
+        def trace_forwards(current_component, path, visited_components):
+            if current_component in visited_components:
+                # print("current component has been revisited in the same path")
+                return
+            
+            visited_components.add(current_component)
+            # print(f"added: {current_component} to visited components")
+            for flow in self._flows:
+                # print(f"analyzing flow with src: {flow.src} and dst: {flow.dst}")
+                if flow.src == current_component:
+                    # print(f"we matched component: {current_component}, with src: {flow.src}")
+                    new_path = path + [flow]
+                    
+                    # prevent oscillations
+                    if len(new_path) > 1:
+                        if isinstance(new_path[-1], Flow) and isinstance(new_path[-2], Flow):
+                            if new_path[-1].dst == new_path[-2].src:
+                                # print("Skipping due to immediate return to previous node.")
+                                continue 
+
+                    # Prevent the entire path from looping back to the asset
+                    if not any((isinstance(floe, Flow) and (floe.dst == component)) for floe in new_path):
+                        related_attacks.append(new_path)
+                        trace_forwards(flow.dst, new_path, visited_components.copy())
+
+            
+            if hasattr(current_component, 'children'):
+                for child in current_component.children:
+                    if child not in visited_components:
+                        child_path = path + ["Child: " + child.name]
+                        related_attacks.append(child_path)
+                        trace_forwards(child, child_path, visited_components.copy())
+
+        trace_forwards(component, [], set())
+
+        return related_attacks
+

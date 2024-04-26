@@ -599,7 +599,11 @@ class Threat(Issue):
         technique : str, default None
             The techniques involved with this step.
         """
-        self.remove_step(order)
+        for step in self.__atack_steps:
+            if step.order == order:
+                self.remove_step(order)
+        
+
         self.__atack_steps.append(
             {
                 "order": order,

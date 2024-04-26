@@ -1,11 +1,75 @@
 from .element import Element
 
 
+
+class Part:
+    """
+    needs documentation
+    """
+    __part_id: str
+    __part_name: str
+    __part_prose: str
+
+    def __init__(self, id: str = None, prose: str = None) -> None:
+        
+        if not isinstance(id, str):
+            raise ValueError("Part ID must be a string")
+        self.__part_id = id
+
+        if not isinstance(prose, str):
+            raise ValueError("Part Prose must be a string")
+        self.__part_prose = prose
+
+    @property
+    def part_id(self) -> str:
+        return self.__part_id
+    
+    @property
+    def part_prose(self) -> str:
+        return self.__part_prose
+    
+    @property
+    def part_name(self) -> str:
+        return self.__part_name
+    
+    @part_name.setter
+    def part_name(self, name: str) -> None:
+        names = [
+            "objective",
+            "statement",
+            "guidance",
+            "item",
+            "information"
+        ]
+        if name not in names:
+            err = f"Part name must be from following: {','.join(names)}."
+            raise ValueError(err)
+        self.__part_name = name
+
+
+
 class Control(Element):
+
+    """
+    A control is a safegaurd or countermeasure prescribed for an information
+    system or an organization to protect the confidentiality, integrity, and
+    availability of the system and its information. In OSCAL, a control is a
+    requirement or guideline, which when implemented will reduce an aspect of
+    risk related to an information system and its information.
+
+    Source: 'KEY CONCEPTS AND TERMS USED IN OSCAL 
+        <https://pages.nist.gov/OSCAL/resources/concepts/terminology/>'
+    """
 
     __id: str = None
     __title: str = None
-    __desc: str = None
+
+    # properties have a label and a textual context which defines
+    # the property's value
+    __prop: dict[str, str] = {}
+
+    # in this case, it must have name statement
+    __parts: list[Part] = []
     __assumptions: list = []
     __development_phase: list = []
     __related: list = []
@@ -17,37 +81,50 @@ class Control(Element):
             desc: str=None,
             related: list=[]
     ):
+        
+        if not isinstance(id, str):
+            raise ValueError("Control ID must be a string")
         self.__id = id
+
+        if not isinstance(title, str):
+            raise ValueError("Control title must be a string")
         self.__title = title
         self.__desc = desc
         self.__related = related
 
     @property
     def id(self) -> str:
-        """ID of the Control"""
         return self.__id
-
-    @id.setter
-    def id(self, val: str) -> None:
-        self.__id = val
-
+    
     @property
     def title(self) -> str:
-        """Title of the Control"""
         return self.__title
-
-    @title.setter
-    def title(self, val: str) -> None:
-        self.__title = val
-
+    
     @property
-    def desc(self) -> str:
-        """Description of the Control"""
-        return self.__desc
+    def parts(self) -> list[Part]:
+        return self.__parts
 
-    @desc.setter
-    def desc(self, val: str) -> None:
-        self.__desc = val
+    @parts.setter
+    def parts(self, parts: list[Part]) -> None:
+        if not isinstance(parts, list):
+            raise ValueError("Parts must be provided as a list of Part objects.")
+        self.__parts = parts
+
+    def add_part(self, part: Part) -> None:
+        self.__parts.append(part)
+    
+    @property
+    def prop(self) -> dict:
+        return self.__prop
+
+    @prop.setter
+    def prop(self, **kwargs):
+        for kwarg, val in kwargs.items():
+            label = kwarg
+            context = val
+            if not isinstance(label, str) and not isinstance(context, str):
+                raise ValueError("Property label and context must be strings")
+            self.__prop[label] = context    
 
     @property
     def assumptions(self) -> list:
@@ -106,14 +183,170 @@ class Control(Element):
             raise ValueError(err)
         self.__development_phase = phase
 
-    @property
-    def related(self) -> list:
-        """Issues related to the Control"""
-        return self.__related
 
-    @related.setter
-    def related(self, val: list) -> None:
-        self.__related = val
+
+class Metadata:
+    """
+    The metadata section of the control catalog contains data about the
+    catalog document. This section has identical structure which is used
+    consistently across all OSCAL models.
+
+    Source: 'CREATING A CONTROL CATALOG <https://pages.nist.gov/OSCAL/learn/tutorials/control/basic-catalog/>'
+    """
+    __title: str = None
+
+    # RFC 3339 format for date/time
+    __published: str = None
+    __last_modified: str = None
+
+    __version: str = None
+    __oscal_version: str = None
+
+    def __init__(self,
+                 title: str, 
+                 published: str, 
+                 last_modified: str, 
+                 version: str, 
+                 oscal_version: str) -> None:
+            
+            if not isinstance(title, str):
+                raise ValueError("Metadata title must be a string")
+            self.__title = title
+
+            if not isinstance(published, str):
+                raise ValueError("Metadata publish date must be a string")
+            self.__published = published
+
+            if not isinstance(last_modified, str):
+                raise ValueError("Metadata last modified date must be a string")
+            self.__last_modified = last_modified
+
+            if not isinstance(version, str):
+                raise ValueError("Metadata version must be a string")
+            self.__version = version
+
+            if not isinstance(oscal_version, str):
+                raise ValueError("Metadata OSCAL version must be a string")
+            self.__oscal_version = oscal_version
+    
+    @property
+    def title(self) -> str:
+        return self.__title
+    
+    @property
+    def published(self) -> str:
+        return self.__published
+    
+    @property
+    def last_modified(self) -> str:
+        return self.__last_modified
+    
+    @property
+    def version(self) -> str:
+        return self.__version
+    
+    @property
+    def oscal_version(self) -> str:
+        return self.__oscal_version
+
+
+
+class Group:
+    """
+    An OSCAL catalog allows for the organization of related controls
+    using groups. A catalog group can represent families of controls
+    or other organizational structures, such as sections in a control
+    catalog.
+
+    Source: 'CREATING A CONTROL CATALOG <https://pages.nist.gov/OSCAL/learn/tutorials/control/basic-catalog/>'
+    """
+    __id: str = None
+    __title: str = None
+
+    # properties have a label and a textual context which defines the property's value
+    __prop: dict[str, str] = {}
+
+    # list of other Group objects
+    __subgroups: list['Group'] = []
+    __parts: list[Part] = []
+    __controls: list[Control] = None
+
+    def __init__(self, 
+                 id: str, 
+                 title: str, 
+                 subgroups: list['Group'], 
+                 controls: list[Control]) -> None:
+            
+            if not isinstance(id, str):
+                raise ValueError("Group ID must be a string")
+            self.__id = id
+
+            if not isinstance(title, str):
+                raise ValueError("Group title must be a string")
+            self.__title = title
+
+            if not isinstance(subgroups, list) or not all(isinstance(subgroup, Group) for subgroup in subgroups):
+                if isinstance(subgroups, Group):
+                    self.__subgroups = [subgroups]
+                else:
+                    raise ValueError("Subgroups must be a list of Group objects")
+            self.__subgroups = subgroups
+
+            if not isinstance(controls, list) or not all(isinstance(control, Control) for control in controls):
+                if isinstance(controls, Control):
+                    self.__controls = [controls]
+                else:
+                    raise ValueError("Controls must be a list of Control Objects")
+            self.__controls = controls
+    
+    @property
+    def id(self) -> str:
+        return self.__id
+    
+    @property
+    def title(self) -> str:
+        return self.__title
+    
+    @property
+    def subgroups(self) -> list:
+        return self.__subgroups
+    
+    @property
+    def controls(self) -> list[Control]:
+        return self.__controls
+
+    @property
+    def parts(self) -> list[Part]:
+        return self.__parts
+
+    @parts.setter
+    def parts(self, parts: list[Part]) -> None:
+        if not isinstance(parts, list) or not all(isinstance(part, Part) for part in parts):
+            if isinstance(parts, Group):
+                self.__parts = [parts]
+            else:
+                raise ValueError("Parts must be a list of Part objects")
+        self.__parts = parts
+
+    def add_part(self, part: Part) -> None:
+        if not isinstance(part, Part):
+            raise ValueError("Part must be a Part object")
+        self.__parts.append(part)
+
+    @property
+    def prop(self) -> dict:
+        return self.__prop
+
+    @prop.setter
+    def prop(self, **kwargs):
+        for kwarg, val in kwargs.items():
+            label = kwarg
+            context = val
+            if not isinstance(label, str) and not isinstance(context, str):
+                raise ValueError("Property label and context must be strings")
+            self.__prop[label] = context      
+
+
 
 class ControlCatalog(Element):
     """
@@ -122,6 +355,51 @@ class ControlCatalog(Element):
 
     Source: `OSCAL CATALOG <https://pages.nist.gov/OSCAL/resources/concepts/layer/control/catalog/>`
     """
+        
+    __metadata: Metadata = None
+    __groups: list[Group] = []
+    __controls: list[Control] = []
 
-    def __init__(self):
-        pass
+    def __init__(self, 
+                 metadata: Metadata,
+                 groups: list[Group],
+                 controls: list[Control]
+                 ):
+        
+        if not isinstance(metadata, Metadata):
+            raise ValueError("Metadata must be a Metadata object")
+        self.__metadata = metadata
+
+
+        if not isinstance(groups, list) or not all(isinstance(group, Group) for group in groups):
+            if isinstance(groups, Group):
+                self.__groups = [groups]
+            else:
+                raise ValueError("Controls must be a list of Control Objects")
+        self.__groups = groups
+
+        if not isinstance(controls, list) or not all(isinstance(control, Control) for control in controls):
+            if isinstance(controls, Control):
+                self.__controls = [controls]
+            else:
+                raise ValueError("Controls must be a list of Control Objects")
+        self.__controls = controls
+
+    @property
+    def metadata(self) -> Metadata:
+        return self.__metadata
+    
+    @property
+    def groups(self) -> list[Group]:
+        return self.__groups
+    
+    @property
+    def controls(self) -> list[Control]:
+        return self.__controls
+    
+    @groups.setter
+    def groups(self, group: Group):
+        if not isinstance(group, Group):
+            raise ValueError("Group must be a Group object")
+        self.__groups.append(group)
+        

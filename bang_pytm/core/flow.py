@@ -1,8 +1,13 @@
 from .component import Component
 from .element import Element
 
+
+
 class Flow(Component):
-    """A flow from a source to a destination"""
+    
+    """
+    A flow from a source to a destination
+    """
 
     __src: Element = None
     __dst: Element = None
@@ -18,14 +23,16 @@ class Flow(Component):
         multifactor_authentication: bool = True,
         **kwargs
     ):
-        """
-        authentication : 
 
-        """
-        self.src = self.__check_parent(src)
-        self.dst = self.__check_parent(dst)
+        # self.src = self.__check_parent(src)
+        # self.dst = self.__check_parent(dst)
+
+        self.src = src
+        self.dst = dst
+
         self.authentication = authentication
         self.multifactor_authentication = multifactor_authentication
+        
         if path == []:
             self.path = [src, dst]
         else:
@@ -38,6 +45,8 @@ class Flow(Component):
 
     @src.setter
     def src(self, elem: Element) -> None:
+        if not isinstance(elem, Element):
+            raise ValueError("Source element must be an Element object")
         self.__src = elem
 
     @property
@@ -46,6 +55,8 @@ class Flow(Component):
 
     @dst.setter
     def dst(self, elem: Element) -> None:
+        if not isinstance(elem, Element):
+            raise ValueError("Destination element must be an Element object")
         self.__dst = elem
 
     @property

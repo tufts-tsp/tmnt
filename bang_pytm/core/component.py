@@ -2,7 +2,7 @@ from .element import Element
 from .data import Data
 from .threat import Threat
 from .control import Control
-from typing import Dict, List
+
 
 
 class Component(Element):
@@ -13,15 +13,14 @@ class Component(Element):
     threat model), i.e. assets and flows.
     """
 
-    __controls: List[Control] = []
-    __threats: List[Threat] = []
-    __data: List[Data] = None
+    __controls: list[Control] = []
+    __threats: list[Threat] = []
+    __data: list[Data] = []
 
-    def __init__(self, name: str, desc: str = None, data: List[Data] = []) -> None:
-        if data != None and type(data) == list:
-            self.data = data
-        elif data!= None:
-            self.data = [data]
+    def __init__(self, name: str, desc: str = None, data_list: list[Data] = []) -> None:
+  
+        self.data = data_list
+
         super().__init__(name, desc)
 
     @property
@@ -29,10 +28,26 @@ class Component(Element):
         return self.__data
 
     @data.setter
-    def data(self, data: List[Data]) -> None:
-        self.__data = data
+    def data(self, val: list[Data]) -> None:
+        if not isinstance(val, list) or not all(isinstance(item, Data) for item in val):
+            raise ValueError("Value must be a list of Data objects")
+        self.__data = val
+    
+    def add_data(self, val: Data) -> None:
+
+        if not isinstance(val, Data):
+            raise ValueError("Value must be a Data object")
+        
+        self.__data.append(val)
 
     def remove_data(self, val: Data) -> None:
+
+        if val is None:
+            raise ValueError("No data value specified to remove")
+        
+        if not isinstance(val, Data):
+            raise ValueError("Value must be a Data object")
+        
         self.__data.remove(val)
 
     def add_data(self, val: Data) -> None:
