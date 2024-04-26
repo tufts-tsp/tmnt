@@ -32,3 +32,4 @@ update yaml/documentation
 - change description to desc
 - add_elem/remove_elem removed in component
 - required attributes for Control
+- added related attr for Control
