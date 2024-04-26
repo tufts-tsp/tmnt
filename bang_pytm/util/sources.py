@@ -51,7 +51,7 @@ def load_owasp_asvs() -> list:
                 related = [{"cweid": id.text} for id in related]
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
-                c = Control(id=id, title=title, description=desc)
+                c = Control(id=id, title=title, desc=desc)
                 results.append(c)
 
     return results

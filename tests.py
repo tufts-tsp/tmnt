@@ -298,7 +298,11 @@ class TestSources(unittest.TestCase):
 class TestIssue(unittest.TestCase):
     def setUp(self):
         self.issue = Issue("test_issue")
+    def test_empty_issue(self):
+        print(self.issue.consequences)
+        self.assertEqual(len(self.issue.consequences), 0)
     def test_add_remove_consequence(self):
+        self.assertEqual(len(self.issue.consequences), 0)
         self.issue.add_consequence("spoofing", "high")
         self.issue.remove_consequence(1)
         self.assertEqual(len(self.issue.consequences), 0)
@@ -311,6 +315,9 @@ class TestIssue(unittest.TestCase):
         self.issue.remove_consequence(4)
         self.issue.remove_consequence(2)
         self.assertEqual(len(self.issue.consequences), 2)
+        self.issue.remove_consequence(1)
+        self.issue.remove_consequence(3)
+        self.assertEqual(len(self.issue.consequences), 0)
     def tearDown(self) -> None:
         for c in self.issue.consequences:
             self.issue.remove_consequence(c["id"])
@@ -384,9 +391,9 @@ class TestActor(unittest.TestCase):
         return super().tearDown()
 
 class TestThreatlib(unittest.TestCase):
-    pytm_rules = Rules()
-    tm_components = [Asset("A"), Asset("B"), Process("C")]
-    findings = get_findings(tm_components, pytm_rules)
+    # pytm_rules = Rules()
+    # tm_components = [Asset("A"), Asset("B"), Process("C")]
+    # findings = get_findings(tm_components, pytm_rules)
     def setUp(self):
         self.rules = Rules()
         asset1 = Asset("A")
