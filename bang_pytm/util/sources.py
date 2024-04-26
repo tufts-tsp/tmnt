@@ -47,9 +47,11 @@ def load_owasp_asvs() -> list:
             for requirement in requirements: #Vx.x.x
                 sc = requirement.find('shortcode').text[1:]
                 desc = requirement.find("description").text
+                related = requirement.find_all("cwe")
+                related = [{"cweid": id.text} for id in related]
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
-                c = Control(id=id, title=title, desc=desc)
+                c = Control(id=id, title=title, desc=desc, related=related)
                 results.append(c)
 
     return results

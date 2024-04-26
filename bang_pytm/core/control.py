@@ -8,16 +8,19 @@ class Control(Element):
     __desc: str = None
     __assumptions: list = []
     __development_phase: list = []
+    __related: list = []
 
     def __init__(
             self, 
             id: str,
             title: str,
-            desc: str
+            desc: str,
+            related: list=[]
     ):
         self.__id = id
         self.__title = title
-        self.__desc = desc    
+        self.__desc = desc
+        self.__related = related
 
     @property
     def id(self) -> str:
@@ -103,6 +106,14 @@ class Control(Element):
             raise ValueError(err)
         self.__development_phase = phase
 
+    @property
+    def related(self) -> list:
+        """Issues related to the Control"""
+        return self.__related
+
+    @related.setter
+    def related(self, val: list) -> None:
+        self.__related = val
 
 class ControlCatalog(Element):
     """
