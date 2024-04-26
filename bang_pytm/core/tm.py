@@ -143,7 +143,7 @@ class TM:
 
     def find_related_attack_vectors(self, asset: Asset) -> list[list[Element]]:
 
-        if not isinstance(asset, (Asset, Actor)):
+        if not isinstance(asset, (Asset)):
             raise ValueError("Provided asset is not of type 'Asset' or 'Actor'")
         
         related_attack_vectors = []
@@ -185,7 +185,7 @@ class TM:
     def simulate_attack(self, component: Component):
 
         # print("Analyzing asset:", component)
-        if not isinstance(component, (Asset, Actor)):
+        if not isinstance(component, (Asset)):
             raise ValueError("Provided asset is not of type 'Asset' or 'Actor'")
         
         related_attacks = []
