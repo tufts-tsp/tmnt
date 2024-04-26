@@ -42,7 +42,6 @@ def load_owasp_asvs() -> list:
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
                 c = Control(id=id, title=title, desc="")
-                c = Control(id=id, title=title, desc="")
                 results.append(c)
             
             for requirement in requirements: #Vx.x.x
