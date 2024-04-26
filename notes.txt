@@ -10,9 +10,18 @@ testing
 - assert tests
 - clean up import logic
 
+sources load
+- there are some attributes in cwe.xml, capec.xml, and asvs.xml that are not used in the load functions in sources.py
+- there are some class attributes for Threat, Weakness, and Control that are not used in the load functions in sources.py
+
 other
 - rebase dev into main (main branch 2-3 commits ahead of dev)
 - type annotation for different python versions (generic list type works currently with python 3.11, but would be better to have lists of specific types)
-- there are some attributes in cwe.xml, capec.xml, and asvs.xml that are not used in the load functions in sources.py
-- there are some class attributes for Threat, Weakness, and Control that are not used in the load functions in sources.py
 - property getters/setters missing in various places
+
+update yaml/documentation
+- required_skills, required_resources in Threat should be lists of dicts, not strings
+- conditions in Weakness should be something else
+- mitigations is list of dict for weakness and list of str for threat
+- change description to desc
+- add_elem/remove_elem removed in component
