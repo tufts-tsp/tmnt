@@ -45,8 +45,8 @@ class Asset(Component):
     def __init__(
         self,
         name: str,
-        open_ports: list[int] = None,
-        trust_boundaries: list[Boundary] = None,
+        open_ports: list[int] = [],
+        trust_boundaries: list[Boundary] = [],
         machine: Machine = Machine.PHYSICAL,
         **kwargs
     ):

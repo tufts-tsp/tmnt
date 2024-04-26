@@ -17,9 +17,9 @@ class Component(Element):
     __threats: list[Threat] = []
     __data: list[Data] = []
 
-    def __init__(self, name: str, desc: str = None, data_list: list[Data] = None) -> None:
+    def __init__(self, name: str, desc: str = None, data_list: list[Data] = []) -> None:
   
-        self.data = data_list or []
+        self.data = data_list
 
         super().__init__(name, desc)
 
@@ -50,6 +50,9 @@ class Component(Element):
         
         self.__data.remove(val)
 
+    def add_data(self, val: Data) -> None:
+        self.__data.append(val)
+
     @property
     def threats(self) -> list[Threat]:
         """
@@ -61,20 +64,10 @@ class Component(Element):
         return self.__threats
 
     def add_threat(self, threat: Threat) -> None:
-
-        if not isinstance(threat, Threat):
-            raise ValueError("Threat must be a Threat object")
-        self.__add_elem(threat, self.__threats)
+        self.__threats.append(threat)
 
     def remove_threat(self, threat: Threat) -> None:
-
-        if threat is None:
-            raise ValueError("No Threat specified to remove")
-        
-        if not isinstance(threat, Threat):
-            raise ValueError("Threat must be a Threat object")
-        
-        self.__remove_elem(threat, self.__threats)
+        self.__threats.remove(threat)
 
     @property
     def controls(self) -> list[Control]:
@@ -87,18 +80,7 @@ class Component(Element):
         return self.__controls
 
     def add_control(self, control: Control) -> None:
-        
-        if not isinstance(control, Control):
-            raise ValueError("Control must be a Control object")
-        
-        self.__add_elem(control, self.__controls)
+        self.__controls.append(control)
 
     def remove_control(self, control: Control) -> None:
-
-        if control is None:
-            raise ValueError("No Control specified to remove")
-        
-        if not isinstance(control, Control):
-            raise ValueError("Control must be a Control object")
-        
-        self.__remove_elem(control, self.__controls)
+        self.__controls.remove(control)

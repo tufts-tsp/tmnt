@@ -5,8 +5,7 @@ python -m pipreqs.pipreqs
 pip install requirements.txt
 
 ## Usage
-import bang_pytm.util.sources
-sources.load_capec() # etc
+import bang_pytm
 
 ### Parent / Child
 

@@ -72,11 +72,14 @@ class Control(Element):
     __parts: list[Part] = []
     __assumptions: list = []
     __development_phase: list = []
+    __related: list = []
 
     def __init__(
             self, 
             id: str,
             title: str,
+            desc: str=None,
+            related: list=[]
     ):
         
         if not isinstance(id, str):
@@ -86,6 +89,8 @@ class Control(Element):
         if not isinstance(title, str):
             raise ValueError("Control title must be a string")
         self.__title = title
+        self.__desc = desc
+        self.__related = related
 
     @property
     def id(self) -> str:
