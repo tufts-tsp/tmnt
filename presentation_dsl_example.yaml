@@ -1,0 +1,71 @@
+assets:
+
+  - name: "Life Support/Monitoring Equipment"
+    type: "Asset"
+    security_property:
+      confidentiality: "HIGH"
+      integrity: "HIGH"
+      availability: "HIGH"
+    machine: "PHYSICAL"  
+    data:
+      - name: "Patient Monitoring Data"
+        is_pii: true
+        is_phi: true
+        format: "Digital"
+        is_credentials: false
+        lifetime: "For the duration of the surgery"
+
+actors:
+
+  - name: "Surgeon"
+    type: "Actor"
+    actor_type: "Individual"
+    physical_access: true
+    security_property:
+      confidentiality: "NONE"
+      integrity: "NONE"
+      availability: "NONE"
+
+
+flows:
+
+  - name: "Data Transfer from Life Support to Surgeon Workstation"
+    type: "Dataflow"
+    src: 
+      name: "Life Support/Monitoring Equipment"
+    dst: 
+      name: "Surgeon Workstation"
+    port: "443"
+    protocol: "HTTPS"
+    authentication: "TLS"
+    multifactor_authentication: false
+
+  - name: "Surgical Procedure Execution Flow"
+    type: "Workflow"
+    src:
+      name: "Surgeon Workstation"
+    dst:
+      name: "Surgical Robot"
+    path:
+      - name: "Hospital Network"
+    authentication: "Certificate-based"
+    multifactor_authentication: true
+
+
+external_entities:
+
+  - name: "Remote Maintenance Provider"
+    type: "ExternalEntity"
+    security_property:
+      confidentiality: "HIGH"
+      integrity: "HIGH"
+      availability: "HIGH"
+    physical_access: false
+    machine: "VIRTUAL"
+    data:
+      - name: "Robot Maintenance Logs"
+        is_pii: false
+        is_phi: false
+        format: "Textual Log Files"
+        is_credentials: false
+        lifetime: "Retained according to maintenance schedule"

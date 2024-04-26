@@ -2,7 +2,7 @@ from .element import Element
 
 from bang_pytm.util.requirement import STRIDE, SecurityProperty, SafetyImpact
 from bang_pytm.util.cvss import CVSS
-
+from typing import Union
 
 class Issue(Element):
     """
@@ -197,7 +197,7 @@ class Issue(Element):
 
     def add_consequence(
         self,
-        scope: str | list,
+        scope: Union[str, list],
         impact: str,
         likelihood: str = None,
         note: str = None,
@@ -308,8 +308,8 @@ class Weakness(Issue):
         name: str,
         alt_name: str = None,
         desc: str = None,
-        mode_introduction: list = None,
-        detection_methods: list = None,
+        mode_introduction: list = [],
+        detection_methods: list = [],
         **kwargs,
     ) -> None:
         super().__init__(name, desc, **kwargs)
@@ -599,7 +599,11 @@ class Threat(Issue):
         technique : str, default None
             The techniques involved with this step.
         """
-        self.remove_step(order)
+        for step in self.__atack_steps:
+            if step.order == order:
+                self.remove_step(order)
+        
+
         self.__atack_steps.append(
             {
                 "order": order,
@@ -613,3 +617,4 @@ class Threat(Issue):
         for i in range(len(self.__atack_steps)):
             if self.__atack_steps[i]["order"] == order:
                 del self.__atack_steps[i]
+                break

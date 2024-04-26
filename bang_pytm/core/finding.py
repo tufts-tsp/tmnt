@@ -1,6 +1,7 @@
 from .component import Component
 from .control import Control
 from .threat import Issue
+from typing import Union
 
 from bang_pytm.util.requirement import SecurityProperty, SafetyImpact
 
@@ -40,9 +41,9 @@ class Finding:
 
     def __init__(
         self,
-        affected_components: Component | list,
-        issues: Issue | list,
-        controls: Control | list = None,
+        affected_components: Union[Component, list],
+        issues: Union[Issue, list],
+        controls: Union[Control, list] = None,
         relevance: str = None,
         likelihood: str = None,
         likelihood_event_occurence: str = None,
@@ -57,6 +58,7 @@ class Finding:
         risk: str = None,
         residual_risk: str = None,
     ) -> None:
+        
         self.affected_components = affected_components
         self.issues = issues
         self.controls = controls

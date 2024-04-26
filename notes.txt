@@ -1,4 +1,35 @@
-- github main branch ahead of dev
-- control doesn't use init 
-- attributes in xml and in class not in load functions
-- go over classes
+rules.py
+- TODO - store controls/conditions in some way to represent boolean expression, currently stored as a simple list 
+    - fix parse_pytm_threatlib
+    - fix Rule.mitigated_threat function
+- [INP17, SC05, AC22, DR01, DS06] don't have a capec, only cwe
+- find somewhere to put get_findings.py
+
+tests.py
+- test remaining classes
+- test threat lib - weird errors adding controls in unit testing framework
+- test setters, inits
+- clean up import logic
+
+sources.py
+- there are some attributes in cwe.xml, capec.xml, and asvs.xml that are not used in the load functions in sources.py
+- there are some class attributes for Threat, Weakness, and Control that are not used in the load functions in sources.py
+- related should return objects instead of strings/dicts
+- capec attack steps
+- cwe conditions
+
+other
+- rebase dev into main (main branch 2-3 commits ahead of dev)
+- type annotation for different python versions (generic list type works currently with python 3.11, but would be better to have lists of specific types)
+- property getters/setters missing in various places
+- enforce unique controls, implement control catalog
+- remove_introduction, remove_detection_method in Weakness
+
+update yaml/documentation
+- required_skills, required_resources in Threat should be lists of dicts, not strings
+- conditions in Weakness should be something else
+- mitigations is list of dict for weakness and list of str for threat
+- change description to desc
+- add_elem/remove_elem removed in component
+- required attributes for Control
+- added related attr for Control
