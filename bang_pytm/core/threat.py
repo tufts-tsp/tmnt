@@ -308,8 +308,8 @@ class Weakness(Issue):
         name: str,
         alt_name: str = None,
         desc: str = None,
-        mode_introduction: list = None,
-        detection_methods: list = None,
+        mode_introduction: list = [],
+        detection_methods: list = [],
         **kwargs,
     ) -> None:
         super().__init__(name, desc, **kwargs)
@@ -613,3 +613,4 @@ class Threat(Issue):
         for i in range(len(self.__atack_steps)):
             if self.__atack_steps[i]["order"] == order:
                 del self.__atack_steps[i]
+                break

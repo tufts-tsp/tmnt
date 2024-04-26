@@ -64,20 +64,24 @@ class Rules(Engine):
                     if c.meta["ref_id"] == "CAPEC-" + capec_id:
                         threat = c
             else:
-                threat = None
+                threat = Issue(d["description"])
 
             # get controls
-            controls_list = re.findall('target\.controls\.(\w*) is (True|False)', d["condition"])
+            controls_strs = re.findall('target\.controls\.(\w*) is (True|False)', d["condition"]) #pretty sure it's always False
             controls_list_2 = re.findall('target\.controls\.(\w*)', d["condition"])
+
+            controls_list = []
+            for i, c in enumerate(controls_strs):
+                controls_list.append(Control(id=i, title=c[0]))
             
             # TODO - Currently stores controls as a regular list, ignoring logical relationships
             # EXAMPLE EXPRESSION: s = "(target.hasDataLeaks() or any(d.isCredentials or d.isPII for d in target.data)) and (not target.controls.isEncrypted or (not target.isResponse and any(d.isStored and d.isDestEncryptedAtRest for d in target.data)) or (target.isResponse and any(d.isStored and d.isSourceEncryptedAtRest for d in target.data)))"
             # "condition": "target.usesEnvironmentVariables is True and target.controls.sanitizesInput is False and target.controls.checksInputBounds is False"
-            control_conditions = re.findall('(and|or)', d["condition"])
-            filtered_control_conditions = []
-            for i in range(len(controls_list) - 1):
-                if control_conditions[i] in ['and', 'or']:
-                    filtered_control_conditions.append(control_conditions[i])
+            # control_conditions = re.findall('(and|or)', d["condition"])
+            # filtered_control_conditions = []
+            # for i in range(len(controls_list) - 1):
+            #     if control_conditions[i] in ['and', 'or']:
+            #         filtered_control_conditions.append(control_conditions[i])
             
             # create separate rules object for each target
             for t in d['target']:
@@ -141,7 +145,7 @@ class Rule():
         applied_controls = []
         not_applied_controls = []
         for control in self.controls:
-            if control[0] in [c.name for c in component.controls]:
+            if control.title in [x.title for x in component.controls]:
                 applied_controls.append(control)
             else:
                 not_applied_controls.append(control)

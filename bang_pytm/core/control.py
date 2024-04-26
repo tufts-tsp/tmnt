@@ -14,7 +14,7 @@ class Control(Element):
             self, 
             id: str,
             title: str,
-            desc: str,
+            desc: str=None,
             related: list=[]
     ):
         self.__id = id
