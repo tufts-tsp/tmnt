@@ -42,14 +42,17 @@ def load_owasp_asvs() -> list:
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
                 c = Control(id=id, title=title, desc="")
+                c = Control(id=id, title=title, desc="")
                 results.append(c)
             
             for requirement in requirements: #Vx.x.x
                 sc = requirement.find('shortcode').text[1:]
                 desc = requirement.find("description").text
+                related = requirement.find_all("cwe")
+                related = [{"cweid": id.text} for id in related]
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
-                c = Control(id=id, title=title, desc=desc)
+                c = Control(id=id, title=title, description=desc)
                 results.append(c)
 
     return results
@@ -74,7 +77,7 @@ def load_capec() -> list:
                 # class attrs not used - threat_source_desc, avenue, attack_steps
                 # capec.xml not used - Categories, Views, Taxonomy_Mappings 
                 name=pattern.attrs["name"],
-                desc=pattern.find("description"),
+                desc=pattern.find("description").text,
                 prerequisites=[
                     val.text for val in pattern.find_all("prerequisite")
                 ],
@@ -82,11 +85,12 @@ def load_capec() -> list:
                     val.text for val in pattern.find_all("mitigations")
                 ],
                 ref_id="CAPEC-" + pattern.attrs["id"],
-                long_desc=pattern.find("extended_description"),
+                long_desc= __get_text_val(
+                    pattern.find("extended_description")),
                 likelihood=__get_text_val(
-                    pattern.find("likelihood_of_attack")
-                ),
-                severity=__get_text_val(pattern.find("typical_severity")),
+                    pattern.find("likelihood_of_attack")),
+                severity=__get_text_val(
+                    pattern.find("typical_severity")),
                 related=[
                     __get_related_capec(related)
                     for related in pattern.find_all("related_attack_pattern")
@@ -135,8 +139,8 @@ def load_cwes() -> list:
                 alt_name=[
                     term.text for term in weakness.find_all("alternate_term")
                 ],
-                desc=weakness.find("description"),
-                long_desc=weakness.find("extended_description"),
+                desc=weakness.find("description").text,
+                long_desc=__get_text_val(weakness.find("extended_description")),
                 mode_introduction=[
                     intro.find("phase").text
                     for intro in weakness.find_all("introduction")
@@ -190,7 +194,7 @@ def load_json(fn: str, fpath: str = None) -> list:
 
 def __get_references(references, ref):
     if references == None:
-        return None
+        return []
     references = references.find_all("Reference")
     return [__find_reference(r, ref) for r in references]
 
@@ -244,7 +248,7 @@ def __get_related_cwes(related):
 
 def __get_text_val(txt):
     if txt == None:
-        return None
+        return ""
     return txt.text
 
 
@@ -283,7 +287,7 @@ def __get_related_capec(related):
 
 def __get_conditions(conditions):
     if conditions == None:
-        return None
+        return []
     results = [__get_applicable(child) for child in conditions.children]
     return [res for res in results if res != None]
 
@@ -305,14 +309,14 @@ def __get_cves(cves):
     if cves == None:
         return []
     return [
-        ex.find("reference").text.strip("\n")
+        {"cveid":ex.find("reference").text.strip("\n")}
         for ex in cves.find_all("observed_example")
     ]
 
 
 def __get_mitigations(mitigations):
     if mitigations == None:
-        return None
+        return []
     results = [
         __get_children(mitigation)
         for mitigation in mitigations.find_all("mitigation")
@@ -322,7 +326,7 @@ def __get_mitigations(mitigations):
 
 def __get_detection(mthds):
     if mthds == None:
-        return None
+        return []
     results = [
         __get_children(mthd) for mthd in mthds.find_all("detection_method")
     ]
@@ -333,7 +337,9 @@ def __get_capec(threats):
     if threats == None:
         return []
     threats = threats.find_all("related_attack_pattern")
-    return ["CAPEC-" + threat.attrs["capec_id"] for threat in threats]
+    # return ["CAPEC-" + threat.attrs["capec_id"] for threat in threats]
+    return [__get_related_capec(threat) for threat in threats]
+    
 
 
 ################################# ASVS HELPERS #################################

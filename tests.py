@@ -2,7 +2,14 @@ import unittest
 
 from bang_pytm.core.tm import TM
 from bang_pytm.core.component import Component
+from bang_pytm.core.asset import Asset, ExternalEntity, Datastore, Process
+from bang_pytm.core.control import Control, ControlCatalog
+from bang_pytm.core.actor import Actor
+from bang_pytm.core.flow import DataFlow
+from bang_pytm.core.threat import Issue, Threat, Weakness, Vulnerability
+from bang_pytm.core.finding import Finding
 from bang_pytm.core.element import Element
+from bang_pytm.engine.rules import Rules, Rule
 from bang_pytm.core.data import Data
 from bang_pytm.core.asset import Asset
 from bang_pytm.core.asset import ExternalEntity
@@ -10,6 +17,7 @@ from bang_pytm.core.asset import Process
 from bang_pytm.core.asset import Datastore
 from bang_pytm.core.flow import Flow
 from bang_pytm.util.sources import *
+from bang_pytm.util.get_findings import *
 
 class TestTM(unittest.TestCase):
 
@@ -31,11 +39,9 @@ class TestTM(unittest.TestCase):
 
         self.tm.add_component(component1)
         component_list = self.tm.components
-        print(component_list)
 
         self.tm.remove_component(component1)
         component_list = self.tm.components
-        print(component_list) 
 
     def tearDown(self):
         self.tm.reset()
@@ -108,15 +114,6 @@ class TestElement(unittest.TestCase):
         #    elem1.add_child(elem2)
 
     
-class TestSources(unittest.TestCase):
-    def test_load_asvs(self):
-        asvs = load_owasp_asvs()
-        # assertEqual
-    def test_load_capec(self):
-        capec = load_capec()
-    def test_load_cwes(self):
-        cwes = load_cwes()
-
 class TestComponent(unittest.TestCase):
     def setUp(self):
         self.component = Component(
@@ -131,6 +128,7 @@ class TestComponent(unittest.TestCase):
         self.assertEqual(len(self.component.data), 0)
         
     def test_add_control(self):
+        control = Control(id="1", title="Test", desc="Description")
         control = Control(id="1", title="Test", desc="Description")
         self.component.add_control(control)
 
