@@ -1,7 +1,7 @@
-﻿bang\_pytm.util.requirement.STRIDE
-==================================
+﻿tmnt\_dsl.core.requirement.STRIDE
+=================================
 
-.. currentmodule:: bang_pytm.util.requirement
+.. currentmodule:: tmnt_dsl.core.requirement
 
 .. autoclass:: STRIDE
 
@@ -25,6 +25,7 @@
    
       ~STRIDE.denial_of_service
       ~STRIDE.elevation_of_privilege
+      ~STRIDE.info
       ~STRIDE.information_disclosure
       ~STRIDE.repudiation
       ~STRIDE.spoofing

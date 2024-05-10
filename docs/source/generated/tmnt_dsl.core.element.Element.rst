@@ -1,7 +1,7 @@
-﻿bang\_pytm.core.element.Element
-===============================
+﻿tmnt\_dsl.core.element.Element
+==============================
 
-.. currentmodule:: bang_pytm.core.element
+.. currentmodule:: tmnt_dsl.core.element
 
 .. autoclass:: Element
 
@@ -15,7 +15,6 @@
    
       ~Element.__init__
       ~Element.add_child
-      ~Element.add_parent
       ~Element.remove_child
       ~Element.remove_parent
    
@@ -28,9 +27,10 @@
    .. autosummary::
    
       ~Element.children
-      ~Element.description
+      ~Element.desc
       ~Element.eid
       ~Element.name
       ~Element.parent
+      ~Element.security_property
    
    

@@ -12,7 +12,7 @@ sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = '!pytm'
+project = 'Threat Modeling Naturally Tool - DSL'
 copyright = '2023, Tufts Security & Privacy Lab'
 author = 'Tufts Security & Privacy Lab'
 release = '0.0.0'

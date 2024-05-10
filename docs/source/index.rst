@@ -1,20 +1,20 @@
-.. !pytm documentation master file, created by
+.. tmnt_dsl documentation master file, created by
    sphinx-quickstart on Wed Dec 27 17:26:39 2023.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to !pytm's documentation!
-=================================
+Welcome to TMNT DSL's documentation!
+====================================
 
-**!pytm** (bang pie tee em) is a domain specific language for building threat 
-models in a natural fashion. 
+**TMNT DSL** is a domain specific language for building threat
+models in a natural fashion.
 
 Check out the :doc:`usage` section for further information.
 
 .. note::
 
    This project is currently being developed by the Tufts Security & Privacy Lab
-   in conjunction with a Tufts Computer Science senior capstone project.
+   with help from a Tufts Computer Science senior capstone project.
 
 Contents
 --------

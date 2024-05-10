@@ -1,7 +1,7 @@
-﻿bang\_pytm.util.requirement.SecurityProperty
-============================================
+﻿tmnt\_dsl.core.requirement.SecurityProperty
+===========================================
 
-.. currentmodule:: bang_pytm.util.requirement
+.. currentmodule:: tmnt_dsl.core.requirement
 
 .. autoclass:: SecurityProperty
 
@@ -27,6 +27,7 @@
       ~SecurityProperty.authorization
       ~SecurityProperty.availability
       ~SecurityProperty.confidentiality
+      ~SecurityProperty.info
       ~SecurityProperty.integrity
       ~SecurityProperty.non_repudiation
    
