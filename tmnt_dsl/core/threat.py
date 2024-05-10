@@ -1,7 +1,7 @@
 from .element import Element
 
-from bang_pytm.util.requirement import STRIDE, SecurityProperty, SafetyImpact
-from bang_pytm.util.cvss import CVSS
+from tmnt_dsl.util.requirement import STRIDE, SecurityProperty, SafetyImpact
+from tmnt_dsl.util.cvss import CVSS
 from typing import Union
 
 
@@ -53,7 +53,7 @@ class Issue(Element):
         Consequences associated with this issue. If a consequence is added it
         must be a list of dictionaries. The following keys are required: `scope`
         `impact`. And the following are optional: `likelihood` and `note`. See
-        :func:`~bang_pytm.core.Issue.consequences` for more information.
+        :func:`~tmnt_dsl.core.Issue.consequences` for more information.
     """
 
     __meta_data: dict = {}
@@ -166,10 +166,10 @@ class Issue(Element):
             associated threat type for the security property that is violated.
             In this case specifying which parts of STRIDE apply for the
             specified consequence. This assignment will be applied to a
-            `bang_pytm.util.STRIDE` object. Valid values are: `spoofing`,
+            `tmnt_dsl.util.STRIDE` object. Valid values are: `spoofing`,
             `tampering`, `repudiation`, `information_disclosure`,
             `denial_of_service`, `elevation_of_privilege`. See
-            :func:`~bang_pytm.util.STRIDE` for more information.
+            :func:`~tmnt_dsl.util.STRIDE` for more information.
         impact : str
             A description of the impact/outcome from this consequence, i.e. when
             the specified STRIDE categories apply. Impact describes the
@@ -298,7 +298,7 @@ class Weakness(Issue):
         Source: DetectionMethodsType
         `MITRE CWE <https://cwe.mitre.org/data/xsd/cwe_schema_latest.xsd>`
     **kwargs
-        See :func:`~bang_pytm.core.Issue`.
+        See :func:`~tmnt_dsl.core.Issue`.
     """
 
     __mode_introduction: list = []
@@ -418,14 +418,14 @@ class Threat(Issue):
         separate avenue represents varying levels of implied trust and attack
         surface. Options are: `Remote`, `Limited Remote`, `Local`, `Physical`.
         More information on these options, as well as additional options can be
-        found in See :func:`~bang_pytm.core.Threat.threat_source`.
+        found in See :func:`~tmnt_dsl.core.Threat.threat_source`.
 
         Source: NIST Vulnerability Data Ontology
     attack_steps : list, default []
         List of steps associated with the threat, this generally only applies to
         attack patterns, such as those given in MITRE CAPEC.
     **kwargs
-        See :func:`~bang_pytm.core.Issue`.
+        See :func:`~tmnt_dsl.core.Issue`.
     """
 
     __threat_source: dict = {}

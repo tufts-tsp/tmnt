@@ -1,16 +1,16 @@
 import unittest
 
-from bang_pytm.core.tm import TM
-from bang_pytm.core.boundary import Boundary
-from bang_pytm.core.actor import Actor
-from bang_pytm.core.asset import (
+from tmnt_dsl.core.tm import TM
+from tmnt_dsl.core.boundary import Boundary
+from tmnt_dsl.core.actor import Actor
+from tmnt_dsl.core.asset import (
     Asset,
     Process,
     Datastore,
     ExternalEntity,
     DATASTORE_TYPE,
 )
-from bang_pytm.core.flow import DataFlow
+from tmnt_dsl.core.flow import DataFlow
 
 
 class TestInsulinDeliveryDeviceExample(unittest.TestCase):

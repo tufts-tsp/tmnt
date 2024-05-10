@@ -1,5 +1,5 @@
 import yaml
-from bang_pytm.core.control import Control, ControlCatalog, Part, Metadata
+from tmnt_dsl.core.control import Control, ControlCatalog, Part, Metadata
 
 
 class OSCALParser:

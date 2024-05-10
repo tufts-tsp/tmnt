@@ -1,23 +1,23 @@
 import unittest
 
-from bang_pytm.core.tm import TM
-from bang_pytm.core.component import Component
-from bang_pytm.core.asset import Asset, ExternalEntity, Datastore, Process
-from bang_pytm.core.control import Control, ControlCatalog
-from bang_pytm.core.actor import Actor
-from bang_pytm.core.flow import DataFlow
-from bang_pytm.core.threat import Issue, Threat, Weakness, Vulnerability
-from bang_pytm.core.finding import Finding
-from bang_pytm.core.element import Element
-from bang_pytm.engine.rules import Rules, Rule
-from bang_pytm.core.data import Data
-from bang_pytm.core.asset import Asset
-from bang_pytm.core.asset import ExternalEntity
-from bang_pytm.core.asset import Process
-from bang_pytm.core.asset import Datastore
-from bang_pytm.core.flow import Flow
-from bang_pytm.util.sources import *
-from bang_pytm.util.get_findings import *
+from tmnt_dsl.core.tm import TM
+from tmnt_dsl.core.component import Component
+from tmnt_dsl.core.asset import Asset, ExternalEntity, Datastore, Process
+from tmnt_dsl.core.control import Control, ControlCatalog
+from tmnt_dsl.core.actor import Actor
+from tmnt_dsl.core.flow import DataFlow
+from tmnt_dsl.core.threat import Issue, Threat, Weakness, Vulnerability
+from tmnt_dsl.core.finding import Finding
+from tmnt_dsl.core.element import Element
+from tmnt_dsl.engine.rules import Rules, Rule
+from tmnt_dsl.core.data import Data
+from tmnt_dsl.core.asset import Asset
+from tmnt_dsl.core.asset import ExternalEntity
+from tmnt_dsl.core.asset import Process
+from tmnt_dsl.core.asset import Datastore
+from tmnt_dsl.core.flow import Flow
+from tmnt_dsl.util.sources import *
+from tmnt_dsl.util.get_findings import *
 
 
 class TestTM(unittest.TestCase):

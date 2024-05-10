@@ -1,14 +1,14 @@
 import json
 import re
 from .engine import Engine
-from bang_pytm.core.asset import Asset, ExternalEntity, Datastore, Process
-from bang_pytm.core.finding import Finding
-from bang_pytm.core.control import Control
-from bang_pytm.core.flow import DataFlow
-from bang_pytm.util import sources
-from bang_pytm.core.tm import TM
-from bang_pytm.core.component import Component
-from bang_pytm.core.threat import Issue
+from tmnt_dsl.core.asset import Asset, ExternalEntity, Datastore, Process
+from tmnt_dsl.core.finding import Finding
+from tmnt_dsl.core.control import Control
+from tmnt_dsl.core.flow import DataFlow
+from tmnt_dsl.util import sources
+from tmnt_dsl.core.tm import TM
+from tmnt_dsl.core.component import Component
+from tmnt_dsl.core.threat import Issue
 
 # from typing import List
 
@@ -52,7 +52,7 @@ class Rules(Engine):
     # Parses the rules found in the threats.json file of pytm, stores it as a list of Rules
     def parse_pytm_threatlib(self):
         with open(
-            "bang_pytm/util/pytm_threatlib.json", "r", encoding="utf8"
+            "tmnt_dsl/util/pytm_threatlib.json", "r", encoding="utf8"
         ) as f:
             data = json.load(f)
         capec = sources.load_capec()

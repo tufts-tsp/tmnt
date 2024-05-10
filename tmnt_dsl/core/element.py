@@ -1,6 +1,6 @@
 import uuid
 
-from bang_pytm.util import SecurityProperty
+from tmnt_dsl.util import SecurityProperty
 
 
 class Element(object):

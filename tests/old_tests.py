@@ -1,17 +1,17 @@
 """import unittest
 
-from bang_pytm.core.tm import TM
-from bang_pytm.core.component import Component
-from bang_pytm.core.element import Element
-from bang_pytm.util.oscal_parser import OSCALParser
+from tmnt_dsl.core.tm import TM
+from tmnt_dsl.core.component import Component
+from tmnt_dsl.core.element import Element
+from tmnt_dsl.util.oscal_parser import OSCALParser
 
 class TestControls(unittest.TestCase):
-    
+
     def setUp(self):
         pass
 
     def test_parse_metadata(self):
-        
+
 
 
 class TestTM(unittest.TestCase):
@@ -25,11 +25,11 @@ class TestTM(unittest.TestCase):
     def test_changing_name(self):
         with self.assertRaises(ValueError):
             self.tm.name = "test2_tm"
-    
+
     def test_adding_removing_component(self):
-        
+
         component_list = []
-        
+
         component1 = Component("test1")
 
         self.tm.add_component(component1)
@@ -38,13 +38,13 @@ class TestTM(unittest.TestCase):
 
         self.tm.remove_component(component1)
         component_list = self.tm.components
-        print(component_list) 
+        print(component_list)
 
     def tearDown(self):
         TM.reset()
 
 class TestElement(unittest.TestCase):
-    
+
     def test_parent_assignments(self):
 
         elem1 = Element("test1")
@@ -62,20 +62,20 @@ class TestElement(unittest.TestCase):
         # a parent node should not assign its child as a parent
         with self.assertRaises(AttributeError):
             elem2.parent = elem1
-        
+
         # a node should not overwrite its parent node without removing it
         with self.assertRaises(ValueError):
             elem1.parent = elem3
-        
+
         # grandparents should not be allowed
         with self.assertRaises(AttributeError):
             # elem1 is parent of elem3
             # elem2 is the parent of elem1
             # elem2 is the grandparent of elem3
             elem3.parent = elem1
-    
+
     def test_child_assignments(self):
-        
+
         elem1 = Element("test1")
         elem2 = Element("test2")
         elem3 = Element("test3")
@@ -88,7 +88,7 @@ class TestElement(unittest.TestCase):
         # self.__parent = elem1
         with self.assertRaises(ValueError):
             elem2.add_child(elem1)
-        
+
         # no grandparents/grandchildren allowed
         with self.assertRaises(AttributeError):
             elem3.add_child(elem1)

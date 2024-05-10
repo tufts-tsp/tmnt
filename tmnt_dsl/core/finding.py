@@ -3,7 +3,7 @@ from .control import Control
 from .threat import Issue
 from typing import Union
 
-from bang_pytm.util.requirement import SecurityProperty, SafetyImpact
+from tmnt_dsl.util.requirement import SecurityProperty, SafetyImpact
 
 
 class Finding:

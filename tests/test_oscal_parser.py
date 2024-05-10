@@ -1,7 +1,7 @@
 import unittest
 
-from bang_pytm.util.oscal_parser import OSCALParser
-from bang_pytm.core.control import Control, Part, ControlCatalog, Metadata
+from tmnt_dsl.util.oscal_parser import OSCALParser
+from tmnt_dsl.core.control import Control, Part, ControlCatalog, Metadata
 
 
 class TestOSCALParser(unittest.TestCase):

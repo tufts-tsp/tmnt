@@ -7,8 +7,8 @@ from bs4.element import NavigableString
 import os
 import json
 
-from bang_pytm.core.threat import Weakness, Threat
-from bang_pytm.core.control import Control
+from tmnt_dsl.core.threat import Weakness, Threat
+from tmnt_dsl.core.control import Control
 
 
 def load_owasp_asvs() -> list:

@@ -2,7 +2,7 @@ import random
 import logging
 from typing import List
 
-from bang_pytm.engine import Engine
+from tmnt_dsl.engine import Engine
 
 from .data import Data
 from .component import Component
