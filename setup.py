@@ -1,19 +1,20 @@
 from setuptools import setup
 
-setup(name='bang_pytm',
+setup(name='tmnt_dsl',
       version='0.0.0',
       description='Not PyTM',
       author='Tufts Security & Privacy Lab',
-      packages=['bang_pytm',
-                'bang_pytm.core',
-                'bang_pytm.engine',
-                'bang_pytm.util',
-                'bang_pytm.visual'],
+      packages=['tmnt_dsl',
+                'tmnt_dsl.core',
+                'tmnt_dsl.engine',
+                'tmnt_dsl.util',
+                'tmnt_dsl.visual'],
       package_data={
-          "bang_pytm.util":[
+          "tmnt_dsl.util":[
               "reference_data/cwe.xml",
               "reference_data/capec.xml",
               "reference_data/asvs.xml",
+              "reference_data/asvs_ref.json",
           ]
       }
       )
