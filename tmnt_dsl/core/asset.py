@@ -1,8 +1,8 @@
+from enum import Enum
+
 from .component import Component
 from .data import Data
 from .boundary import Boundary
-from enum import Enum
-
 
 class Machine(Enum):
 

@@ -1,7 +1,6 @@
 from .element import Element
 
-from tmnt_dsl.util.requirement import STRIDE, SecurityProperty, SafetyImpact
-from tmnt_dsl.util.cvss import CVSS
+from .requirement import STRIDE, SecurityProperty, SafetyImpact
 from typing import Union
 
 
@@ -57,7 +56,6 @@ class Issue(Element):
     """
 
     __meta_data: dict = {}
-    __cvss: CVSS = CVSS()
     __consequences = []
 
     def __init__(
@@ -138,15 +136,6 @@ class Issue(Element):
                 self.__meta_data[kwarg].append(val)
             else:
                 self.__meta_data[kwarg] = val
-
-    @property
-    def cvss(self) -> CVSS:
-        return self.__cvss
-
-    @cvss.setter
-    def cvss(self) -> None:
-        # TO DO
-        pass
 
     @property
     def consequences(self) -> list:

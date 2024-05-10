@@ -1,6 +1,6 @@
 import uuid
 
-from tmnt_dsl.util import SecurityProperty
+from .requirement import SecurityProperty
 
 
 class Element(object):

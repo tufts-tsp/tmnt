@@ -2,8 +2,6 @@ import random
 import logging
 from typing import List
 
-from tmnt_dsl.engine import Engine
-
 from .data import Data
 from .component import Component
 from .finding import Finding
@@ -42,9 +40,6 @@ class TM:
     @property
     def findings(self) -> List[Finding]:
         return self.findings
-
-    def generate_threats(self, engine: Engine):
-        pass
 
     def add_finding(self, finding: Finding = None):
         if not isinstance(finding, Finding):

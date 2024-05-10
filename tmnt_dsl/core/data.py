@@ -1,6 +1,6 @@
 from enum import Enum
-from .element import Element
 
+from .element import Element
 
 class Lifetime(Enum):
 
