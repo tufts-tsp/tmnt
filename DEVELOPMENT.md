@@ -90,3 +90,23 @@ This should not be attempted until all other requirements have been satisfied an
   1. For the other users to "observe" the threat model
   2. Actively edit the threat model
   3. Permissions (such as read/write/access) can be specified by an user
+
+#### Notes from End of Semester
+
+other
+
+- rebase dev into main (main branch 2-3 commits ahead of dev)
+- type annotation for different python versions (generic list type works currently with python 3.11, but would be better to have lists of specific types)
+- property getters/setters missing in various places
+- enforce unique controls, implement control catalog
+- remove_introduction, remove_detection_method in Weakness
+
+update yaml/documentation
+
+- required_skills, required_resources in Threat should be lists of dicts, not strings
+- conditions in Weakness should be something else
+- mitigations is list of dict for weakness and list of str for threat
+- change description to desc
+- add_elem/remove_elem removed in component
+- required attributes for Control
+- added related attr for Control
