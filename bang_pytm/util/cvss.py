@@ -4,6 +4,7 @@
 
 from decimal import Decimal
 
+
 class CVSS(object):
     def __init__(self) -> None:
         pass

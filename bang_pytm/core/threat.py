@@ -4,6 +4,7 @@ from bang_pytm.util.requirement import STRIDE, SecurityProperty, SafetyImpact
 from bang_pytm.util.cvss import CVSS
 from typing import Union
 
+
 class Issue(Element):
     """
     Parent of all different types of issues that have a potential negaitve
@@ -602,7 +603,6 @@ class Threat(Issue):
         for step in self.__atack_steps:
             if step.order == order:
                 self.remove_step(order)
-        
 
         self.__atack_steps.append(
             {

@@ -2,6 +2,7 @@ import uuid
 
 from bang_pytm.util import SecurityProperty
 
+
 class Element(object):
     """
     The basic primitive of a threat model, which can be an asset, control, flow,
@@ -33,7 +34,6 @@ class Element(object):
         name: str,
         desc: str = None,
     ):
-        
         if not isinstance(name, str):
             raise ValueError("Element Name must be a string")
         self.__name = name
@@ -89,7 +89,7 @@ class Element(object):
     @parent.setter
     def parent(self, parent: object) -> None:
         # If this assignment is from `add_child` it will be a tuple, and
-        # we shouldn't assign a child as this will cause issues - user could 
+        # we shouldn't assign a child as this will cause issues - user could
         # also specify using a tuple
         if type(parent) == tuple:
             assign_child = parent[1]
@@ -129,7 +129,9 @@ class Element(object):
 
     def add_child(self, child: object, assign_parent=True) -> None:
         if assign_parent and child.parent != []:
-            raise AttributeError("A different parent has already been assigned")
+            raise AttributeError(
+                "A different parent has already been assigned"
+            )
         elif assign_parent:
             child.parent = (self, False)
 
@@ -140,13 +142,15 @@ class Element(object):
             err = f"{child} is already assigned as the parent of {self}"
             raise AttributeError(err)
         elif child.children != []:
-            err = f"{child} has children, meaning {self} would be a grandparent"
-            raise AttributeError(err)            
+            err = (
+                f"{child} has children, meaning {self} would be a grandparent"
+            )
+            raise AttributeError(err)
         elif child in self.__children:
             err = f"{child} has already been assigned to {self}."
             raise AttributeError(err)
         self.__children.append(child)
-        
+
     def remove_child(self, child: object, remove_parent=True) -> None:
         if child not in self.__children:
             err = f"{child} has not been assigned to {self}."
@@ -158,9 +162,11 @@ class Element(object):
     @property
     def security_property(self) -> SecurityProperty:
         return self.__security_property
-    
+
     @security_property.setter
     def security_property(self, val: SecurityProperty) -> None:
         if not isinstance(val, SecurityProperty):
-            raise ValueError("Security Property must be a SecurityProperty object")
+            raise ValueError(
+                "Security Property must be a SecurityProperty object"
+            )
         self.__security_property = val

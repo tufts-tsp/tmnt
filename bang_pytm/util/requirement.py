@@ -494,7 +494,7 @@ class SafetyImpact(object):
             self.harm = harm
         if exploitability:
             self.exploitability = exploitability
-        self.meta = None # (**kwargs)
+        self.meta = None  # (**kwargs)
 
     @property
     def meta(self) -> dict:

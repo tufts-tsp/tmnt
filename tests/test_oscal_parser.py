@@ -3,10 +3,9 @@ import unittest
 from bang_pytm.util.oscal_parser import OSCALParser
 from bang_pytm.core.control import Control, Part, ControlCatalog, Metadata
 
+
 class TestOSCALParser(unittest.TestCase):
-
     def setUp(self):
-
         self.parser = OSCALParser()
         self.example_data = {
             "catalog": {
@@ -16,53 +15,76 @@ class TestOSCALParser(unittest.TestCase):
                     "published": "2021-01-01T12:00:00Z",
                     "last-modified": "2021-01-02T12:00:00Z",
                     "version": "2.0",
-                    "oscal-version": "1.0.0"
+                    "oscal-version": "1.0.0",
                 },
-                "groups": [{
-                    "id": "grp1",
-                    "title": "Top Group",
-                    "props": [{"name": "priority", "value": "high"}], 
-                    "groups": [{  
-                        "id": "grp1.1",
-                        "title": "Nested Group",
-                        "props": [{"name": "importance", "value": "critical"}],  
-                        "controls": [{
-                            "id": "ctrl1.1",
-                            "title": "Nested Control",
-                            "props": [{"name": "security_level", "value": "high"}], 
-                            "parts": [{
-                                "id": "part1.1",
-                                "name": "statement",
-                                "prose": "Statement of the nested control."
-                            }, {
-                                "id": "part1.2",
-                                "name": "fake_name",
-                                "prose": "Guidance for the nested control."
-                            }]
-                        }]
-                    }],
-                    "controls": [{  
-                        "id": "ctrl1",
-                        "title": "Top Control",
-                        "props": [{"name": "security_level", "value": "medium"}],  
-                        "parts": [{
-                            "id": "part1",
-                            "name": "statement",
-                            "prose": "Ensure compliance with policy."
-                        }, {
-                            "id": "part2",
-                            "name": "guidance",
-                            "prose": "Guidance on compliance."
-                        }]
-                    }]
-                }]
+                "groups": [
+                    {
+                        "id": "grp1",
+                        "title": "Top Group",
+                        "props": [{"name": "priority", "value": "high"}],
+                        "groups": [
+                            {
+                                "id": "grp1.1",
+                                "title": "Nested Group",
+                                "props": [
+                                    {"name": "importance", "value": "critical"}
+                                ],
+                                "controls": [
+                                    {
+                                        "id": "ctrl1.1",
+                                        "title": "Nested Control",
+                                        "props": [
+                                            {
+                                                "name": "security_level",
+                                                "value": "high",
+                                            }
+                                        ],
+                                        "parts": [
+                                            {
+                                                "id": "part1.1",
+                                                "name": "statement",
+                                                "prose": "Statement of the nested control.",
+                                            },
+                                            {
+                                                "id": "part1.2",
+                                                "name": "fake_name",
+                                                "prose": "Guidance for the nested control.",
+                                            },
+                                        ],
+                                    }
+                                ],
+                            }
+                        ],
+                        "controls": [
+                            {
+                                "id": "ctrl1",
+                                "title": "Top Control",
+                                "props": [
+                                    {
+                                        "name": "security_level",
+                                        "value": "medium",
+                                    }
+                                ],
+                                "parts": [
+                                    {
+                                        "id": "part1",
+                                        "name": "statement",
+                                        "prose": "Ensure compliance with policy.",
+                                    },
+                                    {
+                                        "id": "part2",
+                                        "name": "guidance",
+                                        "prose": "Guidance on compliance.",
+                                    },
+                                ],
+                            }
+                        ],
+                    }
+                ],
             }
         }
-    
-        
-    
-    def test_parse_metadata(self):
 
+    def test_parse_metadata(self):
         metadata_data = self.example_data["catalog"]["metadata"]
         metadata = self.parser.parse_metadata(metadata_data)
         title = metadata.get_title()
@@ -76,16 +98,18 @@ class TestOSCALParser(unittest.TestCase):
         self.assertEqual(last_modified, "2021-01-02T12:00:00Z")
         self.assertEqual(version, "2.0")
         self.assertEqual(oscal_version_text, "1.0.0")
-    
 
     def test_parse_part(self):
+        good_part_data = self.example_data["catalog"]["groups"][0]["groups"][
+            0
+        ]["controls"][0]["parts"][0]
+        faulty_part_data = self.example_data["catalog"]["groups"][0]["groups"][
+            0
+        ]["controls"][0]["parts"][1]
 
-        good_part_data = self.example_data["catalog"]["groups"][0]["groups"][0]["controls"][0]["parts"][0]
-        faulty_part_data = self.example_data["catalog"]["groups"][0]["groups"][0]["controls"][0]["parts"][1]
-        
         print("Part Data: " + str(good_part_data))
         print("Faulty Part Data: " + str(faulty_part_data))
-        
+
         good_part = self.parser.parse_part(good_part_data)
 
         good_part_name = good_part.part_name
@@ -101,7 +125,7 @@ class TestOSCALParser(unittest.TestCase):
             faulty_part = self.parser.parse_part(faulty_part_data)
 
     # def test_parse_control(self):
-        
+
     #     control_data = self.example_data["catalog"]["groups"][0]["controls"][0]
     #     control = self.parser.parse_control(control_data)
 
@@ -111,7 +135,6 @@ class TestOSCALParser(unittest.TestCase):
     #     control_parts = control.parts
 
     #     statement_part, guidance_part = control_parts[0], control_parts[1]
-        
 
     #     self.assertEqual(control_id, "ctrl1")
     #     self.assertEqual(control_title, "Top Control")

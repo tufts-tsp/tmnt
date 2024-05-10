@@ -2,9 +2,8 @@ from enum import Enum
 from .element import Element
 
 
-
 class Lifetime(Enum):
-    
+
     """
     needs documentation
     """
@@ -25,9 +24,8 @@ class Lifetime(Enum):
     HARDCODED = "HARDCODED"
 
 
-
 class Data(Element):
-    
+
     """
     needs documentation
     """
@@ -42,7 +40,6 @@ class Data(Element):
         lifetime: str = None,
         **kwargs
     ):
-
         if not isinstance(is_pii, bool):
             raise ValueError("Is PII must be a boolean")
         self.is_pii = is_pii

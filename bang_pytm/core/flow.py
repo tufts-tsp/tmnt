@@ -2,9 +2,8 @@ from .component import Component
 from .element import Element
 
 
-
 class Flow(Component):
-    
+
     """
     A flow from a source to a destination
     """
@@ -23,7 +22,6 @@ class Flow(Component):
         multifactor_authentication: bool = True,
         **kwargs
     ):
-
         # self.src = self.__check_parent(src)
         # self.dst = self.__check_parent(dst)
 
@@ -32,7 +30,7 @@ class Flow(Component):
 
         self.authentication = authentication
         self.multifactor_authentication = multifactor_authentication
-        
+
         if path == []:
             self.path = [src, dst]
         else:
@@ -75,14 +73,14 @@ class Flow(Component):
 
 
 class DataFlow(Flow):
-
-    def __init__(self, name: str, protocol: str = None, port: int = None, **kwargs) -> None:
+    def __init__(
+        self, name: str, protocol: str = None, port: int = None, **kwargs
+    ) -> None:
         self.protocol = protocol
         self.port = port
         super().__init__(name, **kwargs)
 
 
 class WorkFlow(Flow):
-
     def __init__(self, name, **kwargs):
         super().__init__(name, **kwargs)()

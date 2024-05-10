@@ -4,7 +4,6 @@ from .threat import Threat
 from .control import Control
 
 
-
 class Component(Element):
 
     """
@@ -17,8 +16,9 @@ class Component(Element):
     __threats: list[Threat] = []
     __data: list[Data] = []
 
-    def __init__(self, name: str, desc: str = None, data_list: list[Data] = []) -> None:
-  
+    def __init__(
+        self, name: str, desc: str = None, data_list: list[Data] = []
+    ) -> None:
         self.data = data_list
 
         super().__init__(name, desc)
@@ -29,25 +29,25 @@ class Component(Element):
 
     @data.setter
     def data(self, val: list[Data]) -> None:
-        if not isinstance(val, list) or not all(isinstance(item, Data) for item in val):
+        if not isinstance(val, list) or not all(
+            isinstance(item, Data) for item in val
+        ):
             raise ValueError("Value must be a list of Data objects")
         self.__data = val
-    
-    def add_data(self, val: Data) -> None:
 
+    def add_data(self, val: Data) -> None:
         if not isinstance(val, Data):
             raise ValueError("Value must be a Data object")
-        
+
         self.__data.append(val)
 
     def remove_data(self, val: Data) -> None:
-
         if val is None:
             raise ValueError("No data value specified to remove")
-        
+
         if not isinstance(val, Data):
             raise ValueError("Value must be a Data object")
-        
+
         self.__data.remove(val)
 
     def add_data(self, val: Data) -> None:
