@@ -1,21 +1,21 @@
 import unittest
 
-from tmnt_dsl.core.tm import TM
-from tmnt_dsl.core.component import Component
-from tmnt_dsl.core.asset import Asset, ExternalEntity, Datastore, Process
-from tmnt_dsl.core.control import Control, ControlCatalog
-from tmnt_dsl.core.actor import Actor
-from tmnt_dsl.core.flow import DataFlow
-from tmnt_dsl.core.threat import Issue, Threat, Weakness, Vulnerability
-from tmnt_dsl.core.finding import Finding
-from tmnt_dsl.core.element import Element
-from tmnt_dsl.core.data import Data
-from tmnt_dsl.core.asset import Asset
-from tmnt_dsl.core.asset import ExternalEntity
-from tmnt_dsl.core.asset import Process
-from tmnt_dsl.core.asset import Datastore
-from tmnt_dsl.core.flow import Flow
-from tmnt_dsl.util.get_findings import *
+from tmnt.core.tm import TM
+from tmnt.core.component import Component
+from tmnt.core.asset import Asset, ExternalEntity, Datastore, Process
+from tmnt.core.control import Control, ControlCatalog
+from tmnt.core.actor import Actor
+from tmnt.core.flow import DataFlow
+from tmnt.core.threat import Issue, Threat, Weakness, Vulnerability
+from tmnt.core.finding import Finding
+from tmnt.core.element import Element
+from tmnt.core.data import Data
+from tmnt.core.asset import Asset
+from tmnt.core.asset import ExternalEntity
+from tmnt.core.asset import Process
+from tmnt.core.asset import Datastore
+from tmnt.core.flow import Flow
+from tmnt.util.get_findings import *
 
 
 class TestTM(unittest.TestCase):

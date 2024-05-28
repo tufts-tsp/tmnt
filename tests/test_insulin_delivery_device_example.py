@@ -1,16 +1,16 @@
 import unittest
 
-from tmnt_dsl.core.tm import TM
-from tmnt_dsl.core.boundary import Boundary
-from tmnt_dsl.core.actor import Actor
-from tmnt_dsl.core.asset import (
+from tmnt.core.tm import TM
+from tmnt.core.boundary import Boundary
+from tmnt.core.actor import Actor
+from tmnt.core.asset import (
     Asset,
     Process,
     Datastore,
     ExternalEntity,
     DATASTORE_TYPE,
 )
-from tmnt_dsl.core.flow import DataFlow
+from tmnt.core.flow import DataFlow
 
 
 class TestInsulinDeliveryDeviceExample(unittest.TestCase):

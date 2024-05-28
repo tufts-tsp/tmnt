@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to TMNT DSL's documentation!
+Welcome to TMNT's documentation!
 ====================================
 
-**TMNT DSL** is a domain specific language for building threat
+**TMNT Core** is a domain specific language for building threat
 models in a natural fashion.
 
 Check out the :doc:`usage` section for further information.
