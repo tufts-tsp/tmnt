@@ -17,7 +17,7 @@ out_tm.description = "This is a sample threat model of a very simple system - a 
 out_tm.isOrdered = True
 out_tm.mergeResponses = True
 out_tm.assumptions = [
-"Here you can document a list of assumptions about the system",
+    "Here you can document a list of assumptions about the system",
 ]
 
 internet = Boundary("Internet")
@@ -80,19 +80,22 @@ user_to_web = Dataflow(user, web, "User enters comments (*)")
 user_to_web.protocol = "HTTP"
 user_to_web.dstPort = 80
 user_to_web.data = comments_in_text
-user_to_web.note = "This is a simple web app\nthat stores and retrieves user comments."
+user_to_web.note = (
+    "This is a simple web app\nthat stores and retrieves user comments."
+)
 
-query_insert = Data("Insert query with comments", classification=Classification.PUBLIC)
+query_insert = Data(
+    "Insert query with comments", classification=Classification.PUBLIC
+)
 web_to_db = Dataflow(web, db, "Insert query with comments")
 web_to_db.protocol = "MySQL"
 web_to_db.dstPort = 3306
 web_to_db.data = query_insert
-web_to_db.note = (
-    "Web server inserts user comments\ninto it's SQL query and stores them in the DB."
-)
+web_to_db.note = "Web server inserts user comments\ninto it's SQL query and stores them in the DB."
 
 comment_retrieved = Data(
-    "Web server retrieves comments from DB", classification=Classification.PUBLIC
+    "Web server retrieves comments from DB",
+    classification=Classification.PUBLIC,
 )
 db_to_web = Dataflow(db, web, "Retrieve comments")
 db_to_web.protocol = "MySQL"
@@ -101,15 +104,20 @@ db_to_web.data = comment_retrieved
 db_to_web.responseTo = web_to_db
 
 comment_to_show = Data(
-    "Web server shows comments to the end user", classifcation=Classification.PUBLIC
+    "Web server shows comments to the end user",
+    classifcation=Classification.PUBLIC,
 )
 web_to_user = Dataflow(web, user, "Show comments (*)")
 web_to_user.protocol = "HTTP"
 web_to_user.data = comment_to_show
 web_to_user.responseTo = user_to_web
 
-clear_op = Data("Serverless function clears DB", classification=Classification.PUBLIC)
-my_lambda_to_db = Dataflow(my_lambda, db, "Serverless function periodically cleans DB")
+clear_op = Data(
+    "Serverless function clears DB", classification=Classification.PUBLIC
+)
+my_lambda_to_db = Dataflow(
+    my_lambda, db, "Serverless function periodically cleans DB"
+)
 my_lambda_to_db.protocol = "MySQL"
 my_lambda_to_db.dstPort = 3306
 my_lambda_to_db.data = clear_op
@@ -124,4 +132,3 @@ userIdToken = Data(
 
 if __name__ == "__main__":
     out_tm.process()
-

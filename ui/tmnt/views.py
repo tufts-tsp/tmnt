@@ -5,15 +5,17 @@ import io
 import os
 import subprocess
 
+
 # base editor view
 def test(request):
     # generate() # generate random color cat picture
     return render(request, "tmnt/test.html")
 
+
 # view for uploading file
 def upload_file(request):
     # checks to see if request method is POST which means form is submitted
-    if request.method == 'POST':
+    if request.method == "POST":
         # request.POST has form data, request.FILE has file data
         fileform = UploadDFDFileForm(request.POST, request.FILES)
 
@@ -23,41 +25,55 @@ def upload_file(request):
 
             # if yes...
             # did they submit a file?
-            if 'inputFile' in request.FILES.keys():
+            if "inputFile" in request.FILES.keys():
                 # then get the file
                 print("DEBUG >>>> using FILE")
-                tm_file = request.FILES['inputFile'].file
+                tm_file = request.FILES["inputFile"].file
 
             # # or did they submit via the textbox?
             else:
                 # then get the text and treat it like a file
                 print("DEBUG >>>> using TEXT")
-                tm_file = io.BytesIO((request.POST['inputText']).replace('\r', '').encode('ascii'))
+                tm_file = io.BytesIO(
+                    (request.POST["inputText"])
+                    .replace("\r", "")
+                    .encode("ascii")
+                )
 
             # now save whatever they gave us to our own local file...
             DIR = os.path.dirname(__file__)
-            with open(os.path.join(DIR, 'scripts', 'tm.py'), "wb") as f:
+            with open(os.path.join(DIR, "scripts", "tm.py"), "wb") as f:
                 f.write(tm_file.read())
 
             # ...and run pytm on it to generate a threat model image
             # run /mnt/c/Users/miraj/Desktop/study/capstone/ntmt_github/pytm_web/scripts/tm.py --dfd | dot -Tpng -o sample.png
-            ps = subprocess.Popen((os.path.join(DIR, 'scripts', 'tm.py'), '--dfd'), stdout=subprocess.PIPE)
-            _  = subprocess.check_output(('dot', '-Tpng', '-o', os.path.join(DIR, 'static', 'out.png')), stdin=ps.stdout)
+            ps = subprocess.Popen(
+                (os.path.join(DIR, "scripts", "tm.py"), "--dfd"),
+                stdout=subprocess.PIPE,
+            )
+            _ = subprocess.check_output(
+                ("dot", "-Tpng", "-o", os.path.join(DIR, "static", "out.png")),
+                stdin=ps.stdout,
+            )
 
             # os.remove(os.path.join(DIR, 'static', 'out.png'))
 
             # then render the new page
-            return render(request, 'tmnt/dfd_viewer.html', {'fileform': fileform})
+            return render(
+                request, "tmnt/dfd_viewer.html", {"fileform": fileform}
+            )
 
     else:
-            # if request method is not POST, make an empty form
+        # if request method is not POST, make an empty form
         fileform = UploadDFDFileForm()
-            # renders template upload.html, passing in the form
-            # NEED TO IMPLEMENT upload.html TEMPLATE
-    return render(request, 'tmnt/dfd_viewer.html', {'fileform': fileform})
+        # renders template upload.html, passing in the form
+        # NEED TO IMPLEMENT upload.html TEMPLATE
+    return render(request, "tmnt/dfd_viewer.html", {"fileform": fileform})
+
 
 def asset_viewer(request):
     return render(request, "tmnt/asset_viewer.html")
+
 
 ################################################################################
 

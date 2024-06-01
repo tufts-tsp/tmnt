@@ -1,8 +1,18 @@
 import json
 import re
-from tmnt.core import Asset, ExternalEntity, Datastore, Process, Finding, Control, DataFlow, Issue
+from tmnt.core import (
+    Asset,
+    ExternalEntity,
+    Datastore,
+    Process,
+    Finding,
+    Control,
+    DataFlow,
+    Issue,
+)
 
 import sources
+
 # from typing import List
 
 
@@ -45,7 +55,9 @@ class Rules(object):
     # Parses the rules found in the threats.json file of pytm, stores it as a list of Rules
     def parse_pytm_threatlib(self):
         with open(
-            "/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/pytm_threatlib.json", "r", encoding="utf8"
+            "/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/pytm_threatlib.json",
+            "r",
+            encoding="utf8",
         ) as f:
             data = json.load(f)
         capec = sources.load_capec()

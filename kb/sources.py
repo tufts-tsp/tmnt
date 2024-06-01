@@ -175,7 +175,7 @@ def load_cwes() -> list:
 
 def load_xml(fn: str, fpath: str = None) -> bs:
     if fpath == None:
-        fpath = '/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/'
+        fpath = "/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/"
         # fpath = os.path.dirname(__file__) + "/reference_data/"
     with open(fpath + fn, "r", encoding="utf8") as f:
         data = f.read()
@@ -184,7 +184,7 @@ def load_xml(fn: str, fpath: str = None) -> bs:
 
 def load_json(fn: str, fpath: str = None) -> list:
     if fpath == None:
-        fpath = '/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/'
+        fpath = "/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/"
         # fpath = os.path.dirname(__file__) + "/reference_data/"
     with open(fpath + fn, "r") as f:
         data = json.load(f)

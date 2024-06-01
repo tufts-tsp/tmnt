@@ -2,8 +2,16 @@ import unittest
 
 from rules import Rules, Rule
 import sources
-from tmnt.core import Finding, Asset, Process,Datastore,ExternalEntity,DataFlow
+from tmnt.core import (
+    Finding,
+    Asset,
+    Process,
+    Datastore,
+    ExternalEntity,
+    DataFlow,
+)
 from tmnt.core.element import Element
+
 
 def get_findings(tm_components, threat_map):
     findings = []
@@ -12,6 +20,7 @@ def get_findings(tm_components, threat_map):
         finding = Finding(affected_components=component, issues=umt)
         findings.append(finding)
     return findings
+
 
 class TestThreatlib(unittest.TestCase):
     # pytm_rules = Rules()
@@ -57,6 +66,7 @@ class TestThreatlib(unittest.TestCase):
             for control in component.controls:
                 component.remove_control(control)
         return super().tearDown()
+
 
 class TestSources(unittest.TestCase):
     def test_load_asvs(self):
@@ -133,6 +143,7 @@ class TestSources(unittest.TestCase):
             self.assertEqual(type(w.meta["references"]), list)
             for r in w.meta["references"]:
                 self.assertEqual(type(r), dict)
+
 
 if __name__ == "__main__":
     unittest.main()
