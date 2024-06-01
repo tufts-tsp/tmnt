@@ -20,3 +20,14 @@ The rough system design looks like this:
 - Caroline Chin (2023 - 2024)
 
 ## Related Research from TSP
+
+```
+Ronald Thompson, Madeline McLaughlin, Carson Pow-
+ers, and Daniel Votipka. There are rabbit holes i want
+to go down that i’m not allowed to go down: An investi-
+gation of security expert threat modeling practices for
+medical devices. In 33rd USENIX Security Symposium
+(USENIX Security 24), Philadelphia, PA, August 2024.
+USENIX Association.
+```
+[Link](https://www.usenix.org/conference/usenixsecurity24/presentation/thompson)

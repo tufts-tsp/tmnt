@@ -1,4 +1,6 @@
 # Overview
+[Source](https://owasp.org/www-community/Threat_Modeling)
+
 Threat modeling works to identify, communicate, and understand threats and mitigations within the context of protecting something of value.
 
 A threat model is a structured representation of all the information that affects the security of an application. In essence, it is a view of the application and its environment through the lens of security.
@@ -17,11 +19,13 @@ Threat modeling is a process for capturing, organizing, and analyzing all of thi
 
 In 2020 a group of threat modeling practitioners, researchers and authors got together to write the [Threat Modeling Manifesto](https://www.threatmodelingmanifesto.org/) in order to “…share a distilled version of our collective threat modeling knowledge in a way that should inform, educate, and inspire other practitioners to adopt threat modeling as well as improve security and privacy during development”. The Manifesto contains values and principles connected to the practice and adoption of Threat Modeling, as well as identified patterns and anti-patterns to facilitate it.
 
-[Source](https://owasp.org/www-community/Threat_Modeling)
-
 # Four Questions
 
+Adam Shostack first introduced the Four Questions in his book, [Threat Modeling: Designing for Security](https://shostack.org/books/threat-modeling-book), and it has since been adopted by many organizations as well as serves as the foundation for [Threat Modeling Manifesto](https://www.threatmodelingmanifesto.org/).
+
 ## What are we working on?
+[Source](https://shostack.org/resources/threat-modeling#4steps)
+
 The first step is defining what you’re working on. For example, you might choose to model:
 
 - What you’re working on this sprint or improvement
@@ -33,9 +37,10 @@ The first step is defining what you’re working on. For example, you might choo
 
 When you decide what you’re working on, you also start to build models. Diagrams are models of what you’re working on. A lot of people confuse form and function here. What's important is creating data- and process-flow diagrams that help you share what’s in your head with the people around you.
 
-[Source](https://shostack.org/resources/threat-modeling#4steps)
 
 ### Specifics
+[Source](https://www.microsoft.com/en-us/securityengineering/sdl/practices/secure-by-design)
+
 **Identify use cases, scenarios, and assets** - An essential part of threat modeling and reviewing threat models is understanding what business functions or “use cases” the system has. Scenarios describing the sequence of steps for typical interactions with the system illustrate its intended purposes and workflows. They also describe the different roles of users and external systems that connect to it. The first step in threat modeling is to document the business functions the system performs and how users or other systems interact with it. Supplement textual descriptions of use cases and scenarios with flowcharts and UML sequence diagrams as needed. Whether you use formal documentation such as use cases and scenarios, or take a more informal approach, ensure you provide context that answers these questions:
 
 - What are the business functions of the system?
@@ -84,9 +89,9 @@ Trust boundaries are important to consider when threat modeling because calls th
 
 ![contoso cast diagram](https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/ContosoCastSimpleDFD?scl=1)
 
-[Source](https://www.microsoft.com/en-us/securityengineering/sdl/practices/secure-by-design)
-
 ## What can go wrong?
+[Source](https://shostack.org/resources/threat-modeling#4steps)
+
 Once you know what you’re working on, you can start thinking about all the different things that can go wrong. If you’re a glass-half-empty person, this is where you’ll shine. The glass-half full folks will creatively brainstorm.
 
 Some considerations include:
@@ -95,9 +100,10 @@ Some considerations include:
 - Can an unintended user get access to it?
 - Can someone use it in an unintended way?
 
-[Source](https://shostack.org/resources/threat-modeling#4steps)
 
 ### Specifics
+[Source](https://www.microsoft.com/en-us/securityengineering/sdl/practices/secure-by-design)
+
 **Identify the threats** – Threat modeling is most effective when performed by a group of people familiar with the system architecture and business functions who are prepared to think like attackers. Here are some tips for scheduling an effective threat modeling session:
 
 - Prepare the list of use cases/scenarios and, if possible, a first draft of DFDs in advance.
@@ -142,9 +148,9 @@ Record the threats you identify in your engineering team's work tracking system 
 - What the threat actor does
 - The consequences for affected assets and users
 
-[Source](https://www.microsoft.com/en-us/securityengineering/sdl/practices/secure-by-design)
-
 ## What are we going to do?
+[Source](https://shostack.org/resources/threat-modeling#4steps)
+
 The question “what can go wrong” helps you figure out the threats. When you look at what you’re going to do, you address each threat.
 
 Some types of actions include:
@@ -156,9 +162,10 @@ Some types of actions include:
 
 While these sound like, and are aligned to, risk management strategies, they are subtly different. Remember: threats are the things that can go wrong. Risk management focuses on the likelihood and impact of threats. You can use implicit agreement when choosing because it can be faster and easier than formal risk management approaches.
 
-[Source](https://shostack.org/resources/threat-modeling#4steps)
 
 ### Specifics
+[Source](https://www.microsoft.com/en-us/securityengineering/sdl/practices/secure-by-design)
+
 **Identify and track mitigations** - Secure Design Philosophy: When identifying mitigations, keep in mind that security is not “all or nothing”. A partial mitigation that raises the cost for an attacker, slows them down to give defenders time to detect them, or limits the scope of damage is much better than no mitigation at all. Think in terms of layered defenses. Attackers don’t just exploit a single vulnerability and stop there. They chain multiple vulnerabilities together, pivoting from one target system to the next until they achieve their objective (or get caught.) Each layered defense increases the likelihood that attackers will be blocked or detected. Also, assume that other layers’ security controls will be bypassed or disabled. This is the essence of the Assume Breach philosophy which results in a resilient set of layered defenses rather than relying solely on external defenses that, if bypassed, result in a major breach.
 
 Recommended Secure Design Practices:
@@ -175,17 +182,15 @@ Recommended Secure Design Practices:
 
 Threat modeling is not complete until you create work items to track your threat findings and the related development and testing tasks to mitigate them. Consider tagging the work items and writing queries so they are easy to find. A threat model provides the seeds for a good security test plan. Be sure to test that your mitigations work as intended and use automated testing when possible.
 
-[Source](https://www.microsoft.com/en-us/securityengineering/sdl/practices/secure-by-design)
-
 ## Did we do a good job?
+[Source](https://shostack.org/resources/threat-modeling#4steps)
+
 Finally, you need to validate your threat model by checking your work to make sure it’s as complete as possible.
 
 This step includes checking:
 - The model: make sure it matches what you built, starting with the diagram.
 - Each threat: review that you found all the possible threats and did the right thing with them.
 - Tests: ensure you have a good test to detect the problem, one that is in line with other software tests and the risks that failures expose.
-
-[Source](https://shostack.org/resources/threat-modeling#4steps)
 
 # Additional Resources
 
