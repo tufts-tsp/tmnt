@@ -5,7 +5,15 @@ setup(
     version="0.0.0",
     description="Threat Modeling Naturally Tool",
     author="Tufts Security & Privacy Lab",
-    packages=["tmnt","tmnt.dsl", "tmnt.dsl.core", "tmnt.dsl.util", "tmnt.dsl.visual","tmnt.kb","tmnt.engines"],
+    packages=[
+        "tmnt",
+        "tmnt.dsl",
+        "tmnt.dsl.core",
+        "tmnt.dsl.util",
+        "tmnt.dsl.visual",
+        "tmnt.kb",
+        "tmnt.engines",
+    ],
     package_data={
         "tmnt.kb": [
             "reference_data/cwe.xml",
