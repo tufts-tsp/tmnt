@@ -22,6 +22,10 @@ The rough system design looks like this:
 ## Related Research from TSP
 
 ```
-Ronald Thompson, Madeline McLaughlin, Carson Powers, and Daniel Votipka. "There are rabbit holes I want to go down that I'm not allowed to go down": An Investigation of Security Expert Threat Modeling Practices for Medical Devices. In 33rd USENIX Security Symposium (USENIX Security 24), Philadelphia, PA, August 2024. USENIX Association.
+Ronald Thompson, Madeline McLaughlin, Carson Powers, and Daniel Votipka.
+"There are rabbit holes I want to go down that I'm not allowed to go
+down": An Investigation of Security Expert Threat Modeling Practices for
+Medical Devices. In 33rd USENIX Security Symposium (USENIX Security 24),
+Philadelphia, PA, August 2024. USENIX Association.
 ```
 [Link](https://www.usenix.org/conference/usenixsecurity24/presentation/thompson)
