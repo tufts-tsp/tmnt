@@ -2,6 +2,8 @@
 
 You are able to run the app using Docker. You'll want to install [Docker Desktop](https://docs.docker.com/desktop/). Whenever you want to build a new version, i.e. you've made some changes to the app, you'll run `docker build -t "tmnt_ui" .`. This will create a Docker image for you to run the app. Then go to Docker Desktop and you should see the image there, and you can just hit run. You'll want to note the port you set as you'll then get to the app with that (for ease, recommend just doing 8000 which is what we are using right now on the container side). You'll then navigate to `http://localhost:8000/tmnt/asset_view/` to use the app.
 
+Additionally every time there's a push to dev, a new version of the UI will be available on Docker Hub as `zenw00kie/tmnt_ui:latest`.
+
 ## Capstone notes
 
 ### Run Server:
@@ -31,45 +33,3 @@ http://localhost:8000/tmnt/asset_view/
         * Select Technical and Safety Impact
         * Set Assessment Date and Assessor
         * Write any Notes
-
-### Future Work:
-1. What are we working on?
-    * Ability to add trust boundaries
-    * Ability to add workflows
-    * Ability to remove assets
-    * Improved handling of double-headed arrow (currently just decreases
-    x-value of label if a dataflow already exists in opposite direction)
-    * (nice to have) Descriptions of what each of the types of assets mean
-2. What could go wrong?
-    * Connect to backend to pull potential threats from the recommendation
-    engine
-    * Display descriptions of threats somewhere useful
-3. What are we doing about it?
-    * Connect to backend to pull potential controls from the recommendation
-    engine
-    * Display descriptions of controls somewhere useful
-4. Did we do a good enough job?
-    * (nice to have) Descriptions of each of the fields and what they mean
-5. Other elements
-    * Ability to pan view of DFD
-    * Ability to show badges on elements of DFD that have any of:
-        * Open threats
-        * Any threats or controls
-        * Suggested threats or controls
-    * Connection with backend
-    * Make bottom bar collapsible
-    * Ability to export DFD
-    * Ability to save threat modeling document and create new ones
-
-### Docker Info:
-run the docker image
-`docker run -it -p 8000:8000 mrtoaf/nltm_tool`
-
-single tag w/ latest
-`docker build -t mrtoaf/nltm_tool:latest -t mrtoaf/nltm_tool:latest .`
-
-multiple tags
-`docker build -t mrtoaf/nltm_tool:version-whatever -t mrtoaf/nltm_tool:latest .`
-
-pushing
-`docker push mrtoaf/nltm_tool:tagname`
