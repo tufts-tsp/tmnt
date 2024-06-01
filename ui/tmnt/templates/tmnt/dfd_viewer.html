@@ -1,0 +1,54 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'tmnt.css' %}">
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload File</title>
+<head>
+<body>
+
+    <div id = 'menuBar'>
+        <h2>Threat Modeling Naturally Tool</h2>
+        <div class="topnav">
+            <a href="#share">Share</a>
+            <a href="#export">Export</a>
+            <a href="#profile">Profile</a>
+        </div>
+    </div>
+
+
+
+    <div class="flex-parent">
+        <div class="flex-child">
+            <form method="post" class = "createDFD" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ fileform.as_p }}
+                <font size="-1">NOTE: Uploading a file will overwrite whatever is in your textbox!</font>
+                <br>
+                <br>
+                <button class = "formButtons" type="submit">Render it!</button>
+            </form>
+
+            <button class = "createDFD" id= "reset" onclick="hide_img()">Reset</button>
+
+        </div>
+        <div class="flex-child">
+
+            <img class = "dfd_dfdview" id="dfd_img" src="{% static 'out.png' %}" style = "display:inline">
+
+        </div>
+    </div>
+
+    <script>
+        function hide_img() {
+            document.getElementById("dfd_img").style.display = "none"
+        }
+    </script>
+
+
+
+
+</body>
+</html>

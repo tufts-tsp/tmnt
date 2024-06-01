@@ -1,0 +1,1088 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>TMNT Asset Viewer</title>
+<link rel="stylesheet" href="{% static 'tmnt.css' %}">
+<link rel="icon" href="{% static 'favicon.ico' %}">
+</head>
+
+
+
+<body>
+<!-- Top of screen menu bar -->
+<div id = 'menuBar'>
+    <h1>Threat Modeling Naturally Tool</h1>
+    <div class="topnav">
+        <a href="#share">Share</a>
+        <a href="#export">Export</a>
+        <a href="#profile">Profile</a>
+    </div>
+</div>
+
+<!-- Everything below the top of the screen -->
+<div class="lowerArea">
+    <!-- Left sidebar to switch between modes -->
+    <div class="modeBar">
+        <img src="{% static 'assets.png' %}" width="75%" style="padding-bottom: 10px;" onclick= "showSection('assets')">
+        <img src="{% static 'warnings.png' %}" width="75%" style="padding-bottom: 10px;" onclick="showSection('threats')">
+        <img src="{% static 'wrench.png' %}" width="75%" style="padding-bottom: 10px;"  onclick="showSection('controls')">
+        <img src="{% static 'magnify.png' %}" width="75%" style="padding-bottom: 10px;" onclick="showSection('findings')">
+    </div>
+
+    <!-- Area for actually adding assets/threats/controls/etc. -->
+    <div id="itemsBar" class="itemsBar">
+
+        <!-- Panel for adding assets -->
+        <div id="assets" class="items">
+            <h2>What are we working on?</h2>
+            <br>
+
+            <h3>Assets</h3>
+            <div class="button_container">
+                <button type="button" class="asset_button" onclick="addElement(this.innerHTML)">Actor</button>
+                <button type="button" class="asset_button" onclick="addElement(this.innerHTML)">Server</button>
+                <button type="button" class="asset_button" onclick="addElement(this.innerHTML)">Data Store</button>
+            </div>
+            <div class="button_container">
+                <button type="button" class="asset_button" onclick="addElement(this.innerHTML)">Lambda</button>
+                <button type="button" class="asset_button" onclick="addElement(this.innerHTML)">Process</button>
+                <button type="button" class="asset_button" onclick="addElement(this.innerHTML)">External Entity</button>
+            </div>
+            <br>
+
+            <h3>Dataflows</h3>
+
+            <label for="source_dropdown">Source:</label>
+            <select name="source_dropdown" class="dropdown" id="source_dropdown" disabled>
+                <option value="invalid">Add an asset first!</option>
+            </select>
+
+            <br>
+
+            <label for="target_dropdown">Target:</label>
+            <select name="target_dropdown" class="dropdown" id="target_dropdown" disabled>
+                <option value="invalid">Add an asset first!</option>
+            </select>
+
+            <br>
+            <button type="button" class="add_button" onclick="addDataFlow(this.innerHTML)" disabled>Add Data Flow</button>
+        </div>
+
+        <!-- Panel for adding threats -->
+        <div id="threats" class="items" style="display: none;">
+            <h2>What could go wrong?</h2>
+            <br>
+
+            <h3>Threats</h3>
+            <div>
+            <label for="threat_dropdown">Add to asset:</label>
+            <select name="threat_dropdown" id = "threat_dropdown" class="dropdown" disabled>
+                <option value="invalid">Add an asset first!</option>
+            </select>
+
+            <br>
+            <input class="threat_textbox" id="threat_title" type="text" placeholder="Threat title..." name="threat_title">
+            <br>
+
+            <input class="threat_textbox" id="threat_number" type="text" placeholder="(Optional) CVE/CWE number" name="threat_number">
+            <br>
+
+            <textarea class="threat_textbox" id="threat_description" name="threat_description" placeholder="(Optional) Threat description..."rows="4" cols="20"></textarea>
+
+            <button type="button" class="add_button" onClick = "addThreat()">Add Threat</button></div>
+            <br>
+            <div id = "added_threats">
+                <h3>Potential Threats</h3>
+                [[ placeholder text ]]
+            </div>
+        </div>
+
+        <!-- Panel for adding controls -->
+        <div id="controls" class="items" style="display: none;" >
+            <h2>What are we doing about it?</h2>
+            <br>
+
+            <h3>Controls</h3>
+            <div>
+            <label for="controls_dropdown">Apply to asset:</label>
+            <select name="controls_dropdown" id = "controls_dropdown" class="dropdown" disabled>
+                <option value="invalid">Add an asset first!</option>
+            </select>
+            <br>
+            <input class="controls_textbox" id="control_title" type="text" placeholder="Control title..." name="control_title">
+            <br>
+            <textarea class="controls_textbox" id="control_description" name="threat_description" placeholder="(Optional) Control description..."rows="4" cols="20"></textarea>
+
+            <button type="button" class="add_button" onClick="addControl()">Add Control</button></div>
+            <br>
+            <div id = "added_controls">
+                <h3>Potential Controls</h3>
+                [[ placeholder text ]]
+            </div>
+        </div>
+
+        <!-- Panel for adding and reviewing findings -->
+        <div id="findings" class="items" style="display: none;">
+            <h2>Did we do a good enough job?</h2>
+            <br>
+
+            <h3>Findings</h3>
+            <label for="findings_asset_dropdown">Review findings for:</label>
+            <select id="findings_asset_dropdown" name="asset_dropdown" onchange="updateThreatDropdown()" id="asset_dropdown" class="dropdown" disabled>
+                <option value="-1">Add an asset first!</option>
+            </select>
+            <br>
+            <label for="findings_threats_dropdown">Select a threat:</label>
+            <select name="findings_threats_dropdown" id="findings_threats_dropdown" onchange="updateFindings()" disabled>
+                <option value="-1">Add an asset first!</option>
+            </select>
+            <br><br>
+            <div id = "greyed_out">
+            <div id = "status">
+            <label for="status_dropdown">Status:</label>
+            <select name="status_dropdown" id="status_dropdown" disabled>
+                <option value="-1">Select an asset first!</option>
+            </select>
+            </div>
+            <b>Select mitigating controls:</b>
+            <br>
+            <div id="control_findings">
+                &ensp;<span style="color: grey">Select a threat first!</span>
+            </div>
+            <div id = "technical_impact">
+                <table>
+                    <tr>
+                        <th style="text-align: left;">Technical impact:</th>
+                        <th>None</th>
+                        <th>Low</th>
+                        <th>High</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">&emsp;Confidentiality</td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_confidentiality" value="none" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_confidentiality" value="low" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_confidentiality" value="high" disabled></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">&emsp;Integrity</td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_integrity" value="none" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_integrity" value="low" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_integrity" value="high" disabled></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">&emsp;Availability</td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_availability" value="none" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_availability" value="low" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_availability" value="high" disabled></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">&emsp;Authenticity</td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_authenticity" value="none" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_authenticity" value="low" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_authenticity" value="high" disabled></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">&emsp;Non-Repudiation</td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_nonrepudiation" value="none" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_nonrepudiation" value="low" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_nonrepudiation" value="high" disabled></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">&emsp;Authorization</td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_authorization" value="none" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_authorization" value="low" disabled></td>
+                        <td><input type="radio" class="tech_impact_radio" name="radio_authorization" value="high" disabled></td>
+                    </tr>
+
+                </table>
+
+            </div>
+            <div id = "safety_impact">
+                <b>Safety impact:</b>
+                <br>
+                &ensp;<label for="harm_dropdown">Harm:</label>
+                    <select id="harm_dropdown" class = "findings_dropdown" disabled>
+                    </select><br>
+                    &ensp;<label for="exploitability_dropdown">Exploitability:</label>
+                    <select id="exploitability_dropdown" class = "findings_dropdown" disabled>
+                    </select><br>
+                <div id= "datetime"> <b>Assessed on:</b> </div>
+                <b>Assessed by:</b> &nbsp<input id="assessor_textbox" type="text" placeholder="Name..." name="assessor">
+                <br>
+             </div>
+             <b>Notes:</b><br><textarea class="notes_textbox" id="notes_textbox" name="notes_textbox" placeholder="(Optional) Add Notes..."rows="4" cols="20"></textarea><br>
+
+             <br>
+             <button type="button" class="add_button" onclick="saveFinding()">Save</button disabled>
+            </div>
+        </div>
+    </div>
+
+    <!-- Area to display actual DFD -->
+    <div class="dfd_assetview" id="dfd">
+        <!-- svg is generated into here -->
+        <svg id="dfd_svg"></svg>
+        <!-- bottom bar is generated into here -->
+        <div class="dfd_detailsbar" id="bottom_bar">
+            <h2 style="color: gray">No asset selected...</h2>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript code starts here -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+    // Static variables
+    var nodes = [];
+    var links = [];
+    var svg;
+    var simulation;
+
+    // Create an SVG on page load
+    window.onload = function() {
+        var date = new Date();
+        var displayDate = date.toLocaleDateString();
+        var displayTime = date.toLocaleTimeString();
+        document.getElementById('datetime').innerHTML += displayDate + " " + displayTime;
+
+        let area = d3.select('.dfd_assetview').node().getBoundingClientRect();
+
+        svg = d3.select('#dfd_svg')
+        .attr("width", area.width)
+        .attr("height", area.height * 0.75); // TODO make this dynamic with bottom bar
+
+        // Tells d3 how to handle forces
+        simulation = d3.forceSimulation(nodes)
+        .force("x", d3.forceX(area.width / 2))
+        .force("y", d3.forceY(area.height / 2 * 0.75)) // TODO make this dynamic with bottom bar
+        .force("collide", d3.forceCollide().radius(100))
+        .on("tick", ticked);
+
+        // Creates a definition for an arrowhead, to be used by links later
+        svg.append("defs")
+        .append("marker")
+        .attr("id", "arrow")
+        .attr("markerWidth", 20)
+        .attr("markerHeight", 20)
+        .attr("refX", 20 - 1)
+        .attr("refY", 10)
+        .attr("orient", "auto")
+        .attr("markerUnits", "strokeWidth")
+        .append("path")
+        .attr("d", 'M 0,0 L 20,10 L 0,20 z')
+        .attr("fill", "#000");
+
+        // unselects node(s) if you click on canvas
+        svg.on("click", function (e) {
+            if (e.target.id == "dfd_svg") {
+                // Unselect all nodes
+                for (let node of nodes) {
+                    node.selected = false;
+                }
+                d3.selectAll(".asset")
+                    .style("stroke", "black")
+                    .style("stroke-width", "1");
+
+                document.getElementById("bottom_bar").innerHTML =
+                    "<h2 style=\"color: gray\">No asset selected...</h2>";
+            }
+        })
+    }
+
+    // On window resize, run the force simulation again
+    // so that elements don't ever get stuck off screen
+    window.onresize = function() {
+        // FIXME: Sometimes, AFTER resizing the screen, adding a new element
+        // causes it to get stuck in the corner with an error complaining that
+        // it is being transformed to NaN coordinates.
+        // This seems to fix itself after another resize or two, and also seems
+        // more common when the window is particularly small.
+        // Why is this happening!?!?
+
+        let area = d3.select('.dfd_assetview').node().getBoundingClientRect();
+
+        svg = d3.select('#dfd_svg')
+        .attr("width", area.width)
+        .attr("height", area.height * 0.75); // TODO make this dynamic with bottom bar
+
+        simulation = d3.forceSimulation(nodes)
+        .force("x", d3.forceX(area.width / 2))
+        .force("y", d3.forceY(area.height / 2 * 0.75)) // TODO make this dynamic with bottom bar
+        .force("collide", d3.forceCollide().radius(100))
+        .on("tick", ticked);
+
+        simulation.alpha(1.0).restart();
+    }
+
+    // Toggles between the four question sections (What are we working on?, etc.)
+    // Determines which one should be displayed.
+    function showSection(icon) {
+        var divs = document.querySelectorAll('.items');
+        divs.forEach(div => {
+            div.style.display = "none";
+        });
+        document.getElementById(icon).style.display = "block";
+
+        // Prevent user from trying to add a threat or a control if no
+        // assets exist yet in the DFD
+        if (icon == "threats") {
+            let elems = document.getElementsByClassName('threat_textbox');
+            for (let elem of elems) {
+                elem.disabled = (nodes.length == 0);
+            }
+        }
+        else if (icon == "controls") {
+            let elems = document.getElementsByClassName('controls_textbox');
+            for (let elem of elems) {
+                elem.disabled = (nodes.length == 0);
+            }
+        }
+        let elems = document.getElementsByClassName('add_button');
+        for (let elem of elems) {
+            elem.disabled = (nodes.length == 0);
+        }
+
+        // Recalculate dropdowns when findings tab is opened
+        if (icon == "findings") {
+            updateThreatDropdown();
+        }
+    }
+
+    // When an Asset button is clicked, this function creates a corresponding
+    // node, then pushes it to the list of nodes for d3 to draw at a later step.
+    function addElement(asset_type) {
+        // Prompt user for asset name
+        let area = d3.select('.dfd_assetview').node().getBoundingClientRect();
+
+        var asset_name = window.prompt("Name this object:", "New " + asset_type);
+        if (asset_name == null)
+            return;
+
+        // Add new node to nodes array
+        let rand_x = area.width/2 + Math.random()*5 - 10;
+        let rand_y = area.height/2 + Math.random()*5 - 10;
+        nodes.push({
+            "id": nodes.length,
+            "asset_type": asset_type,
+            "asset_name": asset_name,
+            'x': rand_x,
+            'y': rand_y,
+            "threats": [],
+            "controls": [],
+            "selected": false
+        })
+
+        // Select every node and attach it to an asset
+        var node_update = svg.selectAll(".node_group")
+            .data(simulation.nodes(), function (d) {return d.id});
+
+        // node.enter() gets every NEWLY ADDED node.
+        // For each of these, append a node_group g to the new node...
+        let node_group = node_update.enter().append("g")
+            .on("click", clicked)
+            .attr("class", "node_group")
+            .call(d3.drag().on("drag", dragged));
+            // TODO maybe add a dragend that selects the node if the drag is tiny?
+            // that way small drags are still registered as clicks for selection
+
+        // ...attach a shape to that group...
+        // (big switch statement to decide the proper shape for asset_type)
+        switch (asset_type) {
+            case "Actor":
+                node_group
+                .append('rect')
+                .attr('class', 'asset')
+                .attr('x', -30)
+                .attr('y', -30)
+                .attr('width', 60)
+                .attr('height', 60)
+                .style('fill', 'white')
+                .style('stroke', 'black');
+                break;
+            case "Server":
+                node_group
+                .append('rect')
+                .attr('class', 'asset')
+                .attr('x', -30)
+                .attr('y', -30)
+                .attr('width', 60)
+                .attr('height', 60)
+                .style('fill', 'white')
+                .style('stroke', 'black');
+                break;
+            case "Data Store":
+                let radX = 30;
+                let radY = 15;
+
+                node_group
+                .append('rect')
+                .attr('class', 'asset')
+                .attr('x', 0 - radX)
+                .attr('y', -1.5*radY)
+                .attr('width', radX*2)
+                .attr('height', radY*3)
+                .style('fill', 'white')
+                .style('stroke', 'black');
+
+                node_group
+                .append('ellipse')
+                .attr('class', 'asset')
+                .attr('cx', 0)
+                .attr('cy', -1.5*radY)
+                .attr('rx', radX)
+                .attr('ry', radY)
+                .style('fill', 'white')
+                .style('stroke', 'black');
+
+                node_group
+                .append('ellipse')
+                .attr('class', 'asset')
+                .attr('cx', 0)
+                .attr('cy', 1.5*radY)
+                .attr('rx', radX)
+                .attr('ry', radY)
+                .style('fill', 'white')
+                .style('stroke', 'black');
+                break;
+            case "Process":
+                node_group
+                .append('circle')
+                .attr('class', 'asset')
+                .attr('cx', 0)
+                .attr('cy', 0)
+                .attr('r', 30)
+                .style('fill', 'white')
+                .style('stroke', 'black');
+                break;
+            case "External Entity":
+                node_group
+                .append('rect')
+                .attr('class', 'asset')
+                .attr('x', -30)
+                .attr('y', -30)
+                .attr('width', 60)
+                .attr('height', 60)
+                .style('fill', 'white')
+                .style('stroke', 'black');
+                break;
+            case "Lambda":
+                node_group
+                .append('text')
+                .attr('class', 'asset')
+                .attr('x', -25)
+                .attr('y', 40)
+                .attr('fill', 'white')
+                .style('stroke', 'black')
+                .style("font-size", '100pt')
+                .style('font-family', 'Calibri')
+                .text('λ');
+                break;
+            case "Trust Boundry":
+                node_group
+                .append('rect')
+                .attr('class', 'asset')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', 60)
+                .attr('height', 60)
+                .style('fill', 'white')
+                .attr('stroke-dasharray','5,3')
+                .style('stroke', 'black');
+                break;
+            default:
+                // should never happen
+                console.debug("ERROR: addElement() got name " + name + ", which isn't recognized as a shape");
+                break;
+        }
+
+        // ...and attach name of asset, provided by user to that group
+        node_group
+            .append("text")
+            .attr("class", "asset_label")
+            .attr("x", 15)
+            .attr("y", 15)
+            .attr("text-anchor", "middle")
+            .attr("alignment-baseline", "central")
+            .attr("fill", "black")
+            .style("font-size", "16pt")
+            .text(asset_name);
+
+        // force nodes to start in the center of the canvas
+        node_group
+            .attr("transform", "translate(" + area.width/2 + "," + area.height/2 + ")")
+
+        // Also, remove any duplicate nodes.
+        node_update.exit().remove();
+
+        // Last, (re)run the force simulation
+        simulation.nodes(nodes);
+        simulation.alpha(1.0).restart();
+
+        updateAssetDropdowns();
+    }
+
+    // gives nodes new location every time the force simulation runs
+    function ticked() {
+        // Transform links
+        svg.selectAll(".link")
+            .attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
+
+        // Transform nodes
+        svg.selectAll(".node_group")
+            .attr("transform", function(d) { return "translate("+ d.x + "," + d.y + ")"; });
+
+        // Transform dataflows
+        svg.selectAll(".link_group").selectAll("text")
+            .attr("transform", function(d) { return "translate("+ (d.source.x + d.target.x)/2 + "," + (d.source.y + d.target.y)/2 + ")"; });
+    }
+
+    // Function that defines how node groups should behave when dragged.
+    function dragged(e) {
+        e.subject.x = e.x;
+        e.subject.y = e.y;
+        simulation.alpha(1.0).restart();
+    }
+
+    // Function that defines how node groups should behave when clicked.
+    function clicked(e) {
+        let selected_node = d3.select(this).data()[0]
+        let already_selected = selected_node.selected;
+
+        // Unselect all nodes
+        for (let node of nodes) {
+            node.selected = false;
+        }
+        d3.selectAll(".asset")
+            .style("stroke", "black")
+            .style("stroke-width", "1");
+
+        let bottom_bar_html = "<h2 style=\"color: gray\">No asset selected...</h2>";
+
+        // Reselect the clicked on node
+        selected_node.selected = !already_selected;
+        if (!already_selected) {
+            d3.select(this).selectAll(".asset")
+                .style("stroke", "#3E8EDE")
+                .style("stroke-width", "4");
+
+            bottom_bar_html =
+                "<h2>"+ selected_node.asset_name +"</h2>" +
+                selected_node.asset_type +
+                "<br><br>" +
+                "<h3>Threats</h3>";
+
+            if (selected_node.threats.length == 0) {
+                bottom_bar_html += "No threats added...<br>"
+            } else {
+                for (let threat of selected_node.threats) {
+                    bottom_bar_html += "&emsp;&emsp;" +
+                    threat.threat_title + " ("+ threat.threat_num + ")" + "<br>";
+                }
+            }
+
+            bottom_bar_html += "<br><h3>Controls</h3>"
+            if (selected_node.controls.length == 0) {
+                bottom_bar_html += "No controls added...<br>"
+            } else {
+            for (let control of selected_node.controls) {
+                bottom_bar_html +=
+                    control.control_title + "<br>";
+            }
+            }
+        }
+
+        // places information about the selected node in the bottom bar
+        document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+    }
+
+    // Helper function that gets the value of an HTML dropdown given
+    // its ID in the HTML document.
+    function getDropdownValue(html_id) {
+        let dropdown = document.getElementById(html_id);
+        let value = parseInt(dropdown.options[dropdown.selectedIndex].value);
+        return value;
+    }
+
+    // Clears the asset dropdown lists, then regenerates them
+    // with the names of every existing element
+    function updateAssetDropdowns() {
+        let dropdowns = document.getElementsByClassName('dropdown');
+
+        while (dropdowns[0].options.length > 0) {
+            for (let dropdown of dropdowns) {
+                dropdown.remove(0);
+            }
+        }
+        for (let dropdown of dropdowns) {
+            dropdown.add(new Option("Select an asset...", -1));
+        }
+
+        const svg = d3.select(document.getElementById("dfd")).select("svg");
+        svg.selectAll(".node_group").each(function (d, i) {
+            for (let dropdown of dropdowns) {
+                dropdown.add(new Option(
+                    d3.select(this).select(".asset_label").text(),
+                    d.id
+                ))
+            }
+        });
+
+        for (let dropdown of dropdowns) {
+            dropdown.disabled = false;
+            dropdown.selectedIndex = 0;
+        }
+
+        let elems = document.getElementsByClassName('add_button');
+        for (let elem of elems) {
+            elem.disabled = (nodes.length == 0);
+        }
+    }
+    // Clears the threat dropdown lists, then regenerates them
+    // with the names of every existing element
+    function updateThreatDropdown() {
+        let threat_dropdown = document.getElementById("findings_threats_dropdown");
+        let node_id = getDropdownValue("findings_asset_dropdown");
+        threat_dropdown.disabled = true;
+
+        while (threat_dropdown.options.length > 0) {
+            threat_dropdown.remove(0);
+        }
+
+        if (nodes.length == 0) {
+            threat_dropdown.add(new Option("Add an asset first!", -1));
+        }
+        else if (node_id == -1) {
+            threat_dropdown.add(new Option("Select an asset first!", -1));
+        }
+        else if (nodes[node_id].threats.length == 0) {
+            threat_dropdown.add(new Option("No threats on this asset", -1));
+        }
+        else {
+            threat_dropdown.add(new Option("Select a threat...", -1));
+            threat_dropdown.disabled = false;
+        }
+
+        updateFindings();
+        if (threat_dropdown.disabled) {
+            document.getElementById("greyed_out").style.setProperty("color", "grey")
+            return;
+        }
+
+        let i = 0;
+        for (let threats of nodes[node_id].threats) {
+            threat_dropdown.add(new Option(threats.threat_title, i));
+            i++;
+        }
+    }
+
+    // helper function that fills out dropdowns in the Did we do a good enough
+    // job? tab
+    function populateSelects(status_dropdown, harm_dropdown, exploitability_dropdown) {
+        status_dropdown.disabled = false;
+        status_dropdown.add(new Option("Open", 0));
+        status_dropdown.add(new Option("Resolved", 1));
+        status_dropdown.add(new Option("Not Relevant", 2));
+
+        harm_dropdown.disabled = false;
+        harm_dropdown.add(new Option("Negligible", 0));
+        harm_dropdown.add(new Option("Minor", 1));
+        harm_dropdown.add(new Option("Serious", 2));
+        harm_dropdown.add(new Option("Critical", 3));
+        harm_dropdown.add(new Option("Catastrophic", 4));
+
+        exploitability_dropdown.disabled = false;
+        exploitability_dropdown.add(new Option("Unknown", 0));
+        exploitability_dropdown.add(new Option("Low", 1));
+        exploitability_dropdown.add(new Option("Medium", 2));
+        exploitability_dropdown.add(new Option("High", 3));
+    }
+
+    // function changes the list of controls depending on which asset and
+    // threat are selected in the Did we do a good enough job? tab
+    // also greys out findings tab if an asset and threat have not been
+    // selected yet
+    function updateFindings() {
+        // Get various HTML elements
+        let node_id = getDropdownValue("findings_asset_dropdown");
+        let selected_threat = getDropdownValue("findings_threats_dropdown");
+
+        let controls_div = document.getElementById("control_findings");
+        let status_dropdown = document.getElementById("status_dropdown");
+        let harm_dropdown = document.getElementById("harm_dropdown");
+        let exploitability_dropdown = document.getElementById("exploitability_dropdown");
+        let radio_buttons = document.getElementsByClassName("tech_impact_radio");
+        let assessor_textbox = document.getElementById("assessor_textbox");
+        let notes_textbox = document.getElementById("notes_textbox")
+
+        // Clear all of the dropdowns and disable all of the buttons
+        while (status_dropdown.options.length > 0) {
+            status_dropdown.remove(0);
+        }
+        while (harm_dropdown.options.length > 0) {
+            harm_dropdown.remove(0);
+        }
+        while (exploitability_dropdown.options.length > 0) {
+           exploitability_dropdown.remove(0);
+        }
+        status_dropdown.disabled = true;
+        harm_dropdown.disabled = true;
+        exploitability_dropdown.disabled = true;
+        for (let rb of radio_buttons) {
+            rb.checked = false;
+            rb.disabled = true;
+        }
+        assessor_textbox.disabled = true;
+        assessor_textbox.value = "";
+        notes_textbox.disabled = true;
+        notes_textbox.value = "";
+
+        controls_div.innerHTML = "";
+
+        // If we haven't selected an asset:
+        if (node_id == -1) {
+            // Disable everything, report correct error text
+            controls_div.innerHTML = "&ensp;<span style=\"color: grey\">Select an asset first!</span>";
+            status_dropdown.add(new Option("Select an asset first!", -1));
+            harm_dropdown.add(new Option("Select an asset first!", -1));
+            exploitability_dropdown.add(new Option("Select an asset first!", -1));
+            document.getElementById("greyed_out").style.setProperty("color", "grey");
+            return;
+        }
+        // Otherwise, if we've selected an asset but not a threat:
+        else if (nodes[node_id].threats.length == 0 || selected_threat == -1) {
+            // Disable everything, report correct error text
+            controls_div.innerHTML = "&ensp;<span style=\"color: grey\">Select a threat first!</span>";
+            status_dropdown.add(new Option("Select a threat first!", -1));
+            harm_dropdown.add(new Option("Select an threat first!", -1));
+            exploitability_dropdown.add(new Option("Select an threat first!", -1));
+            document.getElementById("greyed_out").style.setProperty("color", "grey");
+            return;
+        }
+        // Otherwise, if an asset and threat are selected, but no controls
+        // exist on the asset:
+        else if (nodes[node_id].controls.length == 0) {
+            // Enable everything except the controls section,
+            // and report correct error text
+            controls_div.innerHTML = "&ensp;<span style=\"color: grey\">No controls for this asset</span>";
+
+            populateSelects(status_dropdown, harm_dropdown, exploitability_dropdown);
+            for (let rb of radio_buttons) {
+                rb.disabled = false;
+            }
+            assessor_textbox.disabled = false;
+            notes_textbox.disabled = false;
+            document.getElementById("greyed_out").style.setProperty("color", "black");
+        }
+        else {
+            // Otherwise: Enable everything
+            populateSelects(status_dropdown, harm_dropdown, exploitability_dropdown);
+            for (let rb of radio_buttons) {
+                rb.disabled = false;
+            }
+            assessor_textbox.disabled = false;
+            notes_textbox.disabled = false;
+            document.getElementById("greyed_out").style.setProperty("color", "black");
+
+            // Since controls exist, create a checkbox for each one
+            let i = 0;
+            for (let control of nodes[node_id].controls) {
+                let title = control.control_title
+                controls_div.innerHTML +=
+                    "&emsp;<input type=\"checkbox\" id=\"control_"+ i +"_checkbox\" name=\"control_checkbox\" value=\""+ title +"\"><label for=\"control_" + i + "_checkbox\">" + title + "</label><br>";
+                i++;
+            }
+        }
+
+        // If we previously set and saved a finding for this threat, then load
+        // any previously saved values and show them back to the user
+        findings = nodes[node_id].threats[selected_threat].findings;
+        if (findings != null) {
+            assessor = document.getElementById("assessor_textbox");
+            assessment_date = document.getElementById("datetime");
+            let date = findings.assessment_date;
+            let displayDate = date.toLocaleDateString();
+            let displayTime = date.toLocaleTimeString();
+            notes_textbox = document.getElementById("notes_textbox");
+
+            status_dropdown.selectedIndex = findings.status;
+            exploitability_dropdown.selectedIndex = findings.exploitability;
+            harm_dropdown.selectedIndex = findings.exploitability;
+            assessor.value = findings.assessor;
+            assessment_date.innerHTML = "<b>Assessed on:</b> " + displayDate + " " + displayTime;
+            notes_textbox.value = findings.notes;
+
+            document.querySelector("input[name=\"radio_confidentiality\"][value=\"" + findings.technical_impact.confidentiality + "\"]").checked = true;
+            document.querySelector("input[name=\"radio_integrity\"][value=\"" + findings.technical_impact.integrity + "\"]").checked = true;
+            document.querySelector("input[name=\"radio_availability\"][value=\"" + findings.technical_impact.availability + "\"]").checked = true;
+            document.querySelector("input[name=\"radio_authenticity\"][value=\"" + findings.technical_impact.authenticity + "\"]").checked = true;
+            document.querySelector("input[name=\"radio_nonrepudiation\"][value=\"" + findings.technical_impact.nonrepudiation + "\"]").checked = true;
+            document.querySelector("input[name=\"radio_authorization\"][value=\"" + findings.technical_impact.authorization + "\"]").checked = true;
+
+            checked_boxes = findings.controls
+            for (i = 0; i < checked_boxes.length; ++i) {
+               control = document.getElementById(checked_boxes[i].id)
+               control.checked = "checked";
+            }
+        }
+
+    }
+
+    // Adds a dataflow line between two chosen elements.
+    function addDataFlow() {
+        // Get the currently selected assets to draw a dataflow between.
+        let source = getDropdownValue("source_dropdown");
+        let target = getDropdownValue("target_dropdown");
+        let double_headed = false
+
+        // Check that user actually has two assets selected:
+        if (source == -1 || target == -1) {
+            alert("Please select two assets to create a dataflow between!");
+            return;
+        }
+
+        // Prevent dataflows from being added that point
+        // from an object to itself
+        if (source === target) {
+            alert("Cannot add a dataflow with identical source and target!");
+            return;
+        }
+
+        for (let link of links) {
+            // Prevent duplicate dataflows
+            if (link.source.id === source && link.target.id === target) {
+                alert("Cannot add a duplicate dataflow!");
+                return;
+            }
+            else if (link.source.id === target && link.target.id === source) {
+                double_headed = true
+            }
+        }
+
+        // Prompt user for dataflow name...
+        var dataflow_name = window.prompt("(Optional) Name this dataflow:", "");
+        // Return from function if user cancels
+        if (dataflow_name === null || dataflow_name === false)
+            return;
+
+        // Define the link that d3 will use to apply forces...
+        let link = {
+            "source": nodes[source],
+            "target": nodes[target],
+            "type": "Test -->",
+            "distance": 30
+        }
+        // ...and append it to our array of links
+        links.push(link);
+
+        // Then, get a selection containing the changes to links from this step
+        var link_update = svg.selectAll(".link").data(links,
+        function(d) { return d.source.id + "-" + d.target.id; });
+
+        // Use that selection to get the newly added link,
+        // and create a group to add the link
+        var link_group = link_update.enter()
+        .append("g")
+        .attr("class", "link_group")
+
+        // Append a line to that group...
+        link_group
+            .insert("line", ".node") // "insert a line into the SVG right before each .node in the SVG"
+            .attr("class", "link")
+            .attr("stroke", "black")
+            .attr("marker-end", "url(#arrow)")
+            .attr("markerWidth", 300)
+
+        // ...as well as a name, if one was given
+        if (dataflow_name != null) {
+            link_group
+                .append("text")
+                .attr("x", 35)
+                .attr("y", (double_headed) ? 35 : 15) // In case of double-headed dataflow, push second label down
+                               // TODO: probably can make this look much cleaner
+                .attr("text-anchor", "middle")
+                .attr("alignment-baseline", "central")
+                .attr("fill", "black")
+                .style("font-size", "16pt")
+                .text(dataflow_name);
+        }
+
+        // Remove any links that need to be removed
+        link_update.exit().remove();
+
+        // Last, tell our simulation to restart
+        simulation.alpha(1.0).restart();
+    }
+
+    // Add a threat to an existing DFD node.
+    function addThreat() {
+        let asset = getDropdownValue("threat_dropdown");
+
+        if (asset == -1) {
+            alert("Please select an asset to add a threat to!");
+            return;
+        }
+
+        let title = document.getElementById("threat_title").value
+        if (title == "") {
+            alert("Please add a threat title!");
+            return;
+        }
+        let cve_num = document.getElementById("threat_number").value
+        let description = document.getElementById("threat_description").value
+
+        nodes[asset].threats.push({
+            "threat_num": cve_num,
+            "threat_title": title,
+            "threat_description": description,
+            "findings": null
+        })
+
+        alert("New threat (" + title + ") added to " + nodes[asset].asset_name + " succesfully!");
+
+        let textboxes = document.getElementsByClassName("threat_textbox");
+        for (let textbox of textboxes) {
+            textbox.value = "";
+        }
+    }
+
+    // Add a control to an existing DFD node.
+    // TODO: maybe merge this with addThreat()?
+    function addControl() {
+        let asset = getDropdownValue("controls_dropdown");
+
+        if (asset == -1) {
+            alert("Please select an asset to add a control to!");
+            return;
+        }
+
+        let title = document.getElementById("control_title").value
+        if (title == "") {
+            alert("Please add a control title!");
+            return;
+        }
+        let description = document.getElementById("control_description").value
+
+        nodes[asset].controls.push({
+            "control_title": title,
+            "control_description": description
+        })
+
+        alert("New control (" + title + ") added to " + nodes[asset].asset_name + " succesfully!");
+
+        let textboxes = document.getElementsByClassName("controls_textbox");
+        for (let textbox of textboxes) {
+            textbox.value = "";
+        }
+    }
+
+    // Gets values from radio buttons
+    // Returns null if no value is selected (which throws an error later)
+    function getTechImpactValue(impact_name) {
+        let query = "input[name=\"radio_" + impact_name + "\"]:checked";
+        let selection = document.querySelector(query);
+        if (selection == null) {
+            return null;
+        }
+        else {
+            return selection.value;
+        }
+    }
+
+    // Save any info filled into a findings page.
+    function saveFinding() {
+        let assessor_textbox = document.getElementById("assessor_textbox");
+
+        if (assessor_textbox.value == "") {
+            alert("Please add the name of the assessor(s) for this finding!");
+            return;
+        }
+
+        let technical_impact = [
+            getTechImpactValue("confidentiality"),
+            getTechImpactValue("integrity"),
+            getTechImpactValue("availability"),
+            getTechImpactValue("authenticity"),
+            getTechImpactValue("nonrepudiation"),
+            getTechImpactValue("authorization"),
+        ];
+        for (let impact of technical_impact) {
+            if (impact == null) {
+                alert("Please set a technical impact level for each field!");
+                return;
+            }
+        }
+
+        let asset_index = getDropdownValue("findings_asset_dropdown");
+        let threat_index = getDropdownValue("findings_threats_dropdown");
+
+        let notes_textbox = document.getElementById("notes_textbox");
+        var checked_boxes = document.querySelectorAll('input[name=control_checkbox]:checked');
+
+        let findings = {
+            "status": getDropdownValue("status_dropdown"),
+            "controls": checked_boxes,
+            "technical_impact": {
+                "confidentiality": technical_impact[0],
+                "integrity": technical_impact[1],
+                "availability": technical_impact[2],
+                "authenticity": technical_impact[3],
+                "nonrepudiation": technical_impact[4],
+                "authorization": technical_impact[5],
+            },
+            "harm": getDropdownValue("harm_dropdown"),
+            "exploitability": getDropdownValue("exploitability_dropdown"),
+            "assessor": assessor_textbox.value,
+            "assessment_date": new Date(),
+            "notes": notes_textbox.value,
+        }
+
+        nodes[asset_index].threats[threat_index].findings = findings
+        console.log(nodes[asset_index].threats[threat_index].findings)
+
+        alert("Findings saved!");
+    }
+
+    // TODO
+    // Findings tab:
+    // -- Pick an asset from a dropdown
+    // -- Pick a threat on that asset from a dropdown
+    //
+    // -- See a list of checkboxes for all controls on that asset,
+    //    with the ability to check which ones are mitigating that threat
+    // -- Relevant? toggle
+    // -- Technical impact section: One line per factor
+    //    (confidentiality, integrity, availability, authenticity,
+    //    non-repudiation, authorization)
+    //    Each of these is set by user to None/Low/High (default None)
+    // -- Safety impact section: One line per factor
+    //    Harm: Unset/Negligible/Minor/Serious/Critical/Catastrophic
+    //        (default Unset)
+    //    Exploitability: Unknown/Low/Medium/High
+    //        (default Unknown)
+    //    Assessment Time: (autopopulated with current time)
+    //    Assessed By: User can input their name
+    // -- Additional Notes: User can add any other notes
+    // -- User should be able to mark a finding as completed once they have
+    //    been properly filled in (or un-mark completed if they think
+    //    something needs to be changed)
+    //
+    // -- List of threats should be color-coded based on the status of their
+    //    associated findings...:
+    //    Red - Finding has been generated; is not complete
+    //    Orange - Finding has been generated; some data is saved, not marked
+    //        as complete
+    //    Black - Finding is marked as complete
+    //    Grey - Finding is marked as not relevant
+
+
+
+</script>
+</body>
+
+</html>

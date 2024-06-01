@@ -1,0 +1,22 @@
+{% load static %}
+
+<b>My Threat Model</b>
+<br />
+
+<form onSubmit="displayImg()" id="tmntForm" method="post">
+    {% csrf_token %}
+    <input type="submit" />
+</form>
+
+<textarea rows="10" cols="80" id="textAreaInput" form="tmntForm"></textarea>
+
+<div id="out_dfd" style="display: none">
+    <img src="{% static 'out.png' %}" />
+</div>
+
+<script>
+    function displayImg() {
+        alert(document.getElementById("textAreaInput").value);
+        document.getElementById("out_dfd").style.display = "inline";
+    }
+</script>

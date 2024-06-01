@@ -1,0 +1,215 @@
+{% load static %}
+
+<!DOCTYPE html>
+<b> This is a test page for random HTML stuff </b>
+
+<div id="container"></div>
+
+<script type="module">
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+// Declare the chart dimensions and margins.
+const width = 640;
+const height = 400;
+const marginTop = 20;
+const marginRight = 20;
+const marginBottom = 30;
+const marginLeft = 40;
+
+// Create the SVG container.
+const svg = d3.create("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+// Define the circle variables
+  const boxHeight = 200;
+  const circleX = 100;
+  const circleX2 = 200;
+  const circleY = boxHeight / 2;
+  const radius = 40;
+
+  // Define the line variables
+  const lineLength = 100;
+  const lineStart1 = [circleX + radius, circleY - 8];
+  const lineEnd1 = [lineStart1[0] + lineLength, circleY - 8];
+  const lineStart2 = [circleX + radius + 10, circleY + 8];
+  const lineEnd2 = [lineStart2[0] + lineLength, circleY + 8];
+
+  // Define the arrowhead marker variables
+  const markerBoxWidth = 20;
+  const markerBoxHeight = 20;
+  const refX = markerBoxWidth / 2;
+  const refY = markerBoxHeight / 2;
+  const markerWidth = markerBoxWidth / 2;
+  const markerHeight = markerBoxHeight / 2;
+  const arrowPoints = [[0, 0], [0, 20], [20, 10]];
+
+  // svg
+  //   .append('defs')
+  //   .append('marker')
+  //   .attr('id', 'arrow')
+  //   .attr('viewBox', [0, 0, markerBoxWidth, markerBoxHeight])
+  //   .attr('refX', refX)
+  //   .attr('refY', refY)
+  //   .attr('markerWidth', markerBoxWidth)
+  //   .attr('markerHeight', markerBoxHeight)
+  //   .attr('orient', 'auto-start-reverse')
+  //   .append('path')
+  //   .attr('d', d3.line()(arrowPoints))
+  //   .attr('stroke', 'black');
+
+  // Add the first circle
+  var test_group_1 = svg
+    .append('g')
+    .attr('class', 'testgroup');
+
+  test_group_1
+    .append('circle')
+    .attr('cx', circleX2)
+    .attr('cy', circleY)
+    .attr('r', radius)
+    .style('fill', 'blue')
+    .style('stroke', 'black');
+
+  test_group_1
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .attr('alignment-baseline', 'central')
+    .attr('x', circleX2)
+    .attr('y', circleY)
+    .attr('fill', 'white')
+    .style("font-size", 19)
+    .text("client");
+  
+  var test_group_2 = svg
+    .append('g')
+    .attr('class', 'testgroup')
+  
+  test_group_2
+    .append('circle')
+    .attr('cx', circleX2)
+    .attr('cy', circleY)
+    .attr('r', radius)
+    .style('fill', 'blue')
+    .style('stroke', 'black');
+
+  test_group_2
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .attr('alignment-baseline', 'central')
+    .attr('x', circleX2)
+    .attr('y', circleY)
+    .attr('fill', 'white')
+    .style("font-size", 19)
+    .text("server");
+
+  var test_group_3 = svg
+    .append('g')
+    .attr('class', 'testgroup')
+  
+  test_group_3
+    .append('circle')
+    .attr('cx', circleX2)
+    .attr('cy', circleY)
+    .attr('r', radius)
+    .style('fill', 'green')
+    .style('stroke', 'black');
+
+  test_group_3
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .attr('alignment-baseline', 'central')
+    .attr('x', circleX2)
+    .attr('y', circleY)
+    .attr('fill', 'white')
+    .style("font-size", 19)
+    .text("datastore");
+
+  var sim_w = 300, sim_h = 300
+  var nodes = [{}, {}, {}]
+
+  var simulation = d3.forceSimulation(nodes)
+    .force('charge', d3.forceManyBody())
+    .force('center', d3.forceCenter(sim_w / 2, sim_h / 2))
+    .on('tick', ticked);
+
+  function ticked() {
+    var u = d3.select('svg')
+    .selectAll('.testgroup').selectAll('circle')
+    .data(nodes)
+    .join('g').join('circle')
+    // .attr('r', 30)
+    .attr('cx', function(d) {
+      return d.x
+    })
+    .attr('cy', function(d) {
+      return d.y
+    });
+
+    // var p = d3.select('svg')
+    // .selectAll('.testgroup')
+    // .selectAll('text')
+    // .data(nodes)
+    // .join('text')
+    // .attr('x', function(d) {
+    //   return d.x
+    // })
+    // .attr('y', function(d) {
+    //   return d.y
+    // });
+  }
+
+
+  // // Add first text
+  // svg
+  //   .append('text')
+  //   .attr('text-anchor', 'middle')
+  //   .attr('alignment-baseline', 'central')
+  //   .attr('x', circleX)
+  //   .attr('y', circleY)
+  //   .attr('fill', 'red')
+  //   .style("font-size", 19)
+  //   .text("server");
+
+  // // Add the line with arrowhead at the end
+  // svg
+  //   .append('path')
+  //   .attr('d', d3.line()([lineStart1, lineEnd1]))
+  //   .attr('stroke', 'black')
+  //   .attr('marker-end', 'url(#arrow)')
+  //   .attr('fill', 'none');
+
+  // // but what if... 2nd line (gasp)
+  // svg
+  //   .append('path')
+  //   .attr('d', d3.line()([lineEnd2, lineStart2]))
+  //   .attr('stroke', 'black')
+  //   .attr('marker-end', 'url(#arrow)')
+  //   .attr('fill', 'none');
+
+  // // Add the second circle
+  // svg
+  //   .append('rect')
+  //   .attr('x', lineEnd1[0] + markerWidth)
+  //   .attr('y', circleY - radius)
+  //   .attr('width', radius*2)
+  //   .attr('height', radius*2)
+  //   .style('fill', 'white')
+  //   .style('stroke', 'black');
+
+  // // Add second text
+  // svg
+  //   .append('text')
+  //   .attr('text-anchor', 'middle')
+  //   .attr('alignment-baseline', 'central')
+  //   .attr('x', lineEnd1[0] + markerWidth + radius)
+  //   .attr('y', circleY)
+  //   .attr('fill', 'blue')
+  //   .style("font-size", 19)
+  //   .text("client");
+
+
+  // Append the SVG element.
+  container.append(svg.node());
+
+</script>
