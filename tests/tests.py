@@ -1,6 +1,23 @@
 import unittest
 
-from tmnt.dsl import TM, Asset, ExternalEntity, Datastore, Process, Control, ControlCatalog, Actor, DataFlow, Issue, Threat, Weakness, Vulnerability, Finding, Data, Flow
+from tmnt.dsl import (
+    TM,
+    Asset,
+    ExternalEntity,
+    Datastore,
+    Process,
+    Control,
+    ControlCatalog,
+    Actor,
+    DataFlow,
+    Issue,
+    Threat,
+    Weakness,
+    Vulnerability,
+    Finding,
+    Data,
+    Flow,
+)
 from tmnt.dsl.core.component import Component
 from tmnt.dsl.core.element import Element
 from tmnt.dsl.util import get_findings
@@ -99,9 +116,7 @@ class TestElement(unittest.TestCase):
 
 class TestComponent(unittest.TestCase):
     def setUp(self):
-        self.component = Component(
-            name="Test Component", desc="Description"
-        )
+        self.component = Component(name="Test Component", desc="Description")
 
     def test_component_init(self):
         self.assertEqual(self.component.name, "Test Component")
@@ -136,7 +151,6 @@ class TestComponent(unittest.TestCase):
         self.component.remove_threat(threat)
         self.assertEqual(len(self.component.threats), 0)
 
-
     def tearDown(self):
         return super().tearDown()
 
@@ -159,7 +173,9 @@ class TestAsset(unittest.TestCase):
         self.assertIsInstance(external_entity, ExternalEntity)
 
     def test_datastore(self):
-        datastore = Datastore(name="Datastore Name", ds_type=DATASTORE_TYPE.SQL)
+        datastore = Datastore(
+            name="Datastore Name", ds_type=DATASTORE_TYPE.SQL
+        )
         self.assertIsInstance(datastore, Datastore)
 
     def test_process(self):

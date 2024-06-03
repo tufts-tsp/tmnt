@@ -1,6 +1,15 @@
 import unittest
 
-from tmnt.dsl import TM, Boundary, Actor, Asset, Process, Datastore, ExternalEntity, DataFlow
+from tmnt.dsl import (
+    TM,
+    Boundary,
+    Actor,
+    Asset,
+    Process,
+    Datastore,
+    ExternalEntity,
+    DataFlow,
+)
 from tmnt.dsl.core.asset import (
     DATASTORE_TYPE,
     Machine,
