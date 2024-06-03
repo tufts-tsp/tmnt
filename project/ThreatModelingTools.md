@@ -4,7 +4,7 @@ There have been several tools and domain-specific languages that have been previ
 
 We recommend trying out a few of these tools. If you do not have Windows and want to try [Microsoft Threat Modeling Tool](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool) or [Threats Manager Studio](https://threatsmanager.com/), please use `vm-winresearch.eecs.tufts.edu`.
 
-## [Diagramming Only]
+## Diagramming Only
 ### [draw.io](https://app.diagrams.net/)
 Status:
 Summary:
@@ -41,7 +41,7 @@ Summary:
 Advantages:
 Limitations:
 
-## [DSLs/Threat Modeling as Code]
+## DSLs/Threat Modeling as Code
 ### [pytm](https://github.com/izar/pytm)
 Status:
 Summary:
@@ -72,7 +72,7 @@ Summary:
 Advantages:
 Limitations:
 
-## [UIs]
+## UIs
 ### [IriusRisk](https://www.iriusrisk.com/)
 Status:
 Summary:
