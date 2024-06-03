@@ -6,15 +6,14 @@
 Welcome to TMNT's documentation!
 ====================================
 
-**TMNT Core** is a domain specific language for building threat
+**TMNT** is a tool for building threat
 models in a natural fashion.
 
 Check out the :doc:`usage` section for further information.
 
 .. note::
 
-   This project is currently being developed by the Tufts Security & Privacy Lab
-   with help from a Tufts Computer Science senior capstone project.
+   This project is currently being developed by the Tufts Security & Privacy Lab.
 
 Contents
 --------

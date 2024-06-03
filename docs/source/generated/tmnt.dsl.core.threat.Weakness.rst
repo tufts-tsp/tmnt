@@ -1,7 +1,7 @@
-﻿tmnt\_dsl.core.threat.Weakness
-==============================
+﻿tmnt.dsl.core.threat.Weakness
+=============================
 
-.. currentmodule:: tmnt_dsl.core.threat
+.. currentmodule:: tmnt.dsl.core.threat
 
 .. autoclass:: Weakness
 

@@ -1,7 +1,7 @@
-﻿tmnt\_dsl.core.element.Element
-==============================
+﻿tmnt.dsl.core.element.Element
+=============================
 
-.. currentmodule:: tmnt_dsl.core.element
+.. currentmodule:: tmnt.dsl.core.element
 
 .. autoclass:: Element
 
