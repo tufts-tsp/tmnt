@@ -1,16 +1,10 @@
 import unittest
 
-from tmnt.core.tm import TM
-from tmnt.core.boundary import Boundary
-from tmnt.core.actor import Actor
-from tmnt.core.asset import (
-    Asset,
-    Process,
-    Datastore,
-    ExternalEntity,
+from tmnt.dsl import TM, Boundary, Actor, Asset, Process, Datastore, ExternalEntity, DataFlow
+from tmnt.dsl.core.asset import (
     DATASTORE_TYPE,
+    Machine,
 )
-from tmnt.core.flow import DataFlow
 
 
 class TestInsulinDeliveryDeviceExample(unittest.TestCase):
@@ -223,3 +217,7 @@ class TestInsulinDeliveryDeviceExample(unittest.TestCase):
             print(attack)
             print("\n")
         print("\n")
+
+
+if __name__ == "__main__":
+    unittest.main()

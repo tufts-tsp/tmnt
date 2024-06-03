@@ -1,21 +1,11 @@
 import unittest
 
-from tmnt.core.tm import TM
-from tmnt.core.component import Component
-from tmnt.core.asset import Asset, ExternalEntity, Datastore, Process
-from tmnt.core.control import Control, ControlCatalog
-from tmnt.core.actor import Actor
-from tmnt.core.flow import DataFlow
-from tmnt.core.threat import Issue, Threat, Weakness, Vulnerability
-from tmnt.core.finding import Finding
-from tmnt.core.element import Element
-from tmnt.core.data import Data
-from tmnt.core.asset import Asset
-from tmnt.core.asset import ExternalEntity
-from tmnt.core.asset import Process
-from tmnt.core.asset import Datastore
-from tmnt.core.flow import Flow
-from tmnt.util.get_findings import *
+from tmnt.dsl import TM, Asset, ExternalEntity, Datastore, Process, Control, ControlCatalog, Actor, DataFlow, Issue, Threat, Weakness, Vulnerability, Finding, Data, Flow
+from tmnt.dsl.core.component import Component
+from tmnt.dsl.core.element import Element
+from tmnt.dsl.util import get_findings
+
+from tmnt.dsl.core.asset import DATASTORE_TYPE
 
 
 class TestTM(unittest.TestCase):
@@ -26,7 +16,7 @@ class TestTM(unittest.TestCase):
         self.assertEqual(self.tm.name, "test_tm")
 
     def test_changing_name(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AttributeError):
             self.tm.name = "test2_tm"
 
     def test_adding_removing_component(self):
@@ -110,7 +100,7 @@ class TestElement(unittest.TestCase):
 class TestComponent(unittest.TestCase):
     def setUp(self):
         self.component = Component(
-            name="Test Component", desc="Description", data=[]
+            name="Test Component", desc="Description"
         )
 
     def test_component_init(self):
@@ -118,51 +108,36 @@ class TestComponent(unittest.TestCase):
         self.assertEqual(self.component.desc, "Description")
         self.assertEqual(len(self.component.data), 0)
 
-    def test_add_control(self):
-        control = Control(id="1", title="Test", desc="Description")
-        control = Control(id="1", title="Test", desc="Description")
-        self.component.add_control(control)
-
-    def test_add_threat(self):
-        threat = Threat(
-            name="Test Threat",
-            desc="Threat description",
-            likelihood="High",
-            severity="Critical",
-            consequences=[],
-        )
-
-        self.component.add_threat(threat)
-
-    def test_add_data(self):
+    def test_data(self):
         data = Data(name="Test Data")
         self.component.add_data(data)
-
-    def test_remove_control(self):
-        control = Control(id="1", title="Test", desc="Description")
-        self.component.add_control(control)
-        self.component.remove_control(control)
-
-    def test_remove_threat(self):
-        threat = Threat(
-            name="Test Threat",
-            desc="Threat description",
-            likelihood="High",
-            severity="Critical",
-            consequences=[],
-        )
-
-        self.component.add_threat(threat)
-        self.component.remove_threat(threat)
-
-    def test_remove_data(self):
-        data = Data(name="Test Data")
-        self.component.add_data(data)
+        self.assertEqual(len(self.component.data), 1)
         self.component.remove_data(data)
+        self.assertEqual(len(self.component.data), 0)
+
+    def test_control(self):
+        control = Control(id="1", title="Test", desc="Description")
+        self.component.add_control(control)
+        self.assertEqual(len(self.component.controls), 1)
+        self.component.remove_control(control)
+        self.assertEqual(len(self.component.controls), 0)
+
+    def test_threat(self):
+        threat = Threat(
+            name="Test Threat",
+            desc="Threat description",
+            likelihood="High",
+            severity="Critical",
+            consequences=[],
+        )
+
+        self.component.add_threat(threat)
+        self.assertEqual(len(self.component.threats), 1)
+        self.component.remove_threat(threat)
+        self.assertEqual(len(self.component.threats), 0)
+
 
     def tearDown(self):
-        for c in self.component.controls:
-            self.component.remove_control(c)
         return super().tearDown()
 
 
@@ -184,7 +159,7 @@ class TestAsset(unittest.TestCase):
         self.assertIsInstance(external_entity, ExternalEntity)
 
     def test_datastore(self):
-        datastore = Datastore(name="Datastore Name", ds_type="SQL")
+        datastore = Datastore(name="Datastore Name", ds_type=DATASTORE_TYPE.SQL)
         self.assertIsInstance(datastore, Datastore)
 
     def test_process(self):

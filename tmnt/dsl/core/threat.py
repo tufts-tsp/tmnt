@@ -590,7 +590,7 @@ class Threat(Issue):
             The techniques involved with this step.
         """
         for step in self.__atack_steps:
-            if step.order == order:
+            if step["order"] == order:
                 self.remove_step(order)
 
         self.__atack_steps.append(

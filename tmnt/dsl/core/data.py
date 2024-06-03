@@ -36,9 +36,9 @@ class Data(Element):
         name: str,
         is_pii: bool = False,
         is_phi: bool = False,
-        format: str = None,
+        format: str = "N/A",
         is_credentials: bool = False,
-        lifetime: str = None,
+        lifetime: Lifetime = Lifetime.NONE,
         **kwargs
     ):
         if not isinstance(is_pii, bool):

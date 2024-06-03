@@ -1,3 +1,4 @@
-__all__ = ["STRIDE", "SecurityProperty"]
+__all__ = ["get_findings", "OSCALParser"]
 
-from .requirement import STRIDE, SecurityProperty
+from .get_findings import get_findings
+from .oscal_parser import OSCALParser

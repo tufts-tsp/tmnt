@@ -24,14 +24,17 @@ class TM:
     _threats = []
     _boundaries = []
     _data = []
-    name: str
     description: str
     findings: list[Finding] = []
     assumptions: list = []
 
     def __init__(self, name: str, components: List[Component] = []):
-        self.name = name
+        self._name = name
         self.__components = components
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def components(self) -> List[Component]:

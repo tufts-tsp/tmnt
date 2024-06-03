@@ -11,6 +11,7 @@ __all__ = [
     "Threat",
     "Vulnerability",
     "Control",
+    "ControlCatalog",
     "Finding",
     "Flow",
     "DataFlow",
@@ -27,7 +28,7 @@ from .data import Data
 from .actor import Actor
 from .boundary import Boundary
 from .threat import Issue, Weakness, Threat, Vulnerability
-from .control import Control
+from .control import Control, ControlCatalog
 from .finding import Finding
 from .flow import Flow, DataFlow, WorkFlow
 from .asset import Asset, ExternalEntity, Datastore, Process

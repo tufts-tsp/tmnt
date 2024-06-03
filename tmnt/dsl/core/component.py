@@ -17,14 +17,16 @@ class Component(Element):
     __data: list[Data] = []
 
     def __init__(
-        self, name: str, desc: str = None, data_list: list[Data] = []
+        self, name: str, desc: str = None, data_list: list[Data] | Data = []
     ) -> None:
-        self.data = data_list
-
+        if type(data_list) == Data:
+            self.data = [data_list]
+        elif type(data_list) == list[Data]:
+            self.data = data_list
         super().__init__(name, desc)
 
     @property
-    def data(self) -> Data:
+    def data(self) -> list[Data]:
         return self.__data
 
     @data.setter

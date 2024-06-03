@@ -1,7 +1,7 @@
 import unittest
 
-from tmnt.util.oscal_parser import OSCALParser
-from tmnt.core.control import Control, Part, ControlCatalog, Metadata
+from tmnt.dsl.util import OSCALParser
+from tmnt.dsl.core.control import Control, Part, ControlCatalog, Metadata
 
 
 class TestOSCALParser(unittest.TestCase):
@@ -87,11 +87,11 @@ class TestOSCALParser(unittest.TestCase):
     def test_parse_metadata(self):
         metadata_data = self.example_data["catalog"]["metadata"]
         metadata = self.parser.parse_metadata(metadata_data)
-        title = metadata.get_title()
-        published = metadata.get_published()
-        last_modified = metadata.get_last_modified()
-        version = metadata.get_version()
-        oscal_version_text = metadata.get_oscal_version()
+        title = metadata.title
+        published = metadata.published
+        last_modified = metadata.last_modified
+        version = metadata.version
+        oscal_version_text = metadata.oscal_version
 
         self.assertEqual(title, "Complex Catalog")
         self.assertEqual(published, "2021-01-01T12:00:00Z")
@@ -148,3 +148,7 @@ class TestOSCALParser(unittest.TestCase):
     #     self.assertEqual(guidance_part.part_name, "guidance")
     #     self.assertEqual(guidance_part.part_id, "part2")
     #     self.assertEqual(guidance_part.part_prose, "Guidance on compliance.")
+
+
+if __name__ == "__main__":
+    unittest.main()
