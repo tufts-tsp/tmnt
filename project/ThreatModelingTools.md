@@ -72,6 +72,12 @@ Summary:
 Advantages:
 Limitations:
 
+### [threat-composer](https://awslabs.github.io/threat-composer/workspaces/default/home?mode=Full)
+Status:
+Summary:
+Advantages:
+Limitations:
+
 ## UIs
 ### [IriusRisk](https://www.iriusrisk.com/)
 Status:
