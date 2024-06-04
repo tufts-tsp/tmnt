@@ -9,6 +9,8 @@ import json
 
 from tmnt.core import Weakness, Threat, Control
 
+def load_pytm_threatlib():
+    return load_json("pytm_threatlib.json")
 
 def load_owasp_asvs() -> list:
     """
@@ -175,8 +177,8 @@ def load_cwes() -> list:
 
 def load_xml(fn: str, fpath: str = None) -> bs:
     if fpath == None:
-        fpath = "/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/"
-        # fpath = os.path.dirname(__file__) + "/reference_data/"
+        # fpath = "/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/"
+        fpath = os.path.dirname(__file__) + "/reference_data/"
     with open(fpath + fn, "r", encoding="utf8") as f:
         data = f.read()
     return bs(data, "lxml")
@@ -184,8 +186,8 @@ def load_xml(fn: str, fpath: str = None) -> bs:
 
 def load_json(fn: str, fpath: str = None) -> list:
     if fpath == None:
-        fpath = "/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/"
-        # fpath = os.path.dirname(__file__) + "/reference_data/"
+        # fpath = "/home/zenw00kie/dev/tmnt/tmnt/tmnt/kb/reference_data/"
+        fpath = os.path.dirname(__file__) + "/reference_data/"
     with open(fpath + fn, "r") as f:
         data = json.load(f)
     return data

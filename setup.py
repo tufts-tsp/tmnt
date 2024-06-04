@@ -13,6 +13,7 @@ setup(
         "tmnt.dsl.visual",
         "tmnt.kb",
         "tmnt.engines",
+        "tmnt.engines.threat_assignment",
     ],
     package_data={
         "tmnt.kb": [
