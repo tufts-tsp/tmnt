@@ -22,6 +22,8 @@ Contents
 
    usage
    api
+   overview
+   contributing
 
 
 
