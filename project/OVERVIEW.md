@@ -1,6 +1,14 @@
 # TMNT Overview
-This can also be found in our workshop paper that was presented at WSIW 2024.
 
+The threat modeling tool is a continuation of our work investigating threat modeling by security experts for medical devices ([Thompson et al. USENIX 2024](https://www.usenix.org/conference/usenixsecurity24/presentation/thompson)). Specifically, we wanted to build a tool that leverages UI best practices (see [Ben Shneiderman's Designing the User Interface](http://seu1.org/files/level5/IT201/Book%20-%20Ben%20Shneiderman-Designing%20the%20User%20Interface-4th%20Edition.pdf)) and follows the natural threat modeling process we identified in our prior work.
+
+Please review the full whitepaper that we presented at WSIW 2024 ([wsiw_tm_dsl](wsiw_tm_dsl.pdf)) for a more detailed dive into the tool's design and motivation.
+
+## Background on Threat Modeling
+
+Please refer to [Intro to Threat Modeling](IntroThreatModeling.md).
+
+There have been several tools and domain-specific languages that have been previously developed to aid system designers with threat modeling, we provide a review of these tools [here](ThreatModelingTools.md). We recommend trying out a few of these tools. If you do not have Windows and want to try [Microsoft Threat Modeling Tool](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool) or [Threats Manager Studio](https://threatsmanager.com/), please use `vm-winresearch.eecs.tufts.edu`.
 
 ## Design Goals for TMNT
 

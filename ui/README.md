@@ -1,16 +1,17 @@
 ## Docker Setup
 
-You are able to run the app using Docker. You'll want to install [Docker Desktop](https://docs.docker.com/desktop/). Whenever you want to build a new version, i.e. you've made some changes to the app, you'll run `docker build -t "tmnt_ui" .`. This will create a Docker image for you to run the app. Then go to Docker Desktop and you should see the image there, and you can just hit run. You'll want to note the port you set as you'll then get to the app with that (for ease, recommend just doing 8000 which is what we are using right now on the container side). You'll then navigate to `http://localhost:8000/tmnt/asset_view/` to use the app.
+You are able to run the app using Docker. You'll want to install [Docker Desktop](https://docs.docker.com/desktop/). Right now you can either:
+- After every push/pull request to the `dev` branch a new version of the app will be built and available on Docker Hub. To run this version you simply need to run `docker run -it -p 8000:8000 zenw00kie/tmnt_ui:latest`. If you have already done this before, you'll need to make sure you pull the latest version of the image, which you can either do in Docker Desktop or you can run `docker pull zenw00kie/tmnt_ui:latest`.
+- Build a new docker image on your local version using `docker build -t "tmnt_ui" .`. This will create a Docker image for you to run the app. You then can run `docker run -it -p 8000:8000 tmnt_ui` or you can run the image from the Docker Desktop app (if you do the latter make in the optional settings that you set the host port to 8000).
 
-Additionally every time there's a push to dev, a new version of the UI will be available on Docker Hub as `zenw00kie/tmnt_ui:latest`.
+Once the container is running you can navigate to `http://localhost:8000/tmnt/asset_view/` to use the app.
+
+## Local Setup
+NOTE: If you are running this locally, we highly recommend using [`venv`](https://docs.python.org/3/library/venv.html) to ensure you are using the correct packages and their versions. You can install these with the `requirements.txt` file in this directory (`tmnt.ui.requirements.txt`) and you'll need to install the `tmnt` package.
+
+If you want to run the app on your local machine, without using Docker you can. First you'll need to make sure that you've migrated everything for Django by running `python manage.py migrate` (anytime you make changes you'll need to do this). Then you can run `python manage.py runserver`, and you can navigate to `http://localhost:8000/tmnt/asset_view/` to use the app.
 
 ## Capstone notes
-
-### Run Server:
-`python3 manage.py runserver`
-
-### Access Web App:
-http://localhost:8000/tmnt/asset_view/
 
 ### What is Currently Implemented:
 1. What are we working on?
