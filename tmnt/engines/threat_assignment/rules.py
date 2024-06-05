@@ -1,7 +1,7 @@
 import json
 import re
 import os
-from tmnt.core import (
+from tmnt.dsl.core import (
     Asset,
     ExternalEntity,
     Datastore,

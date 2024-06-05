@@ -7,7 +7,7 @@ from bs4.element import NavigableString
 import os
 import json
 
-from tmnt.core import Weakness, Threat, Control
+from tmnt.dsl.core import Weakness, Threat, Control
 
 def load_pytm_threatlib():
     return load_json("pytm_threatlib.json")
