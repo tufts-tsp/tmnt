@@ -1,4 +1,4 @@
-from tmnt_dsl.core.finding import Finding
+from tmnt.dsl.core.finding import Finding
 
 
 # Given the list of Components in a TM, return Findings for each Component
