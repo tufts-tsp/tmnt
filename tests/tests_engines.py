@@ -1,5 +1,6 @@
 import unittest
-
+from tmnt.dsl import Asset, Process, Datastore, ExternalEntity, DataFlow
+from tmnt.dsl.element import Element
 from tmnt.engines.assignment import Assignment, Rule, get_findings
 
 
