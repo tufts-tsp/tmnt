@@ -1,7 +1,7 @@
-﻿tmnt.dsl.core.threat.Threat
-===========================
+﻿tmnt.dsl.threat.Threat
+======================
 
-.. currentmodule:: tmnt.dsl.core.threat
+.. currentmodule:: tmnt.dsl.threat
 
 .. autoclass:: Threat
 
