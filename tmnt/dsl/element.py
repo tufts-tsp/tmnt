@@ -22,28 +22,25 @@ class Element(object):
         purpose and role within the threat model.
     """
 
-    __id: uuid.UUID = None
-    __name: str = None
-    __desc: str = None
-    __parent: "Element" = None
-    __children: list = []
-    __security_property: SecurityProperty = None
 
     def __init__(
         self,
         name: str,
-        desc: str = None,
+        desc: str = "N/A",
     ):
+        self.__id = uuid.uuid4()
         if not isinstance(name, str):
             raise ValueError("Element Name must be a string")
         self.__name = name
-
-        if not isinstance(desc, str) and desc is not None:
+        if desc == None:
+            desc = "N/A"
+        if not isinstance(desc, str):
             raise ValueError("Element Description must be a string")
         self.__desc = desc
 
         self.__children = []
         self.__parent = []
+        self.__security_property = SecurityProperty()
 
     def __repr__(self):
         return f"<{type(self).__name__}({self.name}) - {self.eid}>"
@@ -54,8 +51,6 @@ class Element(object):
     @property
     def eid(self) -> uuid.UUID:
         """Unique ID for the Element"""
-        if self.__id == None:
-            self.__id = uuid.uuid4()
         return self.__id
 
     @property

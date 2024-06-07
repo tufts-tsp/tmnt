@@ -83,6 +83,7 @@ class TestOSCALParser(unittest.TestCase):
                 ],
             }
         }
+        return super().setUp()
 
     def test_parse_metadata(self):
         metadata_data = self.example_data["catalog"]["metadata"]
@@ -148,6 +149,9 @@ class TestOSCALParser(unittest.TestCase):
     #     self.assertEqual(guidance_part.part_name, "guidance")
     #     self.assertEqual(guidance_part.part_id, "part2")
     #     self.assertEqual(guidance_part.part_prose, "Guidance on compliance.")
+
+    def tearDown(self) -> None:
+        return super().tearDown()
 
 
 if __name__ == "__main__":

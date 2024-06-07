@@ -6,10 +6,6 @@ class Part:
     needs documentation
     """
 
-    __part_id: str
-    __part_name: str
-    __part_prose: str
-
     def __init__(self, id: str = None, prose: str = None) -> None:
         if not isinstance(id, str):
             raise ValueError("Part ID must be a string")
@@ -18,6 +14,8 @@ class Part:
         if not isinstance(prose, str):
             raise ValueError("Part Prose must be a string")
         self.__part_prose = prose
+
+        self.__part_name = None
 
     @property
     def part_id(self) -> str:
@@ -52,19 +50,6 @@ class Control(Element):
     Source: 'KEY CONCEPTS AND TERMS USED IN OSCAL
         <https://pages.nist.gov/OSCAL/resources/concepts/terminology/>'
     """
-
-    __id: str = None
-    __title: str = None
-
-    # properties have a label and a textual context which defines
-    # the property's value
-    __prop: dict[str, str] = {}
-
-    # in this case, it must have name statement
-    __parts: list[Part] = []
-    __assumptions: list = []
-    __development_phase: list = []
-    __related: list = []
 
     def __init__(
         self, id: str, title: str, desc: str = None, related: list = []
@@ -181,15 +166,6 @@ class Metadata:
     Source: 'CREATING A CONTROL CATALOG <https://pages.nist.gov/OSCAL/learn/tutorials/control/basic-catalog/>'
     """
 
-    __title: str = None
-
-    # RFC 3339 format for date/time
-    __published: str = None
-    __last_modified: str = None
-
-    __version: str = None
-    __oscal_version: str = None
-
     def __init__(
         self,
         title: str,
@@ -248,17 +224,6 @@ class Group:
 
     Source: 'CREATING A CONTROL CATALOG <https://pages.nist.gov/OSCAL/learn/tutorials/control/basic-catalog/>'
     """
-
-    __id: str = None
-    __title: str = None
-
-    # properties have a label and a textual context which defines the property's value
-    __prop: dict[str, str] = {}
-
-    # list of other Group objects
-    __subgroups: list["Group"] = []
-    __parts: list[Part] = []
-    __controls: list[Control] = None
 
     def __init__(
         self,
@@ -350,10 +315,6 @@ class ControlCatalog(Element):
 
     Source: `OSCAL CATALOG <https://pages.nist.gov/OSCAL/resources/concepts/layer/control/catalog/>`
     """
-
-    __metadata: Metadata = None
-    __groups: list[Group] = []
-    __controls: list[Control] = []
 
     def __init__(
         self, metadata: Metadata, groups: list[Group], controls: list[Control]

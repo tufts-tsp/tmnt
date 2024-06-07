@@ -57,14 +57,6 @@ class STRIDE(object):
         If Elevation of Privilege applies
     """
 
-    __spoofing = False
-    __tampering = False
-    __repudiation = False
-    __information_disclosure = False
-    __denial_of_service = False
-    __elevation_of_privilege = False
-    __information = None
-
     def __init__(
         self,
         spoofing: bool = False,
@@ -74,12 +66,13 @@ class STRIDE(object):
         denial_of_service: bool = False,
         elevation_of_privilege: bool = False,
     ) -> None:
-        self.spoofing = spoofing
-        self.tampering = tampering
-        self.repudiation = repudiation
-        self.information_disclosure = information_disclosure
-        self.denial_of_service = denial_of_service
-        self.elevation_of_privilege = elevation_of_privilege
+        self.__spoofing = spoofing
+        self.__tampering = tampering
+        self.__repudiation = repudiation
+        self.__information_disclosure = information_disclosure
+        self.__denial_of_service = denial_of_service
+        self.__elevation_of_privilege = elevation_of_privilege
+        self.__information = None
 
     @property
     def spoofing(self) -> bool:
@@ -276,29 +269,23 @@ class SecurityProperty(object):
         LOW = "LOW"
         NONE = "NONE"
 
-    __confidentiality = Property.NONE
-    __integrity = Property.NONE
-    __availability = Property.NONE
-    __authenticity = Property.NONE
-    __non_repudiation = Property.NONE
-    __authorization = Property.NONE
-    __information = None
 
     def __init__(
         self,
-        confidentiality: str = None,
-        integrity: str = None,
-        availability: str = None,
-        authenticity: str = None,
-        non_repudiation: str = None,
-        authorization: str = None,
+        confidentiality: Property = Property.NONE,
+        integrity: Property = Property.NONE,
+        availability: Property = Property.NONE,
+        authenticity: Property = Property.NONE,
+        non_repudiation: Property = Property.NONE,
+        authorization: Property = Property.NONE,
     ) -> None:
-        self.confidentiality = confidentiality
-        self.integrity = integrity
-        self.availability = availability
-        self.authenticity = authenticity
-        self.non_repudiation = non_repudiation
-        self.authorization = authorization
+        self.__confidentiality = confidentiality
+        self.__integrity = integrity
+        self.__availability = availability
+        self.__authenticity = authenticity
+        self.__non_repudiation = non_repudiation
+        self.__authorization = authorization
+        self.__information = None
 
     @classmethod
     def __properties__(cls):
@@ -463,13 +450,13 @@ class PatientHarm(IntEnum):
         if self.value == 1:
             return """Inconvenience or temporary discomfort"""
         elif self.value == 2:
-            return """Results in temporary injury or impairment not requiring 
+            return """Results in temporary injury or impairment not requiring
             professional medical intervention"""
         elif self.value == 3:
-            return """Results in injury or impairment requiring professional 
+            return """Results in injury or impairment requiring professional
             medical intervention"""
         elif self.value == 4:
-            return """Results in permanent impairment or life-threatening 
+            return """Results in permanent impairment or life-threatening
             injury"""
         elif self.value == 5:
             return """Results in patient death"""
@@ -478,23 +465,20 @@ class PatientHarm(IntEnum):
 
 
 class SafetyImpact(object):
-    __harm: PatientHarm = PatientHarm.CATASTROPHIC
-    __meta: dict = {
-        "assessed_by": None,
-        "assessment_date": None,
-        "additional_info": None,
-    }
-    __exploitability: str = None
-    __risk: bool = None
 
     def __init__(
-        self, harm: str = None, exploitability: str = None, **kwargs
+        self, harm: PatientHarm = PatientHarm.CATASTROPHIC, exploitability: str = None, **kwargs
     ) -> None:
         if harm:
-            self.harm = harm
+            self.__harm = harm
         if exploitability:
-            self.exploitability = exploitability
-        self.meta = None  # (**kwargs)
+            self.__exploitability = exploitability
+        self.__meta = {
+                "assessed_by": None,
+                "assessment_date": None,
+                "additional_info": None,
+            }  # (**kwargs)
+        __risk = False
 
     @property
     def meta(self) -> dict:
@@ -547,7 +531,7 @@ class SafetyImpact(object):
         val = val.upper()
         options = ["HIGH", "MEDIUM", "LOW", "UNKNOWN"]
         if val not in options:
-            err = f"""Exploitability must be one of the following: 
+            err = f"""Exploitability must be one of the following:
             {[o for o in options]}"""
             raise AttributeError()
         self.__exploitability = val
@@ -573,13 +557,10 @@ class SafetyImpact(object):
         Source: FDA. Postmarket Management of Cybersecurity in Medical Devices.
         2016. pp 17-18.
         """
-        if self.__risk != None:
-            return self.__risk
-
         ### CONTROLLED RISK AS RECOMMENDED BY FDA GUIDANCE
         if self.exploitability == "LOW" and (
             self.harm == PatientHarm.NEGLIGIBLE
-            or self.harm == PatientHarm.Minor
+            or self.harm == PatientHarm.MINOR
         ):
             return True
         elif (
@@ -608,6 +589,7 @@ class SafetyImpact(object):
         ### RECOMMENDATION UNCLEAR FROM FDA GUIDANCE
         else:
             print("Please evaluate the risk.")
+            return False
 
     @controlled_risk.setter
     def controlled_risk(self, val: bool) -> None:

@@ -36,9 +36,6 @@ class Finding:
     residual_risk : str, default None
     """
 
-    __impact: dict = {}
-    __likelihood: dict = {}
-
     def __init__(
         self,
         affected_components: Union[Component, list],

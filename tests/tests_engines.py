@@ -37,6 +37,7 @@ class TestThreatlib(unittest.TestCase):
                         x.title for x in self.tm_components[i].controls
                     ]:
                         self.tm_components[i].add_control(c)
+        return super().setUp()
 
     def test_findings(self):
         self.findings = get_findings(self.tm_components, self.rules)

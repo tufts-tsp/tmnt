@@ -28,6 +28,7 @@ from tmnt.dsl.asset import DATASTORE_TYPE
 class TestTM(unittest.TestCase):
     def setUp(self):
         self.tm = TM("test_tm")
+        return super().setUp()
 
     def test_tm_init(self):
         self.assertEqual(self.tm.name, "test_tm")
@@ -49,11 +50,13 @@ class TestTM(unittest.TestCase):
 
     def tearDown(self):
         self.tm.reset()
+        return super().tearDown()
 
 
 class TestElement(unittest.TestCase):
     def setUp(self):
         self.element = Element(name="Test Element", desc="Description")
+        return super().setUp()
 
     def test_component_init(self):
         self.assertEqual(self.element.name, "Test Element")
@@ -112,11 +115,14 @@ class TestElement(unittest.TestCase):
 
         # AttributeError: A different parent has already been assigned
         #    elem1.add_child(elem2)
+    def tearDown(self):
+        return super().tearDown()
 
 
 class TestComponent(unittest.TestCase):
     def setUp(self):
         self.component = Component(name="Test Component", desc="Description")
+        return super().setUp()
 
     def test_component_init(self):
         self.assertEqual(self.component.name, "Test Component")
@@ -158,6 +164,7 @@ class TestComponent(unittest.TestCase):
 class TestAsset(unittest.TestCase):
     def setUp(self):
         self.asset = Asset(name="Test Asset")
+        return super().setUp()
 
     def test_asset_init(self):
         self.assertEqual(self.asset.name, "Test Asset")
@@ -182,7 +189,8 @@ class TestAsset(unittest.TestCase):
         process = Process(name="Process Name")
         self.assertIsInstance(process, Process)
 
-    # no functions
+    def tearDown(self):
+        return super().tearDown()
 
 
 class TestFlow(unittest.TestCase):
@@ -190,6 +198,7 @@ class TestFlow(unittest.TestCase):
         elem1 = Element("test1")
         elem2 = Element("test2")
         self.flow = Flow(name="Test Flow", src=elem1, dst=elem2)
+        return super().setUp()
 
     def test_flow_init(self):
         elem1 = Element("test1")
@@ -201,13 +210,15 @@ class TestFlow(unittest.TestCase):
         self.assertEqual(self.flow.authentication, None)
         self.assertTrue(self.flow.multifactor_authentication)
 
+    def tearDown(self):
+        return super().tearDown()
 
 class TestIssue(unittest.TestCase):
     def setUp(self):
         self.issue = Issue("test_issue")
+        return super().setUp()
 
     def test_empty_issue(self):
-        print(self.issue.consequences)
         self.assertEqual(len(self.issue.consequences), 0)
 
     def test_add_remove_consequence(self):
@@ -238,6 +249,7 @@ class TestIssue(unittest.TestCase):
 class TestThreat(unittest.TestCase):
     def setUp(self):
         self.threat = Threat("test_threat")
+        return super().setUp()
 
     def test_add_remove_step(self):
         self.threat.add_step(1, "Explore")
@@ -257,14 +269,13 @@ class TestThreat(unittest.TestCase):
         self.assertEqual(len(self.threat.attack_steps), 3)
 
     def tearDown(self) -> None:
-        for s in self.threat.attack_steps:
-            self.threat.remove_step(s["order"])
         return super().tearDown()
 
 
 class TestWeakness(unittest.TestCase):
     def setUp(self):
         self.weakness = Weakness("test_weakness")
+        return super().setUp()
 
     def test_add_introduction(self):
         self.weakness.add_introduction("Policy")
@@ -282,6 +293,7 @@ class TestWeakness(unittest.TestCase):
 class TestVulnerability(unittest.TestCase):
     def setUp(self):
         self.vulnerability = Vulnerability("test_vulnerability")
+        return super().setUp()
 
     def tearDown(self) -> None:
         return super().tearDown()
@@ -296,6 +308,7 @@ class TestFinding(unittest.TestCase):
             affected_components=Component("test_component"),
             issues=Issue("test_issue"),
         )
+        return super().setUp()
 
     def tearDown(self) -> None:
         return super().tearDown()
@@ -304,6 +317,7 @@ class TestFinding(unittest.TestCase):
 class TestControl(unittest.TestCase):
     def setUp(self):
         self.vulnerability = Control("1", "test_control")
+        return super().setUp()
 
     def tearDown(self) -> None:
         return super().tearDown()
@@ -312,6 +326,7 @@ class TestControl(unittest.TestCase):
 class TestControlCatalog(unittest.TestCase):
     def setUp(self):
         self.control_catalog = ControlCatalog()
+        return super().setUp()
 
     def tearDown(self) -> None:
         return super().tearDown()
@@ -320,6 +335,7 @@ class TestControlCatalog(unittest.TestCase):
 class TestActor(unittest.TestCase):
     def setUp(self):
         self.actor = Actor("test_actor")
+        return super().setUp()
 
     def tearDown(self) -> None:
         return super().tearDown()

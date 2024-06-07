@@ -51,6 +51,7 @@ def load_owasp_asvs() -> list:
             for requirement in requirements:  # Vx.x.x
                 sc = requirement.find("shortcode").text[1:]
                 desc = requirement.find("description").text
+                desc = desc if desc != None else "N/A"
                 related = requirement.find_all("cwe")
                 related = [{"cweid": id.text} for id in related]
                 id = "v" + version + "-" + sc

@@ -11,14 +11,12 @@ class Component(Element):
     component of the system being threat modeled (rather than an element of the
     threat model), i.e. assets and flows.
     """
-
-    __controls: list[Control] = []
-    __threats: list[Threat] = []
-    __data: list[Data] = []
-
     def __init__(
         self, name: str, desc: str = None, data_list: list[Data] | Data = []
     ) -> None:
+        self.__controls: list[Control] = []
+        self.__threats: list[Threat] = []
+        self.__data: list[Data] = []
         if type(data_list) == Data:
             self.data = [data_list]
         elif type(data_list) == list[Data]:

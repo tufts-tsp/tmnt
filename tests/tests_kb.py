@@ -2,7 +2,10 @@ import unittest
 
 from tmnt import kb
 
-class TestSources(unittest.TestCase):
+class TestASVS(unittest.TestCase):
+    def setUp(self) -> None:
+        return super().setUp()
+
     def test_load_asvs(self):
         asvs = kb.load_owasp_asvs()
         # assertEqual
@@ -13,6 +16,13 @@ class TestSources(unittest.TestCase):
             self.assertEqual(type(c.related), list)
             for id in c.related:
                 self.assertEqual(type(id), dict)
+
+    def tearDown(self):
+        return super().tearDown()
+
+class TestCAPEC(unittest.TestCase):
+    def setUp(self) -> None:
+        return super().setUp()
 
     def test_load_capec(self):
         capec = kb.load_capec()
@@ -48,6 +58,13 @@ class TestSources(unittest.TestCase):
             for e in t.examples:
                 self.assertEqual(type(e), str)
 
+    def tearDown(self):
+        return super().tearDown()
+
+class TestCWES(unittest.TestCase):
+    def setUp(self) -> None:
+        return super().setUp()
+
     def test_load_cwes(self):
         cwes = kb.load_cwes()
         for w in cwes:
@@ -77,6 +94,9 @@ class TestSources(unittest.TestCase):
             self.assertEqual(type(w.meta["references"]), list)
             for r in w.meta["references"]:
                 self.assertEqual(type(r), dict)
+
+    def tearDown(self):
+        return super().tearDown()
 
 if __name__ == "__main__":
     unittest.main()

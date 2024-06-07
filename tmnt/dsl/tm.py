@@ -17,16 +17,6 @@ class TM:
     """Describes the threat model administratively,
     and holds all details during a run"""
 
-    _flows = []
-    _elements = []
-    _actors = []
-    _assets = []
-    _threats = []
-    _boundaries = []
-    _data = []
-    description: str
-    findings: list[Finding] = []
-    assumptions: list = []
 
     def __init__(self, name: str, components: List[Component] = []):
         self._name = name
