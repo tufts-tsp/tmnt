@@ -1,7 +1,7 @@
-﻿tmnt.dsl.core.requirement.SecurityProperty
-==========================================
+﻿tmnt.dsl.requirement.SecurityProperty
+=====================================
 
-.. currentmodule:: tmnt.dsl.core.requirement
+.. currentmodule:: tmnt.dsl.requirement
 
 .. autoclass:: SecurityProperty
 
