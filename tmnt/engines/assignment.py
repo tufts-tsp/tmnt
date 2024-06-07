@@ -27,7 +27,6 @@ def get_findings(tm_components, threat_map):
     return findings
 
 
-
 class Assignment(Engine):
     """
     Assignment represent a list of rules (mappings between a component and a threat/control). The default assignments are from the pytm threatlib.

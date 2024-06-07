@@ -1,6 +1,7 @@
 from .dsl import TM
 from .engines import Engine, Assignment
 
+
 class TMNTController(object):
 
     """
@@ -14,5 +15,10 @@ class TMNTController(object):
     you can add them with `references`.
     """
 
-    def __init__(self, config_file: str = "", engines: Engine | list[Engine] = None, references: TM | list[TM] = None):
+    def __init__(
+        self,
+        config_file: str = "",
+        engines: Engine | list[Engine] = None,
+        references: TM | list[TM] = None,
+    ):
         pass

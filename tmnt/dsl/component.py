@@ -11,6 +11,7 @@ class Component(Element):
     component of the system being threat modeled (rather than an element of the
     threat model), i.e. assets and flows.
     """
+
     def __init__(
         self, name: str, desc: str = None, data_list: list[Data] | Data = []
     ) -> None:

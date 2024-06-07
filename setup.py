@@ -19,7 +19,7 @@ setup(
             "reference_data/asvs.xml",
             "reference_data/asvs_ref.json",
             "reference_data/pytm_threatlib.json",
-            "reference_data/catalog.yaml"
+            "reference_data/catalog.yaml",
         ]
     },
 )

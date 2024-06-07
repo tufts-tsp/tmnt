@@ -22,7 +22,6 @@ class Element(object):
         purpose and role within the threat model.
     """
 
-
     def __init__(
         self,
         name: str,

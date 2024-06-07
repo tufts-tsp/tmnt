@@ -269,7 +269,6 @@ class SecurityProperty(object):
         LOW = "LOW"
         NONE = "NONE"
 
-
     def __init__(
         self,
         confidentiality: Property = Property.NONE,
@@ -465,19 +464,21 @@ class PatientHarm(IntEnum):
 
 
 class SafetyImpact(object):
-
     def __init__(
-        self, harm: PatientHarm = PatientHarm.CATASTROPHIC, exploitability: str = None, **kwargs
+        self,
+        harm: PatientHarm = PatientHarm.CATASTROPHIC,
+        exploitability: str = None,
+        **kwargs,
     ) -> None:
         if harm:
             self.__harm = harm
         if exploitability:
             self.__exploitability = exploitability
         self.__meta = {
-                "assessed_by": None,
-                "assessment_date": None,
-                "additional_info": None,
-            }  # (**kwargs)
+            "assessed_by": None,
+            "assessment_date": None,
+            "additional_info": None,
+        }  # (**kwargs)
         __risk = False
 
     @property

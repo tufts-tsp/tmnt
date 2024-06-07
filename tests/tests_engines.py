@@ -5,7 +5,6 @@ from tmnt.engines.assignment import Assignment, Rule, get_findings
 
 
 class TestThreatlib(unittest.TestCase):
-
     def setUp(self):
         self.rules = Assignment()
         asset1 = Asset("A")
@@ -47,6 +46,7 @@ class TestThreatlib(unittest.TestCase):
             for control in component.controls:
                 component.remove_control(control)
         return super().tearDown()
+
 
 if __name__ == "__main__":
     unittest.main()

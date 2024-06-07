@@ -10,8 +10,10 @@ import json
 
 from tmnt.dsl import Weakness, Threat, Control
 
+
 def load_pytm_threatlib():
     return load_json("pytm_threatlib.json")
+
 
 def load_owasp_asvs() -> list:
     """

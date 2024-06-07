@@ -2,6 +2,7 @@ import unittest
 
 from tmnt import kb
 
+
 class TestASVS(unittest.TestCase):
     def setUp(self) -> None:
         return super().setUp()
@@ -19,6 +20,7 @@ class TestASVS(unittest.TestCase):
 
     def tearDown(self):
         return super().tearDown()
+
 
 class TestCAPEC(unittest.TestCase):
     def setUp(self) -> None:
@@ -61,6 +63,7 @@ class TestCAPEC(unittest.TestCase):
     def tearDown(self):
         return super().tearDown()
 
+
 class TestCWES(unittest.TestCase):
     def setUp(self) -> None:
         return super().setUp()
@@ -97,6 +100,7 @@ class TestCWES(unittest.TestCase):
 
     def tearDown(self):
         return super().tearDown()
+
 
 if __name__ == "__main__":
     unittest.main()

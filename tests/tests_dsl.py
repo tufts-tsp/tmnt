@@ -23,8 +23,6 @@ from tmnt.dsl.element import Element
 from tmnt.dsl.asset import DATASTORE_TYPE
 
 
-
-
 class TestTM(unittest.TestCase):
     def setUp(self):
         self.tm = TM("test_tm")
@@ -115,6 +113,7 @@ class TestElement(unittest.TestCase):
 
         # AttributeError: A different parent has already been assigned
         #    elem1.add_child(elem2)
+
     def tearDown(self):
         return super().tearDown()
 
@@ -212,6 +211,7 @@ class TestFlow(unittest.TestCase):
 
     def tearDown(self):
         return super().tearDown()
+
 
 class TestIssue(unittest.TestCase):
     def setUp(self):

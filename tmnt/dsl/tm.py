@@ -17,7 +17,6 @@ class TM:
     """Describes the threat model administratively,
     and holds all details during a run"""
 
-
     def __init__(self, name: str, components: List[Component] = []):
         self._name = name
         self.__components = components

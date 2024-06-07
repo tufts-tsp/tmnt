@@ -722,5 +722,6 @@ class TestInsulinDeliveryDeviceExample(unittest.TestCase):
     def tearDown(self) -> None:
         return super().tearDown()
 
+
 if __name__ == "__main__":
     unittest.main()
