@@ -226,7 +226,7 @@
         <!-- svg is generated into here -->
         <svg id="dfd_svg"></svg>
         <!-- bottom bar is generated into here -->
-        <div class="dfd_detailsbar" id="bottom_bar">
+        <div class="dfd_detailsbar" id="bottom_bar" onclick="collapse_bottom_bar()">
             <h2 style="color: gray">No asset selected...</h2>
         </div>
     </div>
@@ -240,6 +240,7 @@
     var links = [];
     var svg;
     var simulation;
+    var dfd_svg_fraction = 0.75;
 
     // Create an SVG on page load
     window.onload = function() {
@@ -252,12 +253,12 @@
 
         svg = d3.select('#dfd_svg')
         .attr("width", area.width)
-        .attr("height", area.height * 0.75); // TODO make this dynamic with bottom bar
+        .attr("height", area.height * dfd_svg_fraction); // TODO make this dynamic with bottom bar
 
         // Tells d3 how to handle forces
         simulation = d3.forceSimulation(nodes)
         .force("x", d3.forceX(area.width / 2))
-        .force("y", d3.forceY(area.height / 2 * 0.75)) // TODO make this dynamic with bottom bar
+        .force("y", d3.forceY(area.height / 2 * dfd_svg_fraction)) // TODO make this dynamic with bottom bar
         .force("collide", d3.forceCollide().radius(100))
         .on("tick", ticked);
 
@@ -292,6 +293,29 @@
         })
     }
 
+    // Toggles the collapsible bottom bar 
+    function collapse_bottom_bar() {
+        let area = d3.select('.dfd_assetview').node().getBoundingClientRect();
+
+        // uncollapses if bottom bar is already collapsed
+        if (dfd_svg_fraction == 1) {
+            dfd_svg_fraction = 0.75;
+        }
+        // collapses if bottom bar is uncollapsed
+        else {
+            dfd_svg_fraction = 1;
+        }
+        svg = d3.select('#dfd_svg')
+        .attr("width", area.width)
+        .attr("height", area.height * dfd_svg_fraction);
+
+        simulation = d3.forceSimulation(nodes)
+        .force("x", d3.forceX(area.width / 2))
+        .force("y", d3.forceY(area.height / 2 * dfd_svg_fraction))
+        .force("collide", d3.forceCollide().radius(100))
+        .on("tick", ticked);
+    }
+
     // On window resize, run the force simulation again
     // so that elements don't ever get stuck off screen
     window.onresize = function() {
@@ -303,14 +327,15 @@
         // Why is this happening!?!?
 
         let area = d3.select('.dfd_assetview').node().getBoundingClientRect();
+        // let dfd_svg_fraction = 0.75;
 
         svg = d3.select('#dfd_svg')
         .attr("width", area.width)
-        .attr("height", area.height * 0.75); // TODO make this dynamic with bottom bar
+        .attr("height", area.height * dfd_svg_fraction); // TODO make this dynamic with bottom bar
 
         simulation = d3.forceSimulation(nodes)
         .force("x", d3.forceX(area.width / 2))
-        .force("y", d3.forceY(area.height / 2 * 0.75)) // TODO make this dynamic with bottom bar
+        .force("y", d3.forceY(area.height / 2 * dfd_svg_fraction)) // TODO make this dynamic with bottom bar
         .force("collide", d3.forceCollide().radius(100))
         .on("tick", ticked);
 
