@@ -10,7 +10,7 @@ from tmnt.dsl import (
     ExternalEntity,
     DataFlow,
 )
-from tmnt.dsl.core.asset import (
+from tmnt.dsl.asset import (
     DATASTORE_TYPE,
     Machine,
 )

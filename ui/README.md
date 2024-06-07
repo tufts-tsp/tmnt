@@ -1,7 +1,7 @@
 ## Docker Setup
 
 You are able to run the app using Docker. You'll want to install [Docker Desktop](https://docs.docker.com/desktop/). Right now you can either:
-- After every push/pull request to the `dev` branch a new version of the app will be built and available on Docker Hub. To run this version you simply need to run `docker run -it -p 8000:8000 zenw00kie/tmnt_ui:latest`. If you have already done this before, you'll need to make sure you pull the latest version of the image, which you can either do in Docker Desktop or you can run `docker pull zenw00kie/tmnt_ui:latest`.
+- After every push/pull request to the `deploy` branch a new version of the app will be built and available on Docker Hub. To run this version you simply need to run `docker run -it -p 8000:8000 zenw00kie/tmnt_ui:latest`. If you have already done this before, you'll need to make sure you pull the latest version of the image, which you can either do in Docker Desktop or you can run `docker pull zenw00kie/tmnt_ui:latest`.
 - Build a new docker image on your local version using `docker build -t "tmnt_ui" .`. This will create a Docker image for you to run the app. You then can run `docker run -it -p 8000:8000 tmnt_ui` or you can run the image from the Docker Desktop app (if you do the latter make in the optional settings that you set the host port to 8000).
 
 Once the container is running you can navigate to `http://localhost:8000/tmnt/asset_view/` to use the app.

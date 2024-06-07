@@ -1,7 +1,7 @@
 import unittest
 
-from tmnt.dsl.util import OSCALParser
-from tmnt.dsl.core.control import Control, Part, ControlCatalog, Metadata
+from tmnt.util.parsers import OSCALParser
+from tmnt.dsl.control import Control, Part, ControlCatalog, Metadata
 
 
 class TestOSCALParser(unittest.TestCase):

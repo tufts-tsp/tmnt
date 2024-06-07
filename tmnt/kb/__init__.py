@@ -1,13 +1,14 @@
 """
 Data Sources used to pre-populate TM recomendations
 """
-
+from bs4 import XMLParsedAsHTMLWarning
 from bs4 import BeautifulSoup as bs
 from bs4.element import NavigableString
 import os
+import warnings
 import json
 
-from tmnt.dsl.core import Weakness, Threat, Control
+from tmnt.dsl import Weakness, Threat, Control
 
 def load_pytm_threatlib():
     return load_json("pytm_threatlib.json")
@@ -181,7 +182,9 @@ def load_xml(fn: str, fpath: str = None) -> bs:
         fpath = os.path.dirname(__file__) + "/reference_data/"
     with open(fpath + fn, "r", encoding="utf8") as f:
         data = f.read()
-    return bs(data, "lxml")
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+        return bs(data, features="lxml")
 
 
 def load_json(fn: str, fpath: str = None) -> list:

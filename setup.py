@@ -8,12 +8,9 @@ setup(
     packages=[
         "tmnt",
         "tmnt.dsl",
-        "tmnt.dsl.core",
-        "tmnt.dsl.util",
-        "tmnt.dsl.visual",
         "tmnt.kb",
         "tmnt.engines",
-        "tmnt.engines.threat_assignment",
+        "tmnt.util",
     ],
     package_data={
         "tmnt.kb": [
@@ -22,6 +19,7 @@ setup(
             "reference_data/asvs.xml",
             "reference_data/asvs_ref.json",
             "reference_data/pytm_threatlib.json",
+            "reference_data/catalog.yaml"
         ]
     },
 )
