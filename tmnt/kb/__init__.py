@@ -1,16 +1,19 @@
 """
 Data Sources used to pre-populate TM recomendations
 """
-
+from bs4 import XMLParsedAsHTMLWarning
 from bs4 import BeautifulSoup as bs
 from bs4.element import NavigableString
 import os
+import warnings
 import json
 
-from tmnt.dsl.core import Weakness, Threat, Control
+from tmnt.dsl import Weakness, Threat, Control
+
 
 def load_pytm_threatlib():
     return load_json("pytm_threatlib.json")
+
 
 def load_owasp_asvs() -> list:
     """
@@ -50,6 +53,7 @@ def load_owasp_asvs() -> list:
             for requirement in requirements:  # Vx.x.x
                 sc = requirement.find("shortcode").text[1:]
                 desc = requirement.find("description").text
+                desc = desc if desc != None else "N/A"
                 related = requirement.find_all("cwe")
                 related = [{"cweid": id.text} for id in related]
                 id = "v" + version + "-" + sc
@@ -181,7 +185,9 @@ def load_xml(fn: str, fpath: str = None) -> bs:
         fpath = os.path.dirname(__file__) + "/reference_data/"
     with open(fpath + fn, "r", encoding="utf8") as f:
         data = f.read()
-    return bs(data, "lxml")
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+        return bs(data, features="lxml")
 
 
 def load_json(fn: str, fpath: str = None) -> list:

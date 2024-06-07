@@ -1,7 +1,7 @@
 import json
 import re
 import os
-from tmnt.dsl.core import (
+from tmnt.dsl import (
     Asset,
     ExternalEntity,
     Datastore,
@@ -14,10 +14,22 @@ from tmnt.dsl.core import (
 
 from tmnt import kb
 
+from .engine import Engine
 
-class Rules(object):
+
+# Given the list of Components in a TM, return Findings for each Component
+def get_findings(tm_components, threat_map):
+    findings = []
+    for component in tm_components:
+        mt, umt = threat_map.component_threats(component)
+        finding = Finding(affected_components=component, issues=umt)
+        findings.append(finding)
+    return findings
+
+
+class Assignment(Engine):
     """
-    Rules represent a list of rules. The default ruleset is the pytm threatlib.
+    Assignment represent a list of rules (mappings between a component and a threat/control). The default assignments are from the pytm threatlib.
     """
 
     __threatmap: list  # list of Rules

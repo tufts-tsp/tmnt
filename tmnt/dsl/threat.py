@@ -55,9 +55,6 @@ class Issue(Element):
         :func:`~tmnt_dsl.core.Issue.consequences` for more information.
     """
 
-    __meta_data: dict = {}
-    __consequences = []
-
     def __init__(
         self,
         name: str,
@@ -73,6 +70,7 @@ class Issue(Element):
         consequences: list = [],
     ) -> None:
         super().__init__(name, desc)
+        self.__consequences = []
         self.prerequisites = prerequisites
         self.mitigations = mitigations
         self.__meta_data = {
@@ -85,7 +83,7 @@ class Issue(Element):
         }
         for c in consequences:
             like = c["likelihood"] if "likelihood" in c.keys() else None
-            note = c["note"] if "impact" in c.keys() else None
+            note = c["note"] if "note" in c.keys() else None
             self.add_consequence(c["scope"], c["impact"], like, note)
 
     @property
@@ -290,9 +288,6 @@ class Weakness(Issue):
         See :func:`~tmnt_dsl.core.Issue`.
     """
 
-    __mode_introduction: list = []
-    __detection_methods: list = []
-
     def __init__(
         self,
         name: str,
@@ -417,9 +412,6 @@ class Threat(Issue):
         See :func:`~tmnt_dsl.core.Issue`.
     """
 
-    __threat_source: dict = {}
-    __atack_steps: list = []
-
     def __init__(
         self,
         name: str,
@@ -432,7 +424,7 @@ class Threat(Issue):
         attack_steps: list = [],
         **kwargs,
     ) -> None:
-        super().__init__(name, desc, **kwargs)
+        self.__attack_steps = []
         self.__threat_source = {
             "desc": threat_source_desc,
             "required_skills": required_skills,
@@ -441,6 +433,7 @@ class Threat(Issue):
         }
         self.examples = examples
         self.attack_steps = attack_steps
+        super().__init__(name, desc, **kwargs)
 
     @property
     def threat_source(self) -> dict:
@@ -560,7 +553,7 @@ class Threat(Issue):
         technique : str
             The techniques involved with this step.
         """
-        return self.__atack_steps
+        return self.__attack_steps
 
     @attack_steps.setter
     def attack_steps(self, steps: list) -> None:
@@ -589,11 +582,11 @@ class Threat(Issue):
         technique : str, default None
             The techniques involved with this step.
         """
-        for step in self.__atack_steps:
+        for step in self.__attack_steps:
             if step["order"] == order:
                 self.remove_step(order)
 
-        self.__atack_steps.append(
+        self.__attack_steps.append(
             {
                 "order": order,
                 "phase": phase,
@@ -603,7 +596,7 @@ class Threat(Issue):
         )
 
     def remove_step(self, order: int) -> None:
-        for i in range(len(self.__atack_steps)):
-            if self.__atack_steps[i]["order"] == order:
-                del self.__atack_steps[i]
+        for i in range(len(self.__attack_steps)):
+            if self.__attack_steps[i]["order"] == order:
+                del self.__attack_steps[i]
                 break

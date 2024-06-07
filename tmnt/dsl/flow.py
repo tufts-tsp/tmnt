@@ -8,10 +8,6 @@ class Flow(Component):
     A flow from a source to a destination
     """
 
-    __src: Element = None
-    __dst: Element = None
-    __path: list[Element] = []
-
     def __init__(
         self,
         name,
@@ -25,16 +21,16 @@ class Flow(Component):
         # self.src = self.__check_parent(src)
         # self.dst = self.__check_parent(dst)
 
-        self.src = src
-        self.dst = dst
+        self.__src = src
+        self.__dst = dst
 
         self.authentication = authentication
         self.multifactor_authentication = multifactor_authentication
 
         if path == []:
-            self.path = [src, dst]
+            self.__path = [src, dst]
         else:
-            self.path = path
+            self.__path = path
         super().__init__(name, **kwargs)
 
     @property
