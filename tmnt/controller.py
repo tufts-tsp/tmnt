@@ -1,8 +1,23 @@
+from threading import Lock, Thread
+import time
+
 from .dsl import TM
-from .engines import Engine, Assignment
+from .engines import Engine
+
+class TMNTControllerMeta(type):
+
+    _instances = {}
+    _lock: Lock = Lock()
+
+    def __call__(cls, *args, **kwargs):
+        with cls._lock:
+            if cls not in cls._instances:
+                instance = super().__call__(*args, **kwargs)
+                cls._instances[cls] = instance
+        return cls._instances[cls]
 
 
-class TMNTController(object):
+class TMNTController(metaclass=TMNTControllerMeta):
 
     """
     TMNTController is what starts a TMNT threat modeling session. Your
@@ -17,8 +32,16 @@ class TMNTController(object):
 
     def __init__(
         self,
+        name: str,
         config_file: str = "",
-        engines: Engine | list[Engine] = None,
-        references: TM | list[TM] = None,
+        engines: Engine | list[Engine] = Engine(),
+        references: None | TM | list[TM] = None,
     ):
-        pass
+        self.created = time.time()
+        self.lastmodified = time.time()
+        self.tm = TM(name)
+        if config_file != "":
+            #parse config and add to `self.tm`
+            pass
+        self.engines = engines
+        self.references = references

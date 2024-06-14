@@ -11,7 +11,11 @@ The rough system design looks like this:
 
 ## Using TMNT
 
-You can download this repository and install the `tmnt` python package with `pip install ./tmnt`.
+You can download this repository and install the `tmnt` python package with
+```
+cd tmnt
+pip install .
+```
 
 To run the UI, please refer to the [UI README](ui/README.md).
 
