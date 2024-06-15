@@ -1,0 +1,65 @@
+Diagramming Only Tool – Diagrams 
+
+    Status: It is actively being developed as constant updates are being made to the website.  
+
+    Summary: This tool enables users to draw out a diagram of their threat model. Various shapes, arrows, and other useful items are provided to generate a comprehensive diagram that incorporates the components, data flows, and other essential elements.  
+
+    Advantages: 
+
+        It substantially assists with visualizing the model clearer 
+
+        It is simple to use for novice users as everything is organized neatly and not overloaded with a ton of information at once.  
+
+        The diagram is modular, which is great for making detailed models. 
+
+        You can save and share your work. 
+
+    Disadvantages: 
+
+        As this tool is strictly utilized for diagramming, it doesn’t come with numerous features needed in a threat modeling tool, such as threat and risk assessments and suggestions for mitigations.  
+
+        There isn’t a threat and controls assignment engine or natural suggestion engine.  
+
+DSLs/Threat Modeling as Code Tool – ThreatSpec 
+
+    Status: The tool is currently stale. The files in the GitHub repository have remained unchanged for the past 4-5 years. The date of the last commit was December 30, 2020. 
+
+    Summary: This threat modeling tool is an open-source project that simplifies the process of securing a system by annotating your code with comments regarding threats and security concerns, thus creating a threat model during the development of the system. The tool will subsequently generate a report with a descriptive model and data flows. 
+
+    Advantages: 
+
+        This is great for developers as they can mitigate any threats that exist within their code (insufficient input validation, Cross-Site Scripting, etc.) 
+
+        It shows the users what threats have been mitigated and which ones still need to be addressed.  
+
+        The tool doesn’t interrupt the users focus. 
+
+    Disadvantages: 
+
+        It gives the user a long list of threats and mitigations, which may be too much information presented at once. 
+
+        May be uneasy for inexperienced users to navigate the tool initially.  
+
+        The tool can solely create a report with a diagram from the given code. You can’t quite drag and drop text boxes and arrows to represent the components and flows of the model.  
+
+UIs – Threat Dragon 
+
+    Status: This tool is actively being developed as the last update was not long ago. 
+
+    Summary: This threat modeling tool is an open-source platform that lets users create threat models and log the threats and mitigations accordingly. Users can either log in via GitHub or as a local user. 
+
+    Advantages: 
+
+        The tool is completely free. 
+
+        Very simple to utilize. A wonderful tool for beginners. 
+
+        Availability of drag and drop components for efficient usability 
+
+        Ability to prioritize threats and mark them open or mitigated.  
+
+    Disadvantages: 
+
+        Users must enter every threat and mitigation manually, and it doesn’t provide any valuable recommendations. 
+
+        It doesn’t have a knowledge base, including CAPEC, and relies on the user’s knowledge of the threats and controls. 
