@@ -39,15 +39,25 @@ class ControllerStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.Import = channel.unary_unary(
+                '/Controller/Import',
+                request_serializer=controller__pb2.ImportRequest.SerializeToString,
+                response_deserializer=controller__pb2.Status.FromString,
+                _registered_method=True)
+        self.Export = channel.unary_unary(
+                '/Controller/Export',
+                request_serializer=controller__pb2.ExportRequest.SerializeToString,
+                response_deserializer=controller__pb2.Status.FromString,
+                _registered_method=True)
         self.AddAsset = channel.unary_unary(
                 '/Controller/AddAsset',
                 request_serializer=controller__pb2.AddAssetRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.RemoveAsset = channel.unary_unary(
                 '/Controller/RemoveAsset',
                 request_serializer=controller__pb2.RemoveAssetRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.GetAssets = channel.unary_unary(
                 '/Controller/GetAssets',
@@ -57,12 +67,12 @@ class ControllerStub(object):
         self.AddExternalAsset = channel.unary_unary(
                 '/Controller/AddExternalAsset',
                 request_serializer=controller__pb2.AddExternalAssetRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.RemoveExternalAsset = channel.unary_unary(
                 '/Controller/RemoveExternalAsset',
                 request_serializer=controller__pb2.RemoveExternalAssetRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.GetExternalAssets = channel.unary_unary(
                 '/Controller/GetExternalAssets',
@@ -72,12 +82,12 @@ class ControllerStub(object):
         self.AddDatastore = channel.unary_unary(
                 '/Controller/AddDatastore',
                 request_serializer=controller__pb2.AddDatastoreRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.RemoveDatastore = channel.unary_unary(
                 '/Controller/RemoveDatastore',
                 request_serializer=controller__pb2.RemoveDatastoreRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.GetDatastores = channel.unary_unary(
                 '/Controller/GetDatastores',
@@ -87,12 +97,12 @@ class ControllerStub(object):
         self.AddProcess = channel.unary_unary(
                 '/Controller/AddProcess',
                 request_serializer=controller__pb2.AddProcessRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.RemoveProcess = channel.unary_unary(
                 '/Controller/RemoveProcess',
                 request_serializer=controller__pb2.RemoveProcessRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.GetProcesses = channel.unary_unary(
                 '/Controller/GetProcesses',
@@ -102,12 +112,12 @@ class ControllerStub(object):
         self.AddBoundary = channel.unary_unary(
                 '/Controller/AddBoundary',
                 request_serializer=controller__pb2.Boundary.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.RemoveBoundary = channel.unary_unary(
                 '/Controller/RemoveBoundary',
                 request_serializer=controller__pb2.RemoveBoundaryRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.GetBoundaries = channel.unary_unary(
                 '/Controller/GetBoundaries',
@@ -117,12 +127,12 @@ class ControllerStub(object):
         self.AddActor = channel.unary_unary(
                 '/Controller/AddActor',
                 request_serializer=controller__pb2.Actor.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.RemoveActor = channel.unary_unary(
                 '/Controller/RemoveActor',
                 request_serializer=controller__pb2.RemoveActorRequest.SerializeToString,
-                response_deserializer=controller__pb2.Empty.FromString,
+                response_deserializer=controller__pb2.Status.FromString,
                 _registered_method=True)
         self.GetActors = channel.unary_unary(
                 '/Controller/GetActors',
@@ -133,6 +143,18 @@ class ControllerStub(object):
 
 class ControllerServicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def Import(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Export(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def AddAsset(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -245,15 +267,25 @@ class ControllerServicer(object):
 
 def add_ControllerServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'Import': grpc.unary_unary_rpc_method_handler(
+                    servicer.Import,
+                    request_deserializer=controller__pb2.ImportRequest.FromString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
+            ),
+            'Export': grpc.unary_unary_rpc_method_handler(
+                    servicer.Export,
+                    request_deserializer=controller__pb2.ExportRequest.FromString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
+            ),
             'AddAsset': grpc.unary_unary_rpc_method_handler(
                     servicer.AddAsset,
                     request_deserializer=controller__pb2.AddAssetRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'RemoveAsset': grpc.unary_unary_rpc_method_handler(
                     servicer.RemoveAsset,
                     request_deserializer=controller__pb2.RemoveAssetRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'GetAssets': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAssets,
@@ -263,12 +295,12 @@ def add_ControllerServicer_to_server(servicer, server):
             'AddExternalAsset': grpc.unary_unary_rpc_method_handler(
                     servicer.AddExternalAsset,
                     request_deserializer=controller__pb2.AddExternalAssetRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'RemoveExternalAsset': grpc.unary_unary_rpc_method_handler(
                     servicer.RemoveExternalAsset,
                     request_deserializer=controller__pb2.RemoveExternalAssetRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'GetExternalAssets': grpc.unary_unary_rpc_method_handler(
                     servicer.GetExternalAssets,
@@ -278,12 +310,12 @@ def add_ControllerServicer_to_server(servicer, server):
             'AddDatastore': grpc.unary_unary_rpc_method_handler(
                     servicer.AddDatastore,
                     request_deserializer=controller__pb2.AddDatastoreRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'RemoveDatastore': grpc.unary_unary_rpc_method_handler(
                     servicer.RemoveDatastore,
                     request_deserializer=controller__pb2.RemoveDatastoreRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'GetDatastores': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDatastores,
@@ -293,12 +325,12 @@ def add_ControllerServicer_to_server(servicer, server):
             'AddProcess': grpc.unary_unary_rpc_method_handler(
                     servicer.AddProcess,
                     request_deserializer=controller__pb2.AddProcessRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'RemoveProcess': grpc.unary_unary_rpc_method_handler(
                     servicer.RemoveProcess,
                     request_deserializer=controller__pb2.RemoveProcessRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'GetProcesses': grpc.unary_unary_rpc_method_handler(
                     servicer.GetProcesses,
@@ -308,12 +340,12 @@ def add_ControllerServicer_to_server(servicer, server):
             'AddBoundary': grpc.unary_unary_rpc_method_handler(
                     servicer.AddBoundary,
                     request_deserializer=controller__pb2.Boundary.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'RemoveBoundary': grpc.unary_unary_rpc_method_handler(
                     servicer.RemoveBoundary,
                     request_deserializer=controller__pb2.RemoveBoundaryRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'GetBoundaries': grpc.unary_unary_rpc_method_handler(
                     servicer.GetBoundaries,
@@ -323,12 +355,12 @@ def add_ControllerServicer_to_server(servicer, server):
             'AddActor': grpc.unary_unary_rpc_method_handler(
                     servicer.AddActor,
                     request_deserializer=controller__pb2.Actor.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'RemoveActor': grpc.unary_unary_rpc_method_handler(
                     servicer.RemoveActor,
                     request_deserializer=controller__pb2.RemoveActorRequest.FromString,
-                    response_serializer=controller__pb2.Empty.SerializeToString,
+                    response_serializer=controller__pb2.Status.SerializeToString,
             ),
             'GetActors': grpc.unary_unary_rpc_method_handler(
                     servicer.GetActors,
@@ -347,6 +379,60 @@ class Controller(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
+    def Import(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Controller/Import',
+            controller__pb2.ImportRequest.SerializeToString,
+            controller__pb2.Status.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Export(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Controller/Export',
+            controller__pb2.ExportRequest.SerializeToString,
+            controller__pb2.Status.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
     def AddAsset(request,
             target,
             options=(),
@@ -362,7 +448,7 @@ class Controller(object):
             target,
             '/Controller/AddAsset',
             controller__pb2.AddAssetRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -389,7 +475,7 @@ class Controller(object):
             target,
             '/Controller/RemoveAsset',
             controller__pb2.RemoveAssetRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -443,7 +529,7 @@ class Controller(object):
             target,
             '/Controller/AddExternalAsset',
             controller__pb2.AddExternalAssetRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -470,7 +556,7 @@ class Controller(object):
             target,
             '/Controller/RemoveExternalAsset',
             controller__pb2.RemoveExternalAssetRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -524,7 +610,7 @@ class Controller(object):
             target,
             '/Controller/AddDatastore',
             controller__pb2.AddDatastoreRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -551,7 +637,7 @@ class Controller(object):
             target,
             '/Controller/RemoveDatastore',
             controller__pb2.RemoveDatastoreRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -605,7 +691,7 @@ class Controller(object):
             target,
             '/Controller/AddProcess',
             controller__pb2.AddProcessRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -632,7 +718,7 @@ class Controller(object):
             target,
             '/Controller/RemoveProcess',
             controller__pb2.RemoveProcessRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -686,7 +772,7 @@ class Controller(object):
             target,
             '/Controller/AddBoundary',
             controller__pb2.Boundary.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -713,7 +799,7 @@ class Controller(object):
             target,
             '/Controller/RemoveBoundary',
             controller__pb2.RemoveBoundaryRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -767,7 +853,7 @@ class Controller(object):
             target,
             '/Controller/AddActor',
             controller__pb2.Actor.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,
@@ -794,7 +880,7 @@ class Controller(object):
             target,
             '/Controller/RemoveActor',
             controller__pb2.RemoveActorRequest.SerializeToString,
-            controller__pb2.Empty.FromString,
+            controller__pb2.Status.FromString,
             options,
             channel_credentials,
             insecure,

@@ -9,6 +9,8 @@ from controller_pb2 import (
     Machine,
     Datastore_Type,
     Empty,
+    Status,
+    Status_Code,
     Actor,
     GetActorsResponses,
     Boundary,
@@ -72,13 +74,37 @@ class TMNTController(metaclass=TMNTControllerMeta):
 
 
 class ControllerService(controller_pb2_grpc.ControllerServicer, TMNTController controller):
-    def AddAsset(self, request, context):
+    def AddExternalAsset(self, request, context):
 # check first to see if the actor or boundary already exist. If no, create a new ones.
         actor = TM.Actor(request.trust_boundary.boundary_owner.name,request.trust_boundary.boundary_owner.actor_type,request.trust_boundary.boundary_owner.physical_access)
         boundary = TM.Boundary(request.trust_boundary.name, actor)
-        asset = TM.Asset(request.name, request.open_port, trust_boundary, request.machine, request.ds_type)
-        self.controller.tm.addAsset(asset)
-        return Empty
+        asset = TM.ExternalAsset(request.name, request.open_port, trust_boundary, request.machine, request.physical_access)
+        self.controller.tm.addExternalAsset(asset)
+        status = Status(Status_Code.SUCCESS)
+        return status
+    
+    def AddActor(self, request, context):
+        actor = TM.Actor(request.trust_boundary.boundary_owner.name,request.trust_boundary.boundary_owner.actor_type,request.trust_boundary.boundary_owner.physical_access)
+        self.controller.tm.addActor(asset)
+        status = Status(Status_Code.SUCCESS)
+        return status
+        
+    def AddBoundary(self, request, context):
+        actor = TM.Actor(request.trust_boundary.boundary_owner.name,request.trust_boundary.boundary_owner.actor_type,request.trust_boundary.boundary_owner.physical_access)
+        boundary = TM.Boundary(request.trust_boundary.name, actor)
+        self.controller.tm.addBoundary(asset)
+        status = Status(Status_Code.SUCCESS)
+        return status
+        
+    def Import(self, request, context):
+        # call the parser function on request.input_file to install a new threat model from a yaml file
+        status = Status(Status_Code.SUCCESS)
+        return status
+    
+    def Export(self, request, context):
+        # save the current threat model object to a yaml file with the file name given by request.output_file
+        status = Status(Status_Code.SUCCESS)
+        return status
         
 def serve():
     controller = TMNTController("default","",None,None)

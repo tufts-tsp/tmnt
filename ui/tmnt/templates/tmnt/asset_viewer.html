@@ -401,6 +401,23 @@
                 .attr('height', 60)
                 .style('fill', 'white')
                 .style('stroke', 'black');
+                
+                var act_type = window.prompt("What is the Actor's type?", "New User");
+                var act_access = window.prompt("Does the user have physical access?", "No");
+                
+                $.ajax({
+                    type: "POST",
+                    url: {% url 'api/add_actor' %}
+                    actor_name: asset_name
+                    actor_type: act_type
+                    actor_access: act_acesss
+                    success: function(result){
+                        alert("Success");
+                    }
+                })
+                
+                
+                
                 break;
             case "Server":
                 node_group
@@ -467,6 +484,32 @@
                 .attr('height', 60)
                 .style('fill', 'white')
                 .style('stroke', 'black');
+                
+                var o_port = window.prompt("What is the associated open port?", "22");
+                var act_name = window.prompt("Who is the associated Actor?", "New Actor");
+                var act_type = window.prompt("What is the Actor's type?", "New User");
+                var act_access = window.prompt("Does the user have physical access?", "No");
+                var boundary_name = window.prompt("What is the associated trust boundary's name?", "New Trust Boundary");
+                var machine_type = window.prompt("What is the associated machine's type?", "Physical");
+                
+                
+                $.ajax({
+                    type: "POST",
+                    url: {% url 'api/add_externalasset' %}
+                    actor_name: act_name
+                    actor_type: act_type
+                    actor_access: act_acesss
+                    boundary_name: boundary_name
+                    name: asset_name
+                    open_port: o_port
+                    machine: machine_type
+                    
+                    success: function(result){
+                        alert("Success");
+                    }
+                })
+                
+                
                 break;
             case "Lambda":
                 node_group
@@ -491,6 +534,25 @@
                 .style('fill', 'white')
                 .attr('stroke-dasharray','5,3')
                 .style('stroke', 'black');
+                
+                var act_name = window.prompt("Who is the associated Actor?", "New Actor");
+                var act_type = window.prompt("What is the Actor's type?", "New User");
+                var act_access = window.prompt("Does the user have physical access?", "No");
+                
+                
+                $.ajax({
+                    type: "POST",
+                    url: {% url 'api/add_boundary' %}
+                    actor_name: act_name
+                    actor_type: act_type
+                    actor_access: act_acesss
+                    boundary_name: asset_name
+                    success: function(result){
+                        alert("Success");
+                    }
+                })
+                
+                
                 break;
             default:
                 // should never happen
