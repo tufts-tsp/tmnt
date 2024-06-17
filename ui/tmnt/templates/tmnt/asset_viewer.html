@@ -226,7 +226,8 @@
         <!-- svg is generated into here -->
         <svg id="dfd_svg"></svg>
         <!-- bottom bar is generated into here -->
-        <div class="dfd_detailsbar" id="bottom_bar" onclick="collapse_bottom_bar()">
+        <button type="button" class="collapse_button" id="collapse_button" onclick="collapse_bottom_bar()" style="cursor: s-resize">&#8595</button>
+        <div class="dfd_detailsbar" id="bottom_bar">
             <h2 style="color: gray">No asset selected...</h2>
         </div>
     </div>
@@ -300,10 +301,14 @@
         // uncollapses if bottom bar is already collapsed
         if (dfd_svg_fraction == 1) {
             dfd_svg_fraction = 0.75;
+            document.getElementById("collapse_button").innerHTML = "&#8595";
+            document.getElementById("collapse_button").style.cursor = "s-resize";
         }
         // collapses if bottom bar is uncollapsed
         else {
             dfd_svg_fraction = 1;
+            document.getElementById("collapse_button").innerHTML = "&#8593";
+            document.getElementById("collapse_button").style.cursor = "n-resize";
         }
         svg = d3.select('#dfd_svg')
         .attr("width", area.width)

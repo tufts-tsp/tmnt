@@ -141,6 +141,13 @@ h3 {
     overflow-y: auto;
 }
 
+.collapse_button {
+    background-color: lightgray;
+    border-radius: 5px; 
+    border-color:#646464;
+    cursor: move;
+}
+
 .items {
     padding-left: 10px;
     padding-top: 10px;
