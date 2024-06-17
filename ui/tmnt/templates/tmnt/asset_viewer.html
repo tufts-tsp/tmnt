@@ -69,6 +69,23 @@
 
             <br>
             <button type="button" class="add_button" onclick="addDataFlow(this.innerHTML)" disabled>Add Data Flow</button>
+
+            <br>
+
+            <h3>Workflows</h3>
+
+            <div>Add components in the order in which they occur:</div>
+            <div id="adding_workflows">
+                <label for="component_dropdown1">1st:</label>
+                <select name="component_dropdown1" class="dropdown" id="component_dropdown1" disabled>
+                    <option value="invalid">Add an asset first!</option>
+                </select>
+            </div>
+
+            <button type="button" class="add_button" id="components_button" value="1" onclick="addComponents(this.value)" disabled>Add More Components</button>
+
+            <br>
+            <button type="button" class="add_button" onclick="addWorkFlow()" disabled>Add Work Flow</button>
         </div>
 
         <!-- Panel for adding threats -->
@@ -228,6 +245,12 @@
         <!-- bottom bar is generated into here -->
         <div class="dfd_detailsbar" id="bottom_bar">
             <h2 style="color: gray">No asset selected...</h2>
+            <br>
+            <h2 style="color: gray">Select a Workflow: </h2>
+            <select name="workflow_dropdown" class="workflow_dropdown" id="workflow_dropdown" disabled>
+                <option value="invalid">Add a workflow first!</option>
+            </select>
+            <button type="button" class="view_button" id="view_button" onclick="viewWorkflow()" disabled>View</button>
         </div>
     </div>
 </div>
@@ -238,6 +261,7 @@
     // Static variables
     var nodes = [];
     var links = [];
+    var workflows = {};
     var svg;
     var simulation;
 
@@ -285,9 +309,15 @@
                 d3.selectAll(".asset")
                     .style("stroke", "black")
                     .style("stroke-width", "1");
-
                 document.getElementById("bottom_bar").innerHTML =
-                    "<h2 style=\"color: gray\">No asset selected...</h2>";
+                "<h2 style=\"color: gray\">No asset selected...</h2>" 
+                + "<br>" 
+                + "<h2 style=\"color: gray\">Select a Workflow: </h2>" 
+                + "<select name=\"workflow_dropdown\" class=\"workflow_dropdown\" id=\"workflow_dropdown\" disabled>" 
+                + "<option value=\"invalid\">Add a workflow first!</option>" 
+                + "</select>"
+                + "<button type=\"button\" class=\"view_button\" id=\"view_button\" onclick=\"viewWorkflow()\" disabled>View</button>";
+                updateWorkflowDropdown();
             }
         })
     }
@@ -561,8 +591,15 @@
         d3.selectAll(".asset")
             .style("stroke", "black")
             .style("stroke-width", "1");
-
-        let bottom_bar_html = "<h2 style=\"color: gray\">No asset selected...</h2>";
+            
+        let bottom_bar_html = 
+            "<h2 style=\"color: gray\">No asset selected...</h2>" 
+            + "<br>" 
+            + "<h2 style=\"color: gray\">Select a Workflow: </h2>" 
+            + "<select name=\"workflow_dropdown\" class=\"workflow_dropdown\" id=\"workflow_dropdown\" disabled>" 
+            + "<option value=\"invalid\">Add a workflow first!</option>" 
+            + "</select>"
+            + "<button type=\"button\" class=\"view_button\" id=\"view_button\" onclick=\"viewWorkflow()\" disabled>View</button>";
 
         // Reselect the clicked on node
         selected_node.selected = !already_selected;
@@ -607,6 +644,32 @@
         let dropdown = document.getElementById(html_id);
         let value = parseInt(dropdown.options[dropdown.selectedIndex].value);
         return value;
+    }
+
+    // Clears the workflow dropdown list, then regenerates them
+    // with the names of every existing element
+    function updateWorkflowDropdown() {
+        let workflow_dropdown = document.getElementById("workflow_dropdown");
+        let view_button = document.getElementById("view_button");
+
+        while (workflow_dropdown.options.length > 0) {
+            workflow_dropdown.remove(0);
+        }
+
+        if (Object.keys(workflows).length == 0) {
+            workflow_dropdown.add(new Option("Add a workflow first!", -1));
+            workflow_dropdown.disabled = true;
+            view_button.disabled = true;
+        }
+        else {
+            workflow_dropdown.add(new Option("Select a workflow...", -1));
+            workflow_dropdown.disabled = false;
+            view_button.disabled = false;
+            var workflow_names = Object.keys(workflows);
+            for (let workflow_name of workflow_names) {
+                workflow_dropdown.add(new Option(workflow_name));
+            }
+        }
     }
 
     // Clears the asset dropdown lists, then regenerates them
@@ -918,6 +981,220 @@
         // Last, tell our simulation to restart
         simulation.alpha(1.0).restart();
     }
+
+    // Defines the process of adding components to create a new workflow 
+    function addComponents(numComponents) {
+        if (links.length < 1) {
+            alert("Please add a data flow first!");
+            return;
+        }
+        
+        // Remove the button next to the last asset dropdown
+        if (numComponents > 1) {
+            let toRemove = document.getElementById("remove_button");
+            if (toRemove != null) { toRemove.remove() };
+        }
+
+        // Update the counter value on the button
+        numComponents++;
+        var componentsButton = document.getElementById('components_button');
+        componentsButton.value = numComponents;
+
+        // Create the new div to be appended to the existing dropdowns
+        var newDiv = document.createElement('div');
+        newDiv.id = 'div' + numComponents;
+
+        // Create the label for the next selection
+        var label = document.createElement('label');
+        var ordinal = numComponents;
+        if (numComponents % 10 == 1 && numComponents % 100 != 11) {
+            ordinal += "st:";
+        }
+        else if (numComponents % 10 == 2 && numComponents % 100 != 12) {
+            ordinal += "nd:";
+        }
+        else if (numComponents % 10 == 3 && numComponents % 100 != 13) {
+            ordinal += "rd:";
+        }
+        else {
+            ordinal += "th:";
+        }
+        label.innerHTML = ordinal;
+        label.id = "label" + numComponents;
+        label.htmlFor = selectID;
+        newDiv.appendChild(label);
+
+        // Create the next asset dropdown 
+        var selectID = "component_dropdown" + numComponents;
+        var componentsDropdown = document.createElement('select');
+        componentsDropdown.classList.add('dropdown');
+        componentsDropdown.id = selectID;
+        componentsDropdown.add(new Option("Select an asset...", -1));
+        const svg = d3.select(document.getElementById("dfd")).select("svg");
+        svg.selectAll(".node_group").each(function (d, i) {
+            componentsDropdown.add(new Option(d3.select(this).select(".asset_label").text(), d.id))
+        });
+        newDiv.appendChild(componentsDropdown);
+
+        // Create the remove button 
+        var removeButton = document.createElement('button');
+        removeButton.id = "remove_button";
+        removeButton.setAttribute("type", "button");
+        removeButton.classList.add("remove_button");
+        removeButton.innerHTML = "-";
+        removeButton.setAttribute('onclick', 'removeComponent();');
+        newDiv.appendChild(removeButton);
+
+        // Finally append everything to the existing dropdowns
+        var addingWorkflows = document.getElementById('adding_workflows');
+        addingWorkflows.append(newDiv);
+    }
+
+    // Defines how the remove button behaves
+    function removeComponent() {
+        // Update the workflow's component count
+        var componentsButton = document.getElementById('components_button');
+        var numComponents = componentsButton.value;
+        componentsButton.value--;
+        
+        // Remove the last asset dropdown
+        var divID = "div" + numComponents;
+        var toRemove = document.getElementById(divID);
+        toRemove.remove();
+
+        // Add back the remove button if there's still more than one dropdown
+        if (numComponents > 2) {
+            var removeButton = document.createElement('button');
+            removeButton.id = "remove_button";
+            removeButton.setAttribute("type", "button");
+            removeButton.classList.add("remove_button");
+            removeButton.innerHTML = "-";
+            removeButton.setAttribute('onclick', 'removeComponent();');
+            divID = "div" + (numComponents - 1);
+            div = document.getElementById(divID);
+            div.appendChild(removeButton);
+        }
+    }
+
+    // Adds a work flow between the chosen elements
+    function addWorkFlow() {
+        if (links.length < 1) {
+            alert("Please add a data flow first!");
+            return;
+        }
+        // Get the currently selected assets
+        var numComponents = document.getElementById("components_button").value;
+        const components = [];
+
+        for (let i = 1; i <= numComponents; i++) {
+            var component_dropdown = "component_dropdown" + i;
+            var selected = getDropdownValue(component_dropdown);
+            // Check that user has selected all components 
+            if (selected == -1) {
+                alert("Please make a selection for each component or remove components!");
+                return;
+            }
+            // Check that user has not selected duplicate components 
+            if (components.includes(selected)) {
+                alert("Do not include more than one of the same component!");
+                return; 
+            }
+            components.push(selected);
+        }
+
+        // Prevent duplicate workflows
+        for (let workflow of Object.values(workflows)) {
+            if (components.length != workflow.length) {
+                continue;
+            }
+            let check_duplicate = true;
+            for (let i = 0; i < components.length; i++) {
+                if (workflow[i] != components[i]) {
+                    check_duplicate = false;
+                    break;
+                }
+            }
+            if (check_duplicate) {
+                alert("Cannot add a duplicate workflow!");
+                return;
+            }
+        }
+        
+        // Check that there's a dataflow between each element in the right order
+        for (let i = 0; i < numComponents - 1; i++) {
+            if (!links.find(link => link.source.id === components[i] && link.target.id === components[i + 1])) {
+                alert("There is no data flow from " + nodes[components[i]].asset_name + " to " + nodes[components[i + 1]].asset_name);
+                return;
+            };
+        }
+
+        // Prompt user for workflow name...
+        var workflow_name = window.prompt("(Optional) Name this workflow:", "");
+
+        // Return from function if user cancels
+        if (workflow_name === null || workflow_name === false)
+            return;
+
+        // Set default workflow name if user does not name it 
+        if (workflow_name == "") {
+            workflow_name = "Workflow " + (Object.keys(workflows).length + 1);
+        }
+        workflows[workflow_name] = components;
+
+        // Update the bottom bar's workflow dropdown
+        if (!document.getElementById("workflow_dropdown")) {
+            document.getElementById("bottom_bar").innerHTML =
+                "<h2 style=\"color: gray\">No asset selected...</h2>" 
+                + "<br>" 
+                + "<h2 style=\"color: gray\">Select a Workflow: </h2>" 
+                + "<select name=\"workflow_dropdown\" class=\"workflow_dropdown\" id=\"workflow_dropdown\" disabled>" 
+                + "<option value=\"invalid\">Add a workflow first!</option>" 
+                + "</select>"
+                + "<button type=\"button\" class=\"view_button\" id=\"view_button\" onclick=\"viewWorkflow()\" disabled>View</button>";
+        }
+        updateWorkflowDropdown();
+    }
+
+    // Highlights the components of a workflow that the user selects to view
+    function viewWorkflow() {
+        // Check that user actually selects a workflow
+        if (getDropdownValue("workflow_dropdown") == -1) {
+            alert("Please select a workflow to view!");
+            return;
+        }
+
+        let dropdown = document.getElementById("workflow_dropdown");
+        var selectedWorkflow = dropdown.options[dropdown.selectedIndex].text;
+        var components = workflows[selectedWorkflow];
+
+        // Unselect any currently selected nodes
+        for (let node of nodes) {
+            node.selected = false;
+        }
+        d3.selectAll(".asset")
+            .style("stroke", "black")
+            .style("stroke-width", "1");
+
+        // Selects and highlights the components of the workflow being viewed
+        svg.selectAll(".node_group").each(function (d) {
+            if (components.includes(d.id)) {
+                d3.select(this).selectAll(".asset")
+                .style("stroke", "#3E8EDE")
+                .style("stroke-width", "4");
+            }
+        });
+
+        // Updates bottom bar to display order of components in workflow 
+        let bottom_bar_html = "<h2>"+ selectedWorkflow +"</h2>";
+        for (let component of components) {
+            bottom_bar_html += nodes[component].asset_name;
+            if (component != components[components.length - 1]) {
+                bottom_bar_html += " >> ";
+            }
+        }
+        document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+    }
+
 
     // Add a threat to an existing DFD node.
     function addThreat() {
