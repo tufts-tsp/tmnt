@@ -1,0 +1,170 @@
+syntax = "proto3";
+
+//import "google/protobuf/Empty.proto";
+
+//Asset Definition
+enum Machine {
+    PHYSICAL = 0;
+    VIRTUAL = 1;
+    CONTAINER = 2;
+    SERVERLESS = 3;
+}
+
+enum Datastore_Type {
+    UNKNOWN = 0;
+    FILE_SYSTEM = 1;
+    SQL = 2;
+    LDAP = 3;
+    BUCKET = 4;
+    OTHER = 5;
+    NOSQL = 6;
+}
+
+message Empty {
+    
+}
+
+message Actor {
+    string name = 1;
+    string actor_type = 2;
+    bool physical_access = 3;
+}
+
+message GetActorsResponses {
+    Actor actor = 1;
+}
+
+message RemoveActorRequest {
+    string name = 1;
+}
+
+message Boundary {
+    string name = 1;
+    Actor boundary_owner = 2;
+}
+
+message RemoveBoundaryRequest {
+    string name = 1;
+}
+
+message GetBoundariesResponses {
+    repeated Boundary trust_boundary = 1;
+}
+
+message AddAssetRequest {
+    string name = 1;
+    repeated int32 open_port = 2;
+    repeated Boundary trust_boundary = 3;
+    Machine machine = 4;
+}
+
+message RemoveAssetRequest {
+    string name = 1;
+}
+
+message AssetResponse {
+    string name = 1;
+    repeated int32 open_port = 2;
+    repeated Boundary trust_boundary = 3;
+    Machine machine = 4;
+}
+
+message GetAssetsResponses {
+    repeated AssetResponse asset = 1;
+}
+
+message AddExternalAssetRequest {
+    string name = 1;
+    repeated int32 open_port = 2;
+    repeated Boundary trust_boundary = 3;
+    Machine machine = 4;
+    bool physical_access = 5;
+}
+
+message RemoveExternalAssetRequest {
+    string name = 1;
+}
+
+message ExternalAssetResponse {
+    string name = 1;
+    repeated int32 open_port = 2;
+    repeated Boundary trust_boundary = 3;
+    Machine machine = 4;
+    bool physical_access = 5;
+}
+
+message GetExternalAssetsResponses {
+    repeated ExternalAssetResponse asset = 1;
+}
+
+message AddDatastoreRequest {
+    string name = 1;
+    repeated int32 open_port = 2;
+    repeated Boundary trust_boundary = 3;
+    Machine machine = 4;
+    Datastore_Type ds_type = 5;
+}
+
+message RemoveDatastoreRequest {
+    string name = 1;
+}
+
+message DatastoreResponse {
+    string name = 1;
+    repeated int32 open_port = 2;
+    repeated Boundary trust_boundary = 3;
+    Machine machine = 4;
+    Datastore_Type ds_type = 5;
+}
+
+message GetDatastoreResponses {
+    repeated DatastoreResponse datastore = 1;
+}
+
+message AddProcessRequest {
+    string name = 1;
+    repeated int32 open_port = 2;
+    repeated Boundary trust_boundary = 3;
+    Machine machine = 4;
+}
+
+message RemoveProcessRequest {
+    string name = 1;
+}
+
+message ProcessResponse {
+    string name = 1;
+    repeated int32 open_port = 2;
+    repeated Boundary trust_boundary = 3;
+    Machine machine = 4;
+}
+
+message GetProcessResponses {
+    repeated ProcessResponse process = 1;
+}
+
+service Controller {
+    rpc AddAsset (AddAssetRequest) returns (Empty);
+    rpc RemoveAsset (RemoveAssetRequest) returns (Empty);
+    rpc GetAssets (Empty) returns (GetAssetsResponses);
+    
+    rpc AddExternalAsset (AddExternalAssetRequest) returns (Empty);
+    rpc RemoveExternalAsset (RemoveExternalAssetRequest) returns (Empty);
+    rpc GetExternalAssets (Empty) returns (GetExternalAssetsResponses);
+    
+    rpc AddDatastore (AddDatastoreRequest) returns (Empty);
+    rpc RemoveDatastore (RemoveDatastoreRequest) returns (Empty);
+    rpc GetDatastores (Empty) returns (GetDatastoreResponses);
+    
+    rpc AddProcess (AddProcessRequest) returns (Empty);
+    rpc RemoveProcess (RemoveProcessRequest) returns (Empty);
+    rpc GetProcesses (Empty) returns (GetProcessResponses);
+    
+    rpc AddBoundary (Boundary) returns (Empty);
+    rpc RemoveBoundary (RemoveBoundaryRequest) returns (Empty);
+    rpc GetBoundaries (Empty) returns (GetBoundariesResponses);
+     
+    rpc AddActor (Actor) returns (Empty);
+    rpc RemoveActor (RemoveActorRequest) returns (Empty);
+    rpc GetActors (Empty) returns (GetActorsResponses);
+}

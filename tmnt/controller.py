@@ -1,6 +1,30 @@
 from threading import Lock, Thread
 import time
 
+from concurrent import futures
+
+import grpc
+
+from controller_pb2 import (
+    Machine,
+    Datastore_Type,
+    Empty,
+    Actor,
+    GetActorsResponses,
+    Boundary,
+    GetBoundariesResponses,
+    AssetResponse,
+    GetAssetsResponses,
+    ExternalAssetResponse,
+    GetExternalAssetsResponses,
+    DatastoreResponse,
+    GetDatastoreResponses,
+    ProcessResponse,
+    GetProcessResponses,
+)
+import controller_pb2_grpc
+
+
 from .dsl import TM
 from .engines import Engine
 
@@ -45,3 +69,25 @@ class TMNTController(metaclass=TMNTControllerMeta):
             pass
         self.engines = engines
         self.references = references
+
+
+class ControllerService(controller_pb2_grpc.ControllerServicer, TMNTController controller):
+    def AddAsset(self, request, context):
+# check first to see if the actor or boundary already exist. If no, create a new ones.
+        actor = TM.Actor(request.trust_boundary.boundary_owner.name,request.trust_boundary.boundary_owner.actor_type,request.trust_boundary.boundary_owner.physical_access)
+        boundary = TM.Boundary(request.trust_boundary.name, actor)
+        asset = TM.Asset(request.name, request.open_port, trust_boundary, request.machine, request.ds_type)
+        self.controller.tm.addAsset(asset)
+        return Empty
+        
+def serve():
+    controller = TMNTController("default","",None,None)
+    server = grpc.server(futures.ThreatPoolExecutor(max_workers=10))
+    controller_pb2_grpc.add_ControllerServicer_to_server(ControllerService(controller), server)
+    server.add_insecure_port("[::]:50051")
+    server.start()
+    server.wait_for_termination()
+    
+if __name__ == "__main__":
+    serve()
+        
