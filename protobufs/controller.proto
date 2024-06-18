@@ -20,6 +20,16 @@ enum Datastore_Type {
     NOSQL = 6;
 }
 
+//Update to include other failure options
+enum Status_Code {
+    SUCCESS = 0;
+    FAILURE = 1;
+}
+
+message Status {
+    Status_Code code = 1;
+}
+
 message Empty {
     
 }
@@ -143,28 +153,40 @@ message GetProcessResponses {
     repeated ProcessResponse process = 1;
 }
 
+message ExportRequest {
+    string output_file = 1;
+}
+
+message ImportRequest {
+    string input_file = 1;
+}
+
 service Controller {
-    rpc AddAsset (AddAssetRequest) returns (Empty);
-    rpc RemoveAsset (RemoveAssetRequest) returns (Empty);
+    
+    rpc Import (ImportRequest) returns (Status);
+    rpc Export (ExportRequest) returns (Status);
+    
+    rpc AddAsset (AddAssetRequest) returns (Status);
+    rpc RemoveAsset (RemoveAssetRequest) returns (Status);
     rpc GetAssets (Empty) returns (GetAssetsResponses);
     
-    rpc AddExternalAsset (AddExternalAssetRequest) returns (Empty);
-    rpc RemoveExternalAsset (RemoveExternalAssetRequest) returns (Empty);
+    rpc AddExternalAsset (AddExternalAssetRequest) returns (Status);
+    rpc RemoveExternalAsset (RemoveExternalAssetRequest) returns (Status);
     rpc GetExternalAssets (Empty) returns (GetExternalAssetsResponses);
     
-    rpc AddDatastore (AddDatastoreRequest) returns (Empty);
-    rpc RemoveDatastore (RemoveDatastoreRequest) returns (Empty);
+    rpc AddDatastore (AddDatastoreRequest) returns (Status);
+    rpc RemoveDatastore (RemoveDatastoreRequest) returns (Status);
     rpc GetDatastores (Empty) returns (GetDatastoreResponses);
     
-    rpc AddProcess (AddProcessRequest) returns (Empty);
-    rpc RemoveProcess (RemoveProcessRequest) returns (Empty);
+    rpc AddProcess (AddProcessRequest) returns (Status);
+    rpc RemoveProcess (RemoveProcessRequest) returns (Status);
     rpc GetProcesses (Empty) returns (GetProcessResponses);
     
-    rpc AddBoundary (Boundary) returns (Empty);
-    rpc RemoveBoundary (RemoveBoundaryRequest) returns (Empty);
+    rpc AddBoundary (Boundary) returns (Status);
+    rpc RemoveBoundary (RemoveBoundaryRequest) returns (Status);
     rpc GetBoundaries (Empty) returns (GetBoundariesResponses);
      
-    rpc AddActor (Actor) returns (Empty);
-    rpc RemoveActor (RemoveActorRequest) returns (Empty);
+    rpc AddActor (Actor) returns (Status);
+    rpc RemoveActor (RemoveActorRequest) returns (Status);
     rpc GetActors (Empty) returns (GetActorsResponses);
 }

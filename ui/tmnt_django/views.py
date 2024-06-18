@@ -7,7 +7,7 @@ import subprocess
 from django.http import JsonResponse
 
 import grpc
-from ../../controller_pb2 import (
+from controller_pb2 import (
     Machine,
     Datastore_Type,
     Empty,
@@ -16,7 +16,7 @@ from ../../controller_pb2 import (
     Actor,
     RemoveActorRequest,
     Boundary,
-    RemoveBoundaryRequest
+    RemoveBoundaryRequest,
     AddAssetRequest,
     RemoveAssetRequest,
     AddExternalAssetRequest,
@@ -31,7 +31,7 @@ from ../../controller_pb2 import (
 from controller_pb2_grpc import ControllerStub
 
 controller_host = os.getenv("CONTROLLER_HOST","localhost")
-controller_channel = grpc.insecure_channel(f"{controller_host}}:50051")
+controller_channel = grpc.insecure_channel(f"{controller_host}:50051")
 controller_client = ControllerStub(controller_channel)
 
 
@@ -107,7 +107,7 @@ def add_actor(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
     actor_access = request.POST.get("actor_access")
-    actor = Actor(actor_name, actor_type, actor_access)
+    actor = Actor(name = actor_name, type=actor_type, physical_access=actor_access)
     
     response_status = controller_client.AddActor(actor)
     
@@ -117,9 +117,9 @@ def add_boundary(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
     actor_access = request.POST.get("actor_access")
-    actor = Actor(actor_name, actor_type, actor_access)
+    actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
     boundary_name = request.POST.get("boundary_name")
-    boundary = Boundary(boundary_name, actor)
+    boundary = Boundary(name=boundary_name, boundary_owner=actor)
     
     response_status = controller_client.AddBoundary(boundary)
     
@@ -131,9 +131,9 @@ def add_externalasset(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
     actor_access = request.POST.get("actor_access")
-    actor = Actor(actor_name, actor_type, actor_access)
+    actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
     boundary_name = request.POST.get("boundary_name")
-    boundary = Boundary(boundary_name, actor)
+    boundary = Boundary(name=boundary_name, boundary_owner=actor)
     machine_type = request.POST.get("machine_type")
     machine = Machine.PHYSICAL
     if machine_type == "Virtual":
@@ -145,7 +145,7 @@ def add_externalasset(request):
     
     physical_access = request.POST.get("physical_access")
     
-    addexternalasset_request = AddExternalAssetRequest(name, open_port, boundary, machine,physical_access)
+    addexternalasset_request = AddExternalAssetRequest(name=name, open_port=open_port, trust_boundary=boundary, machine=machine,physical_access=physical_access)
     response_status = controller_client.AddExternalAsset(addasset_request)
     
     return JsonResponse(response_status.code, safe=False)

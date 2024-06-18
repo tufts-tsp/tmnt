@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    "tmnt.apps.TMNTConfig",
+    "tmnt_django.apps.TMNTConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
