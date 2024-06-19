@@ -10,6 +10,13 @@ enum Machine {
     SERVERLESS = 3;
 }
 
+enum Event_Type {
+    ASSET = 0;
+    WORKFLOW = 1;
+    THREAT = 2;
+    MITIGATION = 3;
+}
+
 enum Datastore_Type {
     UNKNOWN = 0;
     FILE_SYSTEM = 1;
@@ -32,6 +39,20 @@ message Status {
 
 message Empty {
     
+}
+
+message Event {
+    Event_Type event_type = 1;
+}
+
+message Threat {
+    string name = 1;
+    string threat_type = 2;
+    //add things from DSL
+}
+
+message GetSuggestionsResopnse {
+    repeated Threat threats = 1;
 }
 
 message Actor {
@@ -189,4 +210,8 @@ service Controller {
     rpc AddActor (Actor) returns (Status);
     rpc RemoveActor (RemoveActorRequest) returns (Status);
     rpc GetActors (Empty) returns (GetActorsResponses);
+    
+    rpc NewEvent (Event) returns (Status);
+    
+    rpc GetSuggestions (Empty) returns (GetSuggestionsResopnse);
 }

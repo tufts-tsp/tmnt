@@ -8,6 +8,8 @@ import grpc
 from controller_pb2 import (
     Machine,
     Datastore_Type,
+    Event_Type,
+    Threat,
     Empty,
     Status,
     Status_Code,
@@ -23,13 +25,14 @@ from controller_pb2 import (
     GetDatastoreResponses,
     ProcessResponse,
     GetProcessResponses,
+    GetsuggestionsResponse,
 )
 import controller_pb2_grpc
 
 
 from tmnt.dsl import TM, Actor, Boundary
 from tmnt.dsl.asset import ExternalEntity, Datastore, Machine, DATASTORE_TYPE
-from tmnt.engines import Engine
+from tmnt.engines import Engine, NaturalEngine, Event_Type
 
 class TMNTControllerMeta(type):
 
@@ -70,6 +73,7 @@ class TMNTController(metaclass=TMNTControllerMeta):
         if config_file != "":
             #parse config and add to `self.tm`
             pass
+        self.natural_engine = NaturalEngine("Focus")
         self.engines = engines
         self.references = references
 
@@ -103,6 +107,9 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
         
         asset = ExternalEntity(name=request.name,physical_access=request.physical_access, open_ports=open_ports, trust_boundaries=trust_boundaries, machine=machine)
         self.controller.tm.add_component(asset)
+        
+        self.natural_engine.event(Event_Type.ASSET)
+        
         status = Status(code = Status_Code.SUCCESS)
         return status
         
@@ -139,12 +146,18 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
             
         asset = Datastore(name=request.name, open_ports=open_ports, trust_boundaries=trust_boundaries, machine=machine,ds_type=datastore_type)
         self.controller.tm.add_component(asset)
+        
+        self.natural_engine.event(Event_Type.ASSET)
+        
         status = Status(code = Status_Code.SUCCESS)
         return status
     
     def AddActor(self, request, context):
         actor = Actor(request.name,request.actor_type,request.physical_access)
         self.controller.tm.add_actor(actor)
+        
+        self.natural_engine.event(Event_Type.ASSET)
+        
         status = Status(code = Status_Code.SUCCESS)
         return status
         
@@ -152,6 +165,9 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
         actor = Actor(request.trust_boundary.boundary_owner.name,request.trust_boundary.boundary_owner.actor_type,request.trust_boundary.boundary_owner.physical_access)
         boundary = Boundary(request.trust_boundary.name, actor)
         self.controller.tm.add_component(boundary)
+        
+        self.natural_engine.event(Event_Type.ASSET)
+        
         status = Status(code = Status_Code.SUCCESS)
         return status
         
@@ -164,6 +180,16 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
         # save the current threat model object to a yaml file with the file name given by request.output_file
         status = Status(Status_Code.SUCCESS)
         return status
+        
+    def NewEvent(self,request,context):
+        self.natural_engine.event(request.event_type)
+        status = Status(Status_Code.SUCCESS)
+        return status
+    
+    def GetSuggestions(self,request,context):
+        # Get self.natural_engine.currentFocus and use that to filter threats and mitigations and put them into a list to return as a GetSuggestionsResponse message
+        suggestions = GetSuggestionsResponse([])
+        return suggestions
         
 def serve():
     controller = TMNTController("default","",None,None)
