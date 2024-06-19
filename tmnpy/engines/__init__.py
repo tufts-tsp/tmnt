@@ -1,4 +1,4 @@
-__all__ = ["Engine", "Assignment"]
+__all__ = ["Engine", "NaturalEngine", "Assignment"]
 
-from .engine import Engine
+from .engine import Engine, NaturalEngine
 from .assignment import Assignment
