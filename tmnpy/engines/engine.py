@@ -1,6 +1,7 @@
 from uuid import uuid4, UUID
 import time
 
+
 class Engine(object):
     def __init__(
         self,
@@ -40,6 +41,7 @@ class Engine(object):
     def desc(self, val: str) -> None:
         self.__desc = val
 
+
 class NaturalEngine(Engine):
 
     """
@@ -47,15 +49,18 @@ class NaturalEngine(Engine):
     """
 
     def __init__(
-        self, name: str, currentFocus: str = "None", desc: str = "N/A",
+        self,
+        name: str,
+        currentFocus: str = "None",
+        desc: str = "N/A",
     ):
         self.currentFocus = currentFocus
         self.previous_events = []
         self.lastevent = time.time()
-        super().__init__(name,desc)
+        super().__init__(name, desc)
 
     def event(self, event_type: str):
-    # Get the event and check what type it is, then plug into markov model to predict new focus.  Update list of previous events to include this.
+        # Get the event and check what type it is, then plug into markov model to predict new focus.  Update list of previous events to include this.
         self.previous_events.append(event_type)
         self.lastevent = time.time()
         return

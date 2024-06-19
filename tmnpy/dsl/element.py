@@ -117,7 +117,7 @@ class Element(object):
         """
         return self.__children
 
-    def add_child(self, child: Self, assign_parent: bool =True) -> None:
+    def add_child(self, child: Self, assign_parent: bool = True) -> None:
         if not isinstance(child, Self):
             raise ValueError("Must be of type tmnpy.dsl.Element")
         if assign_parent and child.parent != []:
@@ -143,7 +143,7 @@ class Element(object):
             raise AttributeError(err)
         self.__children.append(child)
 
-    def remove_child(self, child: Self, remove_parent: bool =True) -> None:
+    def remove_child(self, child: Self, remove_parent: bool = True) -> None:
         if child not in self.__children:
             err = f"{child} has not been assigned to {self}."
             raise AttributeError(err)

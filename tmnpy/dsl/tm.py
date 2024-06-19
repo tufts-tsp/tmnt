@@ -42,7 +42,6 @@ class TM:
         for b in boundaries:
             self.add_boundary(b)
 
-
     @property
     def name(self) -> str:
         return self._name
@@ -55,7 +54,9 @@ class TM:
         if component is None:
             raise ValueError("No component specified to add")
         elif not isinstance(component, Component):
-            raise TypeError("Specified component is not of type tmnpy.dsl.Component")
+            raise TypeError(
+                "Specified component is not of type tmnpy.dsl.Component"
+            )
 
         if component in self.__components:
             print("Component is already in the model")
@@ -71,7 +72,9 @@ class TM:
         if component is None:
             raise ValueError("No component specified to remove")
         elif not isinstance(component, Component):
-            raise TypeError("Specified component is not of type tmnpy.dsl.Component")
+            raise TypeError(
+                "Specified component is not of type tmnpy.dsl.Component"
+            )
 
         self.__components.remove(component)
 
@@ -106,7 +109,9 @@ class TM:
         if boundary is None:
             raise ValueError("No boundary specified to add")
         elif not isinstance(boundary, Boundary):
-            raise TypeError("Specified boundary is not of type tmnpy.dsl.Boundary")
+            raise TypeError(
+                "Specified boundary is not of type tmnpy.dsl.Boundary"
+            )
 
         if boundary in self.__boundaries:
             print("Boundary is already in the model")
@@ -199,7 +204,9 @@ class TM:
             if isinstance(asset, kind):
                 asset_list.append(asset)
 
-    def find_related_attack_vectors(self, initial: Component | Actor) -> list[list[Component]]:
+    def find_related_attack_vectors(
+        self, initial: Component | Actor
+    ) -> list[list[Component]]:
         if not isinstance(initial, (Component, Actor)):
             err = "Provided asset is not of type tmnpy.dsl.Component or tmnpy.dsl.Actor"
             raise ValueError(err)

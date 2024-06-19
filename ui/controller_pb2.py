@@ -7,86 +7,87 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database
 from google.protobuf.internal import builder as _builder
+
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-
-
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10\x63ontroller.proto\"$\n\x06Status\x12\x1a\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x0c.Status_Code\"\x07\n\x05\x45mpty\"(\n\x05\x45vent\x12\x1f\n\nevent_type\x18\x01 \x01(\x0e\x32\x0b.Event_Type\"+\n\x06Threat\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0bthreat_type\x18\x02 \x01(\t\"2\n\x16GetSuggestionsResponse\x12\x18\n\x07threats\x18\x01 \x03(\x0b\x32\x07.Threat\"B\n\x05\x41\x63tor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x12\n\nactor_type\x18\x02 \x01(\t\x12\x17\n\x0fphysical_access\x18\x03 \x01(\x08\"+\n\x12GetActorsResponses\x12\x15\n\x05\x61\x63tor\x18\x01 \x01(\x0b\x32\x06.Actor\"\"\n\x12RemoveActorRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"8\n\x08\x42oundary\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x1e\n\x0e\x62oundary_owner\x18\x02 \x01(\x0b\x32\x06.Actor\"%\n\x15RemoveBoundaryRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\";\n\x16GetBoundariesResponses\x12!\n\x0etrust_boundary\x18\x01 \x03(\x0b\x32\t.Boundary\"p\n\x0f\x41\x64\x64\x41ssetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\"\"\n\x12RemoveAssetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"n\n\rAssetResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\"3\n\x12GetAssetsResponses\x12\x1d\n\x05\x61sset\x18\x01 \x03(\x0b\x32\x0e.AssetResponse\"\x91\x01\n\x17\x41\x64\x64\x45xternalAssetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\x12\x17\n\x0fphysical_access\x18\x05 \x01(\x08\"*\n\x1aRemoveExternalAssetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x8f\x01\n\x15\x45xternalAssetResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\x12\x17\n\x0fphysical_access\x18\x05 \x01(\x08\"C\n\x1aGetExternalAssetsResponses\x12%\n\x05\x61sset\x18\x01 \x03(\x0b\x32\x16.ExternalAssetResponse\"\x96\x01\n\x13\x41\x64\x64\x44\x61tastoreRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\x12 \n\x07\x64s_type\x18\x05 \x01(\x0e\x32\x0f.Datastore_Type\"&\n\x16RemoveDatastoreRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x94\x01\n\x11\x44\x61tastoreResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\x12 \n\x07\x64s_type\x18\x05 \x01(\x0e\x32\x0f.Datastore_Type\">\n\x15GetDatastoreResponses\x12%\n\tdatastore\x18\x01 \x03(\x0b\x32\x12.DatastoreResponse\"r\n\x11\x41\x64\x64ProcessRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\"$\n\x14RemoveProcessRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"p\n\x0fProcessResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\"8\n\x13GetProcessResponses\x12!\n\x07process\x18\x01 \x03(\x0b\x32\x10.ProcessResponse\"$\n\rExportRequest\x12\x13\n\x0boutput_file\x18\x01 \x01(\t\"#\n\rImportRequest\x12\x12\n\ninput_file\x18\x01 \x01(\t*C\n\x07Machine\x12\x0c\n\x08PHYSICAL\x10\x00\x12\x0b\n\x07VIRTUAL\x10\x01\x12\r\n\tCONTAINER\x10\x02\x12\x0e\n\nSERVERLESS\x10\x03*A\n\nEvent_Type\x12\t\n\x05\x41SSET\x10\x00\x12\x0c\n\x08WORKFLOW\x10\x01\x12\n\n\x06THREAT\x10\x02\x12\x0e\n\nMITIGATION\x10\x03*c\n\x0e\x44\x61tastore_Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0f\n\x0b\x46ILE_SYSTEM\x10\x01\x12\x07\n\x03SQL\x10\x02\x12\x08\n\x04LDAP\x10\x03\x12\n\n\x06\x42UCKET\x10\x04\x12\t\n\x05OTHER\x10\x05\x12\t\n\x05NOSQL\x10\x06*\'\n\x0bStatus_Code\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x32\xe9\x07\n\nController\x12!\n\x06Import\x12\x0e.ImportRequest\x1a\x07.Status\x12!\n\x06\x45xport\x12\x0e.ExportRequest\x1a\x07.Status\x12%\n\x08\x41\x64\x64\x41sset\x12\x10.AddAssetRequest\x1a\x07.Status\x12+\n\x0bRemoveAsset\x12\x13.RemoveAssetRequest\x1a\x07.Status\x12(\n\tGetAssets\x12\x06.Empty\x1a\x13.GetAssetsResponses\x12\x35\n\x10\x41\x64\x64\x45xternalAsset\x12\x18.AddExternalAssetRequest\x1a\x07.Status\x12;\n\x13RemoveExternalAsset\x12\x1b.RemoveExternalAssetRequest\x1a\x07.Status\x12\x38\n\x11GetExternalAssets\x12\x06.Empty\x1a\x1b.GetExternalAssetsResponses\x12-\n\x0c\x41\x64\x64\x44\x61tastore\x12\x14.AddDatastoreRequest\x1a\x07.Status\x12\x33\n\x0fRemoveDatastore\x12\x17.RemoveDatastoreRequest\x1a\x07.Status\x12/\n\rGetDatastores\x12\x06.Empty\x1a\x16.GetDatastoreResponses\x12)\n\nAddProcess\x12\x12.AddProcessRequest\x1a\x07.Status\x12/\n\rRemoveProcess\x12\x15.RemoveProcessRequest\x1a\x07.Status\x12,\n\x0cGetProcesses\x12\x06.Empty\x1a\x14.GetProcessResponses\x12!\n\x0b\x41\x64\x64\x42oundary\x12\t.Boundary\x1a\x07.Status\x12\x31\n\x0eRemoveBoundary\x12\x16.RemoveBoundaryRequest\x1a\x07.Status\x12\x30\n\rGetBoundaries\x12\x06.Empty\x1a\x17.GetBoundariesResponses\x12\x1b\n\x08\x41\x64\x64\x41\x63tor\x12\x06.Actor\x1a\x07.Status\x12+\n\x0bRemoveActor\x12\x13.RemoveActorRequest\x1a\x07.Status\x12(\n\tGetActors\x12\x06.Empty\x1a\x13.GetActorsResponses\x12\x1b\n\x08NewEvent\x12\x06.Event\x1a\x07.Status\x12\x31\n\x0eGetSuggestions\x12\x06.Empty\x1a\x17.GetSuggestionsResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
+    b'\n\x10\x63ontroller.proto"$\n\x06Status\x12\x1a\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x0c.Status_Code"\x07\n\x05\x45mpty"(\n\x05\x45vent\x12\x1f\n\nevent_type\x18\x01 \x01(\x0e\x32\x0b.Event_Type"+\n\x06Threat\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0bthreat_type\x18\x02 \x01(\t"2\n\x16GetSuggestionsResponse\x12\x18\n\x07threats\x18\x01 \x03(\x0b\x32\x07.Threat"B\n\x05\x41\x63tor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x12\n\nactor_type\x18\x02 \x01(\t\x12\x17\n\x0fphysical_access\x18\x03 \x01(\x08"+\n\x12GetActorsResponses\x12\x15\n\x05\x61\x63tor\x18\x01 \x01(\x0b\x32\x06.Actor""\n\x12RemoveActorRequest\x12\x0c\n\x04name\x18\x01 \x01(\t"8\n\x08\x42oundary\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x1e\n\x0e\x62oundary_owner\x18\x02 \x01(\x0b\x32\x06.Actor"%\n\x15RemoveBoundaryRequest\x12\x0c\n\x04name\x18\x01 \x01(\t";\n\x16GetBoundariesResponses\x12!\n\x0etrust_boundary\x18\x01 \x03(\x0b\x32\t.Boundary"p\n\x0f\x41\x64\x64\x41ssetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine""\n\x12RemoveAssetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t"n\n\rAssetResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine"3\n\x12GetAssetsResponses\x12\x1d\n\x05\x61sset\x18\x01 \x03(\x0b\x32\x0e.AssetResponse"\x91\x01\n\x17\x41\x64\x64\x45xternalAssetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\x12\x17\n\x0fphysical_access\x18\x05 \x01(\x08"*\n\x1aRemoveExternalAssetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t"\x8f\x01\n\x15\x45xternalAssetResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\x12\x17\n\x0fphysical_access\x18\x05 \x01(\x08"C\n\x1aGetExternalAssetsResponses\x12%\n\x05\x61sset\x18\x01 \x03(\x0b\x32\x16.ExternalAssetResponse"\x96\x01\n\x13\x41\x64\x64\x44\x61tastoreRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\x12 \n\x07\x64s_type\x18\x05 \x01(\x0e\x32\x0f.Datastore_Type"&\n\x16RemoveDatastoreRequest\x12\x0c\n\x04name\x18\x01 \x01(\t"\x94\x01\n\x11\x44\x61tastoreResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine\x12 \n\x07\x64s_type\x18\x05 \x01(\x0e\x32\x0f.Datastore_Type">\n\x15GetDatastoreResponses\x12%\n\tdatastore\x18\x01 \x03(\x0b\x32\x12.DatastoreResponse"r\n\x11\x41\x64\x64ProcessRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine"$\n\x14RemoveProcessRequest\x12\x0c\n\x04name\x18\x01 \x01(\t"p\n\x0fProcessResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\topen_port\x18\x02 \x03(\x05\x12!\n\x0etrust_boundary\x18\x03 \x03(\x0b\x32\t.Boundary\x12\x19\n\x07machine\x18\x04 \x01(\x0e\x32\x08.Machine"8\n\x13GetProcessResponses\x12!\n\x07process\x18\x01 \x03(\x0b\x32\x10.ProcessResponse"$\n\rExportRequest\x12\x13\n\x0boutput_file\x18\x01 \x01(\t"#\n\rImportRequest\x12\x12\n\ninput_file\x18\x01 \x01(\t*C\n\x07Machine\x12\x0c\n\x08PHYSICAL\x10\x00\x12\x0b\n\x07VIRTUAL\x10\x01\x12\r\n\tCONTAINER\x10\x02\x12\x0e\n\nSERVERLESS\x10\x03*A\n\nEvent_Type\x12\t\n\x05\x41SSET\x10\x00\x12\x0c\n\x08WORKFLOW\x10\x01\x12\n\n\x06THREAT\x10\x02\x12\x0e\n\nMITIGATION\x10\x03*c\n\x0e\x44\x61tastore_Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0f\n\x0b\x46ILE_SYSTEM\x10\x01\x12\x07\n\x03SQL\x10\x02\x12\x08\n\x04LDAP\x10\x03\x12\n\n\x06\x42UCKET\x10\x04\x12\t\n\x05OTHER\x10\x05\x12\t\n\x05NOSQL\x10\x06*\'\n\x0bStatus_Code\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x32\xe9\x07\n\nController\x12!\n\x06Import\x12\x0e.ImportRequest\x1a\x07.Status\x12!\n\x06\x45xport\x12\x0e.ExportRequest\x1a\x07.Status\x12%\n\x08\x41\x64\x64\x41sset\x12\x10.AddAssetRequest\x1a\x07.Status\x12+\n\x0bRemoveAsset\x12\x13.RemoveAssetRequest\x1a\x07.Status\x12(\n\tGetAssets\x12\x06.Empty\x1a\x13.GetAssetsResponses\x12\x35\n\x10\x41\x64\x64\x45xternalAsset\x12\x18.AddExternalAssetRequest\x1a\x07.Status\x12;\n\x13RemoveExternalAsset\x12\x1b.RemoveExternalAssetRequest\x1a\x07.Status\x12\x38\n\x11GetExternalAssets\x12\x06.Empty\x1a\x1b.GetExternalAssetsResponses\x12-\n\x0c\x41\x64\x64\x44\x61tastore\x12\x14.AddDatastoreRequest\x1a\x07.Status\x12\x33\n\x0fRemoveDatastore\x12\x17.RemoveDatastoreRequest\x1a\x07.Status\x12/\n\rGetDatastores\x12\x06.Empty\x1a\x16.GetDatastoreResponses\x12)\n\nAddProcess\x12\x12.AddProcessRequest\x1a\x07.Status\x12/\n\rRemoveProcess\x12\x15.RemoveProcessRequest\x1a\x07.Status\x12,\n\x0cGetProcesses\x12\x06.Empty\x1a\x14.GetProcessResponses\x12!\n\x0b\x41\x64\x64\x42oundary\x12\t.Boundary\x1a\x07.Status\x12\x31\n\x0eRemoveBoundary\x12\x16.RemoveBoundaryRequest\x1a\x07.Status\x12\x30\n\rGetBoundaries\x12\x06.Empty\x1a\x17.GetBoundariesResponses\x12\x1b\n\x08\x41\x64\x64\x41\x63tor\x12\x06.Actor\x1a\x07.Status\x12+\n\x0bRemoveActor\x12\x13.RemoveActorRequest\x1a\x07.Status\x12(\n\tGetActors\x12\x06.Empty\x1a\x13.GetActorsResponses\x12\x1b\n\x08NewEvent\x12\x06.Event\x1a\x07.Status\x12\x31\n\x0eGetSuggestions\x12\x06.Empty\x1a\x17.GetSuggestionsResponseb\x06proto3'
+)
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'controller_pb2', _globals)
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "controller_pb2", _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
-  DESCRIPTOR._loaded_options = None
-  _globals['_MACHINE']._serialized_start=2044
-  _globals['_MACHINE']._serialized_end=2111
-  _globals['_EVENT_TYPE']._serialized_start=2113
-  _globals['_EVENT_TYPE']._serialized_end=2178
-  _globals['_DATASTORE_TYPE']._serialized_start=2180
-  _globals['_DATASTORE_TYPE']._serialized_end=2279
-  _globals['_STATUS_CODE']._serialized_start=2281
-  _globals['_STATUS_CODE']._serialized_end=2320
-  _globals['_STATUS']._serialized_start=20
-  _globals['_STATUS']._serialized_end=56
-  _globals['_EMPTY']._serialized_start=58
-  _globals['_EMPTY']._serialized_end=65
-  _globals['_EVENT']._serialized_start=67
-  _globals['_EVENT']._serialized_end=107
-  _globals['_THREAT']._serialized_start=109
-  _globals['_THREAT']._serialized_end=152
-  _globals['_GETSUGGESTIONSRESPONSE']._serialized_start=154
-  _globals['_GETSUGGESTIONSRESPONSE']._serialized_end=204
-  _globals['_ACTOR']._serialized_start=206
-  _globals['_ACTOR']._serialized_end=272
-  _globals['_GETACTORSRESPONSES']._serialized_start=274
-  _globals['_GETACTORSRESPONSES']._serialized_end=317
-  _globals['_REMOVEACTORREQUEST']._serialized_start=319
-  _globals['_REMOVEACTORREQUEST']._serialized_end=353
-  _globals['_BOUNDARY']._serialized_start=355
-  _globals['_BOUNDARY']._serialized_end=411
-  _globals['_REMOVEBOUNDARYREQUEST']._serialized_start=413
-  _globals['_REMOVEBOUNDARYREQUEST']._serialized_end=450
-  _globals['_GETBOUNDARIESRESPONSES']._serialized_start=452
-  _globals['_GETBOUNDARIESRESPONSES']._serialized_end=511
-  _globals['_ADDASSETREQUEST']._serialized_start=513
-  _globals['_ADDASSETREQUEST']._serialized_end=625
-  _globals['_REMOVEASSETREQUEST']._serialized_start=627
-  _globals['_REMOVEASSETREQUEST']._serialized_end=661
-  _globals['_ASSETRESPONSE']._serialized_start=663
-  _globals['_ASSETRESPONSE']._serialized_end=773
-  _globals['_GETASSETSRESPONSES']._serialized_start=775
-  _globals['_GETASSETSRESPONSES']._serialized_end=826
-  _globals['_ADDEXTERNALASSETREQUEST']._serialized_start=829
-  _globals['_ADDEXTERNALASSETREQUEST']._serialized_end=974
-  _globals['_REMOVEEXTERNALASSETREQUEST']._serialized_start=976
-  _globals['_REMOVEEXTERNALASSETREQUEST']._serialized_end=1018
-  _globals['_EXTERNALASSETRESPONSE']._serialized_start=1021
-  _globals['_EXTERNALASSETRESPONSE']._serialized_end=1164
-  _globals['_GETEXTERNALASSETSRESPONSES']._serialized_start=1166
-  _globals['_GETEXTERNALASSETSRESPONSES']._serialized_end=1233
-  _globals['_ADDDATASTOREREQUEST']._serialized_start=1236
-  _globals['_ADDDATASTOREREQUEST']._serialized_end=1386
-  _globals['_REMOVEDATASTOREREQUEST']._serialized_start=1388
-  _globals['_REMOVEDATASTOREREQUEST']._serialized_end=1426
-  _globals['_DATASTORERESPONSE']._serialized_start=1429
-  _globals['_DATASTORERESPONSE']._serialized_end=1577
-  _globals['_GETDATASTORERESPONSES']._serialized_start=1579
-  _globals['_GETDATASTORERESPONSES']._serialized_end=1641
-  _globals['_ADDPROCESSREQUEST']._serialized_start=1643
-  _globals['_ADDPROCESSREQUEST']._serialized_end=1757
-  _globals['_REMOVEPROCESSREQUEST']._serialized_start=1759
-  _globals['_REMOVEPROCESSREQUEST']._serialized_end=1795
-  _globals['_PROCESSRESPONSE']._serialized_start=1797
-  _globals['_PROCESSRESPONSE']._serialized_end=1909
-  _globals['_GETPROCESSRESPONSES']._serialized_start=1911
-  _globals['_GETPROCESSRESPONSES']._serialized_end=1967
-  _globals['_EXPORTREQUEST']._serialized_start=1969
-  _globals['_EXPORTREQUEST']._serialized_end=2005
-  _globals['_IMPORTREQUEST']._serialized_start=2007
-  _globals['_IMPORTREQUEST']._serialized_end=2042
-  _globals['_CONTROLLER']._serialized_start=2323
-  _globals['_CONTROLLER']._serialized_end=3324
+    DESCRIPTOR._loaded_options = None
+    _globals["_MACHINE"]._serialized_start = 2044
+    _globals["_MACHINE"]._serialized_end = 2111
+    _globals["_EVENT_TYPE"]._serialized_start = 2113
+    _globals["_EVENT_TYPE"]._serialized_end = 2178
+    _globals["_DATASTORE_TYPE"]._serialized_start = 2180
+    _globals["_DATASTORE_TYPE"]._serialized_end = 2279
+    _globals["_STATUS_CODE"]._serialized_start = 2281
+    _globals["_STATUS_CODE"]._serialized_end = 2320
+    _globals["_STATUS"]._serialized_start = 20
+    _globals["_STATUS"]._serialized_end = 56
+    _globals["_EMPTY"]._serialized_start = 58
+    _globals["_EMPTY"]._serialized_end = 65
+    _globals["_EVENT"]._serialized_start = 67
+    _globals["_EVENT"]._serialized_end = 107
+    _globals["_THREAT"]._serialized_start = 109
+    _globals["_THREAT"]._serialized_end = 152
+    _globals["_GETSUGGESTIONSRESPONSE"]._serialized_start = 154
+    _globals["_GETSUGGESTIONSRESPONSE"]._serialized_end = 204
+    _globals["_ACTOR"]._serialized_start = 206
+    _globals["_ACTOR"]._serialized_end = 272
+    _globals["_GETACTORSRESPONSES"]._serialized_start = 274
+    _globals["_GETACTORSRESPONSES"]._serialized_end = 317
+    _globals["_REMOVEACTORREQUEST"]._serialized_start = 319
+    _globals["_REMOVEACTORREQUEST"]._serialized_end = 353
+    _globals["_BOUNDARY"]._serialized_start = 355
+    _globals["_BOUNDARY"]._serialized_end = 411
+    _globals["_REMOVEBOUNDARYREQUEST"]._serialized_start = 413
+    _globals["_REMOVEBOUNDARYREQUEST"]._serialized_end = 450
+    _globals["_GETBOUNDARIESRESPONSES"]._serialized_start = 452
+    _globals["_GETBOUNDARIESRESPONSES"]._serialized_end = 511
+    _globals["_ADDASSETREQUEST"]._serialized_start = 513
+    _globals["_ADDASSETREQUEST"]._serialized_end = 625
+    _globals["_REMOVEASSETREQUEST"]._serialized_start = 627
+    _globals["_REMOVEASSETREQUEST"]._serialized_end = 661
+    _globals["_ASSETRESPONSE"]._serialized_start = 663
+    _globals["_ASSETRESPONSE"]._serialized_end = 773
+    _globals["_GETASSETSRESPONSES"]._serialized_start = 775
+    _globals["_GETASSETSRESPONSES"]._serialized_end = 826
+    _globals["_ADDEXTERNALASSETREQUEST"]._serialized_start = 829
+    _globals["_ADDEXTERNALASSETREQUEST"]._serialized_end = 974
+    _globals["_REMOVEEXTERNALASSETREQUEST"]._serialized_start = 976
+    _globals["_REMOVEEXTERNALASSETREQUEST"]._serialized_end = 1018
+    _globals["_EXTERNALASSETRESPONSE"]._serialized_start = 1021
+    _globals["_EXTERNALASSETRESPONSE"]._serialized_end = 1164
+    _globals["_GETEXTERNALASSETSRESPONSES"]._serialized_start = 1166
+    _globals["_GETEXTERNALASSETSRESPONSES"]._serialized_end = 1233
+    _globals["_ADDDATASTOREREQUEST"]._serialized_start = 1236
+    _globals["_ADDDATASTOREREQUEST"]._serialized_end = 1386
+    _globals["_REMOVEDATASTOREREQUEST"]._serialized_start = 1388
+    _globals["_REMOVEDATASTOREREQUEST"]._serialized_end = 1426
+    _globals["_DATASTORERESPONSE"]._serialized_start = 1429
+    _globals["_DATASTORERESPONSE"]._serialized_end = 1577
+    _globals["_GETDATASTORERESPONSES"]._serialized_start = 1579
+    _globals["_GETDATASTORERESPONSES"]._serialized_end = 1641
+    _globals["_ADDPROCESSREQUEST"]._serialized_start = 1643
+    _globals["_ADDPROCESSREQUEST"]._serialized_end = 1757
+    _globals["_REMOVEPROCESSREQUEST"]._serialized_start = 1759
+    _globals["_REMOVEPROCESSREQUEST"]._serialized_end = 1795
+    _globals["_PROCESSRESPONSE"]._serialized_start = 1797
+    _globals["_PROCESSRESPONSE"]._serialized_end = 1909
+    _globals["_GETPROCESSRESPONSES"]._serialized_start = 1911
+    _globals["_GETPROCESSRESPONSES"]._serialized_end = 1967
+    _globals["_EXPORTREQUEST"]._serialized_start = 1969
+    _globals["_EXPORTREQUEST"]._serialized_end = 2005
+    _globals["_IMPORTREQUEST"]._serialized_start = 2007
+    _globals["_IMPORTREQUEST"]._serialized_end = 2042
+    _globals["_CONTROLLER"]._serialized_start = 2323
+    _globals["_CONTROLLER"]._serialized_end = 3324
 # @@protoc_insertion_point(module_scope)

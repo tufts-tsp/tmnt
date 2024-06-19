@@ -16,7 +16,7 @@ class Flow(Component):
         path: list[Element] = [],
         authentication: str = "",
         multifactor_authentication: bool = True,
-        **kwargs
+        **kwargs,
     ):
         # self.src = self.__check_parent(src)
         # self.dst = self.__check_parent(dst)
@@ -77,7 +77,11 @@ class Flow(Component):
 
 class DataFlow(Flow):
     def __init__(
-        self, name: str, protocol: str = "None", port: int | None = None, **kwargs
+        self,
+        name: str,
+        protocol: str = "None",
+        port: int | None = None,
+        **kwargs,
     ) -> None:
         self.protocol = protocol
         self.port = port

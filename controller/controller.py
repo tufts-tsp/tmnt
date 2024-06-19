@@ -34,6 +34,7 @@ from tmnpy.dsl import TM, Actor, Boundary
 from tmnpy.dsl.asset import ExternalEntity, Datastore, Machine, DATASTORE_TYPE
 from tmnpy.engines import Engine, NaturalEngine, EventType
 
+
 class TMNTControllerMeta(type):
     _instances = {}
     _lock: Lock = Lock()
@@ -116,7 +117,7 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
 
         self.controller.natural_engine.event(Event_Type.ASSET)
 
-        status = Status(code = Status_Code.SUCCESS)
+        status = Status(code=Status_Code.SUCCESS)
         return status
 
     def AddDatastore(self, request, context):
@@ -165,7 +166,7 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
 
         self.controller.natural_engine.event(Event_Type.ASSET)
 
-        status = Status(code = Status_Code.SUCCESS)
+        status = Status(code=Status_Code.SUCCESS)
         return status
 
     def AddActor(self, request, context):
@@ -176,7 +177,7 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
 
         self.controller.natural_engine.event(Event_Type.ASSET)
 
-        status = Status(code = Status_Code.SUCCESS)
+        status = Status(code=Status_Code.SUCCESS)
         return status
 
     def AddBoundary(self, request, context):
@@ -190,7 +191,7 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
 
         self.controller.natural_engine.event(Event_Type.ASSET)
 
-        status = Status(code = Status_Code.SUCCESS)
+        status = Status(code=Status_Code.SUCCESS)
         return status
 
     def Import(self, request, context):
@@ -203,12 +204,12 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
         status = Status(Status_Code.SUCCESS)
         return status
 
-    def NewEvent(self,request,context):
+    def NewEvent(self, request, context):
         self.controller.natural_engine.event(request.event_type)
         status = Status(Status_Code.SUCCESS)
         return status
 
-    def GetSuggestions(self,request,context):
+    def GetSuggestions(self, request, context):
         # Get self.natural_engine.currentFocus and use that to filter threats and mitigations and put them into a list to return as a GetSuggestionsResponse message
         suggestions = GetSuggestionsResponse([])
         return suggestions

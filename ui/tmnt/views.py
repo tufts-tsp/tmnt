@@ -36,6 +36,7 @@ controller_host = os.getenv("CONTROLLER_HOST", "localhost")
 controller_channel = grpc.insecure_channel(f"{controller_host}:50051")
 controller_client = ControllerStub(controller_channel)
 
+
 # base editor view
 def test(request):
     # generate() # generate random color cat picture
