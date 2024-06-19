@@ -8,7 +8,7 @@ import os
 import warnings
 import json
 
-from tmnt.dsl import Weakness, Threat, Control
+from tmnpy.dsl import Weakness, Threat, Control
 
 
 def load_pytm_threatlib():

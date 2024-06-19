@@ -234,6 +234,7 @@
 </div>
 
 <!-- JavaScript code starts here -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script>
     // Static variables
@@ -431,6 +432,27 @@
                 .attr('height', 60)
                 .style('fill', 'white')
                 .style('stroke', 'black');
+                
+                var act_type = window.prompt("What is the Actor's type?", "New User");
+                var act_access = window.prompt("Does the user have physical access?", "No");
+                
+                
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'api/add_actor' %}",
+                    data: {
+                        actor_name: asset_name,
+                        actor_type: act_type,
+                        actor_access: act_access,
+                    },
+                    dataType: "html",
+                    success: function(result){
+                        alert("Success");
+                    },
+                });
+                
+                
+                
                 break;
             case "Server":
                 node_group
@@ -476,6 +498,38 @@
                 .attr('ry', radY)
                 .style('fill', 'white')
                 .style('stroke', 'black');
+                
+                var o_port = window.prompt("What are the associated open ports? (include comma separated list)", "22,53");
+                var act_name = window.prompt("Who is the associated Actor?", "New Actor");
+                var act_type = window.prompt("What is the Actor's type?", "New User");
+                var act_access = window.prompt("Does the user have physical access?", "No");
+                var boundary_name = window.prompt("What is the associated trust boundary's name?", "New Trust Boundary");
+                var machine_type = window.prompt("What is the associated machine's type?", "Physical");
+                var datastore_type = window.prompt("What is the datastore's type?", "NOSQL");
+                
+                
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'api/add_datastore' %}",
+                    data: {
+                        actor_name: act_name,
+                        actor_type: act_type,
+                        actor_access: act_access,
+                        boundary_name: boundary_name,
+                        name: asset_name,
+                        open_ports: o_port,
+                        machine: machine_type,
+                        ds_type: datastore_type,
+                    },
+                    data_type: "html",
+                    
+                    success: function(result){
+                        alert("Success");
+                    },
+                });
+                
+                
+                
                 break;
             case "Process":
                 node_group
@@ -486,6 +540,8 @@
                 .attr('r', 30)
                 .style('fill', 'white')
                 .style('stroke', 'black');
+            
+                
                 break;
             case "External Entity":
                 node_group
@@ -497,6 +553,38 @@
                 .attr('height', 60)
                 .style('fill', 'white')
                 .style('stroke', 'black');
+                
+                
+                var o_ports = window.prompt("What is the associated open port? (comma separated)", "22,53");
+                var act_name = window.prompt("Who is the associated Actor?", "New Actor");
+                var act_type = window.prompt("What is the Actor's type?", "New User");
+                var act_access = window.prompt("Does the user have physical access?", "No");
+                var boundary_name = window.prompt("What is the associated trust boundary's name?", "New Trust Boundary");
+                var machine_type = window.prompt("What is the associated machine's type?", "Physical");
+                var physical_access = window.prompt("Is there physical access to the asset?", "No");
+                
+                
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'api/add_externalasset' %}",
+                    data: {
+                        actor_name: act_name,
+                        actor_type: act_type,
+                        actor_access: act_access,
+                        boundary_name: boundary_name,
+                        name: asset_name,
+                        open_ports: o_ports,
+                        machine: machine_type,
+                        physical_access: physical_access,
+                    },
+                    data_type: "html",
+                    
+                    success: function(result){
+                        alert("Success");
+                    },
+                });
+                
+                
                 break;
             case "Lambda":
                 node_group
@@ -521,6 +609,28 @@
                 .style('fill', 'white')
                 .attr('stroke-dasharray','5,3')
                 .style('stroke', 'black');
+                
+                var act_name = window.prompt("Who is the associated Actor?", "New Actor");
+                var act_type = window.prompt("What is the Actor's type?", "New User");
+                var act_access = window.prompt("Does the user have physical access?", "No");
+                
+                
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'api/add_boundary' %}",
+                    data: {
+                        actor_name: act_name,
+                        actor_type: act_type,
+                        actor_access: act_access,
+                        boundary_name: asset_name,
+                    },
+                    data_type: "html",
+                    success: function(result){
+                        alert("Success");
+                    },
+                });
+                
+                
                 break;
             default:
                 // should never happen
