@@ -1,4 +1,3 @@
-from enum import Enum
 from uuid import uuid4, UUID
 import time
 
@@ -41,21 +40,10 @@ class Engine(object):
     def desc(self, val: str) -> None:
         self.__desc = val
 
-class EventType(Enum):
-
-    """
-    needs documentation
-    """
-
-    ASSET = "ASSET"
-    WORKFLOW = "WORKFLOW"
-    THREAT = "THREAT"
-    MITIGATION = "MITIGATION"
-
 class NaturalEngine(Engine):
 
     """
-    NatrualEngine is the system that tracks
+    NaturalEngine is the system that tracks
     """
 
     def __init__(
