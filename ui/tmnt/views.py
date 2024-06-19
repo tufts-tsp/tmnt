@@ -113,7 +113,6 @@ def upload_file(request):
 def asset_viewer(request):
     return render(request, "tmnt/asset_viewer.html")
 
-# @csrf_exempt #fix later
 def add_actor(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
@@ -132,7 +131,6 @@ def add_actor(request):
 
     return JsonResponse(response_status.code, safe=False)
 
-# @csrf_exempt #fix later
 def add_boundary(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
@@ -148,7 +146,6 @@ def add_boundary(request):
 
     return JsonResponse(response_status.code, safe=False)
 
-# @csrf_exempt #fix later
 def add_datastore(request):
     name = request.POST.get("name")
     open_ports_str = request.POST.get("open_ports").split(',')
@@ -181,7 +178,6 @@ def add_datastore(request):
 
     return JsonResponse(response_status.code, safe=False)
 
-# @csrf_exempt #fix later
 def add_externalasset(request):
     name = request.POST.get("name")
     open_ports_str = request.POST.get("open_ports").split(',')
