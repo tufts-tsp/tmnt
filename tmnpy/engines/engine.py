@@ -47,7 +47,7 @@ class NaturalEngine(Engine):
     """
 
     def __init__(
-        self, name: str, currentFocus: str = "None", desc: str = None,
+        self, name: str, currentFocus: str = "None", desc: str = "N/A",
     ):
         self.currentFocus = currentFocus
         self.previous_events = []
