@@ -30,7 +30,7 @@ from controller_pb2 import (
     Event_Type,
     Event,
 )
-from naturalengine_pb2_grpc import NaturalEngineStub
+from controller_pb2_grpc import ControllerStub
 
 controller_host = os.getenv("CONTROLLER_HOST", "localhost")
 controller_channel = grpc.insecure_channel(f"{controller_host}:50051")

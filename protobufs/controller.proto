@@ -38,7 +38,7 @@ message Status {
 }
 
 message Empty {
-    
+
 }
 
 message Event {
@@ -51,7 +51,7 @@ message Threat {
     //add things from DSL
 }
 
-message GetSuggestionsResopnse {
+message GetSuggestionsResponse {
     repeated Threat threats = 1;
 }
 
@@ -183,35 +183,35 @@ message ImportRequest {
 }
 
 service Controller {
-    
+
     rpc Import (ImportRequest) returns (Status);
     rpc Export (ExportRequest) returns (Status);
-    
+
     rpc AddAsset (AddAssetRequest) returns (Status);
     rpc RemoveAsset (RemoveAssetRequest) returns (Status);
     rpc GetAssets (Empty) returns (GetAssetsResponses);
-    
+
     rpc AddExternalAsset (AddExternalAssetRequest) returns (Status);
     rpc RemoveExternalAsset (RemoveExternalAssetRequest) returns (Status);
     rpc GetExternalAssets (Empty) returns (GetExternalAssetsResponses);
-    
+
     rpc AddDatastore (AddDatastoreRequest) returns (Status);
     rpc RemoveDatastore (RemoveDatastoreRequest) returns (Status);
     rpc GetDatastores (Empty) returns (GetDatastoreResponses);
-    
+
     rpc AddProcess (AddProcessRequest) returns (Status);
     rpc RemoveProcess (RemoveProcessRequest) returns (Status);
     rpc GetProcesses (Empty) returns (GetProcessResponses);
-    
+
     rpc AddBoundary (Boundary) returns (Status);
     rpc RemoveBoundary (RemoveBoundaryRequest) returns (Status);
     rpc GetBoundaries (Empty) returns (GetBoundariesResponses);
-     
+
     rpc AddActor (Actor) returns (Status);
     rpc RemoveActor (RemoveActorRequest) returns (Status);
     rpc GetActors (Empty) returns (GetActorsResponses);
-    
+
     rpc NewEvent (Event) returns (Status);
-    
-    rpc GetSuggestions (Empty) returns (GetSuggestionsResopnse);
+
+    rpc GetSuggestions (Empty) returns (GetSuggestionsResponse);
 }
