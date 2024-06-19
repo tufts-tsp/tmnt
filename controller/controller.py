@@ -32,7 +32,7 @@ import controller_pb2_grpc
 
 from tmnpy.dsl import TM, Actor, Boundary
 from tmnpy.dsl.asset import ExternalEntity, Datastore, Machine, DATASTORE_TYPE
-from tmnpy.engines import Engine, NaturalEngine, Event_Type
+from tmnpy.engines import Engine, NaturalEngine, EventType
 
 class TMNTControllerMeta(type):
     _instances = {}
