@@ -1,6 +1,6 @@
 import unittest
 
-from tmnt import kb
+from tmnpy import kb
 
 
 class TestASVS(unittest.TestCase):

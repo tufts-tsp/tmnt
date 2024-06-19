@@ -17,7 +17,12 @@ class TM:
     """Describes the threat model administratively,
     and holds all details during a run"""
 
-    def __init__(self, name: str, components: List[Component] = [], actors: List[Actor] = []):
+    def __init__(
+        self,
+        name: str,
+        components: List[Component] = [],
+        actors: List[Actor] = [],
+    ):
         self._name = name
         self.__components = components
         self.__actors = actors
@@ -29,7 +34,7 @@ class TM:
     @property
     def components(self) -> List[Component]:
         return self.__components
-        
+
     @property
     def actors(self) -> List[Actor]:
         return self.__actors
@@ -85,7 +90,7 @@ class TM:
             raise ValueError("No component specified to remove")
 
         self.__components.remove(component)
-        
+
     def add_actor(self, actor: Actor = None):
         if actor is None:
             raise ValueError("No actor specified to add")

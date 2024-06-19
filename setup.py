@@ -1,19 +1,19 @@
 from setuptools import setup
 
 setup(
-    name="tmnt",
+    name="tmnpy",
     version="0.0.0",
-    description="Threat Modeling Naturally Tool",
+    description="Threat Modeling Naturally in Python",
     author="Tufts Security & Privacy Lab",
     packages=[
-        "tmnt",
-        "tmnt.dsl",
-        "tmnt.kb",
-        "tmnt.engines",
-        "tmnt.util",
+        "tmnpy",
+        "tmnpy.dsl",
+        "tmnpy.kb",
+        "tmnpy.engines",
+        "tmnpy.util",
     ],
     package_data={
-        "tmnt.kb": [
+        "tmnpy.kb": [
             "reference_data/cwe.xml",
             "reference_data/capec.xml",
             "reference_data/asvs.xml",

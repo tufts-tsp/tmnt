@@ -7,38 +7,31 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database
 from google.protobuf.internal import builder as _builder
+
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-
-
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13naturalengine.proto\"$\n\x06Status\x12\x1a\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x0c.Status_Code\"\x07\n\x05\x45mpty\"(\n\x05\x45vent\x12\x1f\n\nevent_type\x18\x01 \x01(\x0e\x32\x0b.Event_Type\"+\n\x06Threat\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0bthreat_type\x18\x02 \x01(\t\",\n\x10NewEventResponse\x12\x18\n\x07threats\x18\x01 \x03(\x0b\x32\x07.Threat*C\n\x07Machine\x12\x0c\n\x08PHYSICAL\x10\x00\x12\x0b\n\x07VIRTUAL\x10\x01\x12\r\n\tCONTAINER\x10\x02\x12\x0e\n\nSERVERLESS\x10\x03*c\n\x0e\x44\x61tastore_Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0f\n\x0b\x46ILE_SYSTEM\x10\x01\x12\x07\n\x03SQL\x10\x02\x12\x08\n\x04LDAP\x10\x03\x12\n\n\x06\x42UCKET\x10\x04\x12\t\n\x05OTHER\x10\x05\x12\t\n\x05NOSQL\x10\x06*A\n\nEvent_Type\x12\t\n\x05\x41SSET\x10\x00\x12\x0c\n\x08WORKFLOW\x10\x01\x12\n\n\x06THREAT\x10\x02\x12\x0e\n\nMITIGATION\x10\x03*\'\n\x0bStatus_Code\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x32\x36\n\rNaturalEngine\x12%\n\x08NewEvent\x12\x06.Event\x1a\x11.NewEventResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
+    b'\n\x13naturalengine.proto"(\n\x05\x45vent\x12\x1f\n\nevent_type\x18\x01 \x01(\x0e\x32\x0b.Event_Type",\n\x10NewEventResponse\x12\x18\n\x07threats\x18\x01 \x03(\x0b\x32\x07.Threat"+\n\x06Threat\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0bthreat_type\x18\x02 \x01(\t*A\n\nEvent_Type\x12\t\n\x05\x41SSET\x10\x00\x12\x0c\n\x08WORKFLOW\x10\x01\x12\n\n\x06THREAT\x10\x02\x12\x0e\n\nMITIGATION\x10\x03\x32\x36\n\rNaturalEngine\x12%\n\x08NewEvent\x12\x06.Event\x1a\x11.NewEventResponseb\x06proto3'
+)
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'naturalengine_pb2', _globals)
+_builder.BuildTopDescriptorsAndMessages(
+    DESCRIPTOR, "naturalengine_pb2", _globals
+)
 if not _descriptor._USE_C_DESCRIPTORS:
-  DESCRIPTOR._loaded_options = None
-  _globals['_MACHINE']._serialized_start=203
-  _globals['_MACHINE']._serialized_end=270
-  _globals['_DATASTORE_TYPE']._serialized_start=272
-  _globals['_DATASTORE_TYPE']._serialized_end=371
-  _globals['_EVENT_TYPE']._serialized_start=373
-  _globals['_EVENT_TYPE']._serialized_end=438
-  _globals['_STATUS_CODE']._serialized_start=440
-  _globals['_STATUS_CODE']._serialized_end=479
-  _globals['_STATUS']._serialized_start=23
-  _globals['_STATUS']._serialized_end=59
-  _globals['_EMPTY']._serialized_start=61
-  _globals['_EMPTY']._serialized_end=68
-  _globals['_EVENT']._serialized_start=70
-  _globals['_EVENT']._serialized_end=110
-  _globals['_THREAT']._serialized_start=112
-  _globals['_THREAT']._serialized_end=155
-  _globals['_NEWEVENTRESPONSE']._serialized_start=157
-  _globals['_NEWEVENTRESPONSE']._serialized_end=201
-  _globals['_NATURALENGINE']._serialized_start=481
-  _globals['_NATURALENGINE']._serialized_end=535
+    DESCRIPTOR._loaded_options = None
+    _globals["_EVENT_TYPE"]._serialized_start = 156
+    _globals["_EVENT_TYPE"]._serialized_end = 221
+    _globals["_EVENT"]._serialized_start = 23
+    _globals["_EVENT"]._serialized_end = 63
+    _globals["_NEWEVENTRESPONSE"]._serialized_start = 65
+    _globals["_NEWEVENTRESPONSE"]._serialized_end = 109
+    _globals["_THREAT"]._serialized_start = 111
+    _globals["_THREAT"]._serialized_end = 154
+    _globals["_NATURALENGINE"]._serialized_start = 223
+    _globals["_NATURALENGINE"]._serialized_end = 277
 # @@protoc_insertion_point(module_scope)
