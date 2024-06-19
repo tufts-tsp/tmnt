@@ -15,6 +15,7 @@ class Engine(object):
         self.__desc = desc
 
 class Event_Type(Enum):
+class EventType(Enum):
 
     """
     needs documentation
