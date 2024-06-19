@@ -1,6 +1,6 @@
 import unittest
 
-from tmnt.dsl import (
+from tmnpy.dsl import (
     TM,
     Asset,
     ExternalEntity,
@@ -18,9 +18,9 @@ from tmnt.dsl import (
     Data,
     Flow,
 )
-from tmnt.dsl.component import Component
-from tmnt.dsl.element import Element
-from tmnt.dsl.asset import DATASTORE_TYPE
+from tmnpy.dsl.component import Component
+from tmnpy.dsl.element import Element
+from tmnpy.dsl.asset import DATASTORE_TYPE
 
 
 class TestTM(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
-from tmnt.dsl import Asset, Process, Datastore, ExternalEntity, DataFlow
-from tmnt.dsl.element import Element
-from tmnt.engines.assignment import Assignment, Rule, get_findings
+from tmnpy.dsl import Asset, Process, Datastore, ExternalEntity, DataFlow
+from tmnpy.dsl.element import Element
+from tmnpy.engines.assignment import Assignment, Rule, get_findings
 
 
 class TestThreatlib(unittest.TestCase):

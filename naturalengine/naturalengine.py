@@ -11,9 +11,9 @@ from naturalengine_pb2 import (
 import naturalengine_pb2_grpc
 
 
-from tmnt.dsl import TM, Actor, Boundary
-from tmnt.dsl.asset import ExternalEntity, Datastore, Machine, DATASTORE_TYPE
-from tmnt.engines import Engine
+from tmnpy.dsl import TM, Actor, Boundary
+from tmnpy.dsl.asset import ExternalEntity, Datastore, Machine, DATASTORE_TYPE
+from tmnpy.engines import Engine
 
 class NatrualEngineMeta(type):
 

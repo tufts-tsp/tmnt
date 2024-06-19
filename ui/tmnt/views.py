@@ -5,7 +5,6 @@ import io
 import os
 import subprocess
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
 import grpc
 from controller_pb2 import (
@@ -34,9 +33,8 @@ from controller_pb2_grpc import ControllerStub
 from naturalengine_pb2 import (
     Event_Type,
     Event,
-    Threat,
 )
-from controller_pb2_grpc import ControllerStub
+from naturalengine_pb2_grpc import NaturalEngineStub
 
 controller_host = os.getenv("CONTROLLER_HOST","localhost")
 controller_channel = grpc.insecure_channel(f"{controller_host}:50051")
@@ -114,8 +112,8 @@ def upload_file(request):
 
 def asset_viewer(request):
     return render(request, "tmnt/asset_viewer.html")
-    
-@csrf_exempt #fix later
+
+# @csrf_exempt #fix later
 def add_actor(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
@@ -126,15 +124,15 @@ def add_actor(request):
     print(actor_type)
     print(actor_access)
     actor = Actor(name = actor_name, actor_type=actor_type, physical_access=actor_access)
-    
+
     response_status = controller_client.AddActor(actor)
-    
-    Event(event_type=Event_Type.ASSET)
+
+    event = Event(event_type=Event_Type.ASSET)
     engine_status = naturalengine_client.NewEvent(event)
-    
+
     return JsonResponse(response_status.code, safe=False)
-    
-@csrf_exempt #fix later
+
+# @csrf_exempt #fix later
 def add_boundary(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
@@ -144,20 +142,20 @@ def add_boundary(request):
     actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
     boundary_name = request.POST.get("boundary_name")
     boundary = Boundary(name=boundary_name, boundary_owner=actor)
-    
-    
+
+
     response_status = controller_client.AddBoundary(boundary)
-    
+
     return JsonResponse(response_status.code, safe=False)
-    
-@csrf_exempt #fix later
+
+# @csrf_exempt #fix later
 def add_datastore(request):
     name = request.POST.get("name")
     open_ports_str = request.POST.get("open_ports").split(',')
     open_ports = []
     for port in open_ports_str:
         open_ports.append(int(port))
-    
+
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
     actor_access = True
@@ -175,22 +173,22 @@ def add_datastore(request):
     elif machine_type == "Serverless":
         machine = Machine.SERVERLESS
     datastore_type = request.POST.get("ds_type")
-        
+
     trust_boundaries = [boundary]
     datastore_request = AddDatastoreRequest(name=boundary_name, open_port = open_ports, trust_boundary=trust_boundaries,machine=machine, ds_type=datastore_type)
-    
+
     response_status = controller_client.AddDatastore(datastore_request)
-    
+
     return JsonResponse(response_status.code, safe=False)
-    
-@csrf_exempt #fix later
+
+# @csrf_exempt #fix later
 def add_externalasset(request):
     name = request.POST.get("name")
     open_ports_str = request.POST.get("open_ports").split(',')
     open_ports = []
     for port in open_ports_str:
         open_ports.append(int(port))
-    
+
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
     actor_access = True
@@ -207,24 +205,14 @@ def add_externalasset(request):
         machine = Machine.CONTAINER
     elif machine_type == "Serverless":
         machine = Machine.SERVERLESS
-    
+
     physical_access = True
     if request.POST.get("physical_access") == "No":
         physical_access = False
-        
+
     trust_boundaries = [boundary]
-    
+
     addexternalasset_request = AddExternalAssetRequest(name=name, open_port=open_ports, trust_boundary=trust_boundaries, machine=machine,physical_access=physical_access)
     response_status = controller_client.AddExternalAsset(addexternalasset_request)
-    
+
     return JsonResponse(response_status.code, safe=False)
-    
-
-
-################################################################################
-
-# helper to convert a BytesIO to a TM object
-# def process_tm_file(file, model_name="Threat Model"):
-#     tm = TM(model_name)
-
-#     return tm
