@@ -2,6 +2,8 @@ import random
 import logging
 from typing import List
 
+from tmnpy.dsl.boundary import Boundary
+
 from .data import Data
 from .component import Component
 from .finding import Finding
@@ -22,10 +24,12 @@ class TM:
         name: str,
         components: List[Component] = [],
         actors: List[Actor] = [],
+        boundaries: List[Boundary] = [],
     ):
         self._name = name
         self.__components = components
         self.__actors = actors
+        self.__boundaries = boundaries
 
     @property
     def name(self) -> str:
@@ -40,10 +44,14 @@ class TM:
         return self.__actors
 
     @property
+    def boundaries(self) -> List[Boundary]:
+        return self.__boundaries
+
+    @property
     def findings(self) -> List[Finding]:
         return self.findings
 
-    def add_finding(self, finding: Finding = None):
+    def add_finding(self, finding: Finding):
         if not isinstance(finding, Finding):
             raise ValueError("No finding specified to add")
 
@@ -52,7 +60,7 @@ class TM:
         else:
             self.findings.append(finding)
 
-    def remove_finding(self, finding: Finding = None):
+    def remove_finding(self, finding: Finding):
         if finding is None:
             raise ValueError("No finding specified to remove")
 
@@ -73,7 +81,7 @@ class TM:
 
         self.assumptions = assumption_list
 
-    def add_component(self, component: Component = None):
+    def add_component(self, component: Component):
         if component is None:
             raise ValueError("No component specified to add")
 
@@ -85,13 +93,13 @@ class TM:
         else:
             self.__components.append(component)
 
-    def remove_component(self, component: Component = None):
+    def remove_component(self, component: Component):
         if component is None:
             raise ValueError("No component specified to remove")
 
         self.__components.remove(component)
 
-    def add_actor(self, actor: Actor = None):
+    def add_actor(self, actor: Actor):
         if actor is None:
             raise ValueError("No actor specified to add")
 
@@ -103,19 +111,39 @@ class TM:
         else:
             self.__actors.append(actor)
 
-    def remove_actor(self, actor: Actor = None):
+    def remove_actor(self, actor: Actor):
         if actor is None:
             raise ValueError("No actor specified to remove")
 
         self.__actors.remove(actor)
+
+    def add_boundary(self, boundary: Boundary):
+        if boundary is None:
+            raise ValueError("No boundary specified to add")
+
+        if not isinstance(boundary, Boundary):
+            raise TypeError("Specified boundary is not of type 'Boundary")
+
+        if boundary in self.__boundaries:
+            print("Boundary is already in the model")
+        else:
+            self.__boundaries.append(boundary)
+
+    def remove_boundary(self, boundary: Boundary):
+        if boundary is None:
+            raise ValueError("No boundary specified to remove")
+
+        self.__boundaries.remove(boundary)
 
     def reset(self):
         for c in self.__components:
             self.remove_component(c)
         for a in self.__actors:
             self.remove_actor(a)
+        for b in self.__boundaries:
+            self.remove_boundary(b)
 
-    def describe_data(self, data: Data = None):
+    def describe_data(self, data: Data):
         # Provide user with the components that process, send, receive, store
         # this data
 

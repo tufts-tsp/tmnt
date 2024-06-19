@@ -186,7 +186,7 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
             request.trust_boundary.boundary_owner.physical_access,
         )
         boundary = Boundary(request.trust_boundary.name, actor)
-        self.controller.tm.add_component(boundary)
+        self.controller.tm.add_boundary(boundary)
 
         self.controller.natural_engine.event(Event_Type.ASSET)
 
