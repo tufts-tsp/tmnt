@@ -36,11 +36,11 @@ from naturalengine_pb2 import (
 )
 from naturalengine_pb2_grpc import NaturalEngineStub
 
-controller_host = os.getenv("CONTROLLER_HOST","localhost")
+controller_host = os.getenv("CONTROLLER_HOST", "localhost")
 controller_channel = grpc.insecure_channel(f"{controller_host}:50051")
 controller_client = ControllerStub(controller_channel)
 
-naturalengine_host = os.getenv("NATURALENGINE_HOST","localhost")
+naturalengine_host = os.getenv("NATURALENGINE_HOST", "localhost")
 naturalengine_channel = grpc.insecure_channel(f"{naturalengine_host}:50052")
 naturalengine_client = NaturalEngineStub(naturalengine_channel)
 
@@ -113,6 +113,7 @@ def upload_file(request):
 def asset_viewer(request):
     return render(request, "tmnt/asset_viewer.html")
 
+
 def add_actor(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
@@ -122,7 +123,9 @@ def add_actor(request):
     print(actor_name)
     print(actor_type)
     print(actor_access)
-    actor = Actor(name = actor_name, actor_type=actor_type, physical_access=actor_access)
+    actor = Actor(
+        name=actor_name, actor_type=actor_type, physical_access=actor_access
+    )
 
     response_status = controller_client.AddActor(actor)
 
@@ -131,24 +134,27 @@ def add_actor(request):
 
     return JsonResponse(response_status.code, safe=False)
 
+
 def add_boundary(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
     actor_access = True
     if request.POST.get("actor_access") == "No":
         actor_access = False
-    actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
+    actor = Actor(
+        name=actor_name, actor_type=actor_type, physical_access=actor_access
+    )
     boundary_name = request.POST.get("boundary_name")
     boundary = Boundary(name=boundary_name, boundary_owner=actor)
-
 
     response_status = controller_client.AddBoundary(boundary)
 
     return JsonResponse(response_status.code, safe=False)
 
+
 def add_datastore(request):
     name = request.POST.get("name")
-    open_ports_str = request.POST.get("open_ports").split(',')
+    open_ports_str = request.POST.get("open_ports").split(",")
     open_ports = []
     for port in open_ports_str:
         open_ports.append(int(port))
@@ -158,7 +164,9 @@ def add_datastore(request):
     actor_access = True
     if request.POST.get("actor_access") == "No":
         actor_access = False
-    actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
+    actor = Actor(
+        name=actor_name, actor_type=actor_type, physical_access=actor_access
+    )
     boundary_name = request.POST.get("boundary_name")
     boundary = Boundary(name=boundary_name, boundary_owner=actor)
     machine_type = request.POST.get("machine_type")
@@ -172,15 +180,22 @@ def add_datastore(request):
     datastore_type = request.POST.get("ds_type")
 
     trust_boundaries = [boundary]
-    datastore_request = AddDatastoreRequest(name=boundary_name, open_port = open_ports, trust_boundary=trust_boundaries,machine=machine, ds_type=datastore_type)
+    datastore_request = AddDatastoreRequest(
+        name=boundary_name,
+        open_port=open_ports,
+        trust_boundary=trust_boundaries,
+        machine=machine,
+        ds_type=datastore_type,
+    )
 
     response_status = controller_client.AddDatastore(datastore_request)
 
     return JsonResponse(response_status.code, safe=False)
 
+
 def add_externalasset(request):
     name = request.POST.get("name")
-    open_ports_str = request.POST.get("open_ports").split(',')
+    open_ports_str = request.POST.get("open_ports").split(",")
     open_ports = []
     for port in open_ports_str:
         open_ports.append(int(port))
@@ -190,7 +205,9 @@ def add_externalasset(request):
     actor_access = True
     if request.POST.get("actor_access") == "No":
         actor_access = False
-    actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
+    actor = Actor(
+        name=actor_name, actor_type=actor_type, physical_access=actor_access
+    )
     boundary_name = request.POST.get("boundary_name")
     boundary = Boundary(name=boundary_name, boundary_owner=actor)
     machine_type = request.POST.get("machine_type")
@@ -208,7 +225,15 @@ def add_externalasset(request):
 
     trust_boundaries = [boundary]
 
-    addexternalasset_request = AddExternalAssetRequest(name=name, open_port=open_ports, trust_boundary=trust_boundaries, machine=machine,physical_access=physical_access)
-    response_status = controller_client.AddExternalAsset(addexternalasset_request)
+    addexternalasset_request = AddExternalAssetRequest(
+        name=name,
+        open_port=open_ports,
+        trust_boundary=trust_boundaries,
+        machine=machine,
+        physical_access=physical_access,
+    )
+    response_status = controller_client.AddExternalAsset(
+        addexternalasset_request
+    )
 
     return JsonResponse(response_status.code, safe=False)
