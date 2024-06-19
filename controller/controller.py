@@ -28,7 +28,7 @@ import controller_pb2_grpc
 
 
 from tmnt.dsl import TM, Actor, Boundary
-from tmnt.dsl.asset import ExternalEntity
+from tmnt.dsl.asset import ExternalEntity, Datastore, Machine, DATASTORE_TYPE
 from tmnt.engines import Engine
 
 class TMNTControllerMeta(type):
@@ -86,9 +86,58 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
 
     def AddExternalAsset(self, request, context):
 # check first to see if the actor or boundary already exist. If no, create a new ones.
-        actor = Actor(request.trust_boundary.boundary_owner.name,request.trust_boundary.boundary_owner.actor_type,request.trust_boundary.boundary_owner.physical_access)
-        boundary = Boundary(request.trust_boundary.name, actor)
-        asset = ExternalEntity(request.name, request.open_port, trust_boundary, request.machine, request.physical_access)
+        actor = Actor(request.trust_boundary[0].boundary_owner.name,request.trust_boundary[0].boundary_owner.actor_type,request.trust_boundary[0].boundary_owner.physical_access)
+        boundary = Boundary(request.trust_boundary[0].name, actor)
+        open_ports = []
+        for port in request.open_port:
+            open_ports.append(port)
+        trust_boundaries = [boundary]
+        
+        machine = Machine.PHYSICAL
+        if request.machine == 1:
+            machine = Machine.VIRTUAL
+        elif request.machine == 2:
+            machine = Machine.CONTAINER
+        elif request.machine == 3:
+            machine = Machine.SERVERLESS
+        
+        asset = ExternalEntity(name=request.name,physical_access=request.physical_access, open_ports=open_ports, trust_boundaries=trust_boundaries, machine=machine)
+        self.controller.tm.add_component(asset)
+        status = Status(code = Status_Code.SUCCESS)
+        return status
+        
+    def AddDatastore(self, request, context):
+# check first to see if the actor or boundary already exist. If no, create a new ones.
+        actor = Actor(request.trust_boundary[0].boundary_owner.name,request.trust_boundary[0].boundary_owner.actor_type,request.trust_boundary[0].boundary_owner.physical_access)
+        boundary = Boundary(request.trust_boundary[0].name, actor)
+        open_ports = []
+        for port in request.open_port:
+            open_ports.append(port)
+        trust_boundaries = [boundary]
+        
+        machine = Machine.PHYSICAL
+        if request.machine == 1:
+            machine = Machine.VIRTUAL
+        elif request.machine == 2:
+            machine = Machine.CONTAINER
+        elif request.machine == 3:
+            machine = Machine.SERVERLESS
+            
+        datastore_type = DATASTORE_TYPE.UNKNOWN
+        if request.ds_type == 1:
+            datastore_type = DATASTORE_TYPE.FILE_SYSTEM
+        elif request.ds_type == 2:
+            datastore_type = DATASTORE_TYPE.SQL
+        elif request.ds_type == 3:
+            datastore_type = DATASTORE_TYPE.LDAP
+        elif request.ds_type == 4:
+            datastore_type = DATASTORE_TYPE.BUCKET
+        elif request.ds_type == 5:
+            datastore_type = DATASTORE_TYPE.OTHER
+        elif request.ds_type == 6:
+            datastore_type = DATASTORE_TYPE.NOSQL
+            
+        asset = Datastore(name=request.name, open_ports=open_ports, trust_boundaries=trust_boundaries, machine=machine,ds_type=datastore_type)
         self.controller.tm.add_component(asset)
         status = Status(code = Status_Code.SUCCESS)
         return status

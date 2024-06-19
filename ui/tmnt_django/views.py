@@ -5,6 +5,7 @@ import io
 import os
 import subprocess
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 import grpc
 from controller_pb2 import (
@@ -103,34 +104,84 @@ def upload_file(request):
 def asset_viewer(request):
     return render(request, "tmnt/asset_viewer.html")
     
+@csrf_exempt #fix later
 def add_actor(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
-    actor_access = request.POST.get("actor_access")
-    actor = Actor(name = actor_name, type=actor_type, physical_access=actor_access)
+    actor_access = True
+    if request.POST.get("actor_access") == "No":
+        actor_access = False
+    print(actor_name)
+    print(actor_type)
+    print(actor_access)
+    actor = Actor(name = actor_name, actor_type=actor_type, physical_access=actor_access)
     
     response_status = controller_client.AddActor(actor)
     
     return JsonResponse(response_status.code, safe=False)
     
+@csrf_exempt #fix later
 def add_boundary(request):
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
-    actor_access = request.POST.get("actor_access")
+    actor_access = True
+    if request.POST.get("actor_access") == "No":
+        actor_access = False
     actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
     boundary_name = request.POST.get("boundary_name")
     boundary = Boundary(name=boundary_name, boundary_owner=actor)
+    
     
     response_status = controller_client.AddBoundary(boundary)
     
     return JsonResponse(response_status.code, safe=False)
     
-def add_externalasset(request):
+@csrf_exempt #fix later
+def add_datastore(request):
     name = request.POST.get("name")
-    open_port = request.POST.get("open_port")
+    open_ports_str = request.POST.get("open_ports").split(',')
+    open_ports = []
+    for port in open_ports_str:
+        open_ports.append(int(port))
+    
     actor_name = request.POST.get("actor_name")
     actor_type = request.POST.get("actor_type")
-    actor_access = request.POST.get("actor_access")
+    actor_access = True
+    if request.POST.get("actor_access") == "No":
+        actor_access = False
+    actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
+    boundary_name = request.POST.get("boundary_name")
+    boundary = Boundary(name=boundary_name, boundary_owner=actor)
+    machine_type = request.POST.get("machine_type")
+    machine = Machine.PHYSICAL
+    if machine_type == "Virtual":
+        machine = Machine.VIRTUAL
+    elif machine_type == "Container":
+        machine = Machine.CONTAINER
+    elif machine_type == "Serverless":
+        machine = Machine.SERVERLESS
+    datastore_type = request.POST.get("ds_type")
+        
+    trust_boundaries = [boundary]
+    datastore_request = AddDatastoreRequest(name=boundary_name, open_port = open_ports, trust_boundary=trust_boundaries,machine=machine, ds_type=datastore_type)
+    
+    response_status = controller_client.AddDatastore(datastore_request)
+    
+    return JsonResponse(response_status.code, safe=False)
+    
+@csrf_exempt #fix later
+def add_externalasset(request):
+    name = request.POST.get("name")
+    open_ports_str = request.POST.get("open_ports").split(',')
+    open_ports = []
+    for port in open_ports_str:
+        open_ports.append(int(port))
+    
+    actor_name = request.POST.get("actor_name")
+    actor_type = request.POST.get("actor_type")
+    actor_access = True
+    if request.POST.get("actor_access") == "No":
+        actor_access = False
     actor = Actor(name=actor_name, actor_type=actor_type, physical_access=actor_access)
     boundary_name = request.POST.get("boundary_name")
     boundary = Boundary(name=boundary_name, boundary_owner=actor)
@@ -143,10 +194,14 @@ def add_externalasset(request):
     elif machine_type == "Serverless":
         machine = Machine.SERVERLESS
     
-    physical_access = request.POST.get("physical_access")
+    physical_access = True
+    if request.POST.get("physical_access") == "No":
+        physical_access = False
+        
+    trust_boundaries = [boundary]
     
-    addexternalasset_request = AddExternalAssetRequest(name=name, open_port=open_port, trust_boundary=boundary, machine=machine,physical_access=physical_access)
-    response_status = controller_client.AddExternalAsset(addasset_request)
+    addexternalasset_request = AddExternalAssetRequest(name=name, open_port=open_ports, trust_boundary=trust_boundaries, machine=machine,physical_access=physical_access)
+    response_status = controller_client.AddExternalAsset(addexternalasset_request)
     
     return JsonResponse(response_status.code, safe=False)
     
