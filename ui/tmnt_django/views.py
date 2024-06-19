@@ -31,9 +31,20 @@ from controller_pb2 import (
 )
 from controller_pb2_grpc import ControllerStub
 
+from naturalengine_pb2 import (
+    Event_Type,
+    Event,
+    Threat,
+)
+from controller_pb2_grpc import ControllerStub
+
 controller_host = os.getenv("CONTROLLER_HOST","localhost")
 controller_channel = grpc.insecure_channel(f"{controller_host}:50051")
 controller_client = ControllerStub(controller_channel)
+
+naturalengine_host = os.getenv("NATURALENGINE_HOST","localhost")
+naturalengine_channel = grpc.insecure_channel(f"{naturalengine_host}:50052")
+naturalengine_client = NaturalEngineStub(naturalengine_channel)
 
 
 # base editor view
@@ -117,6 +128,9 @@ def add_actor(request):
     actor = Actor(name = actor_name, actor_type=actor_type, physical_access=actor_access)
     
     response_status = controller_client.AddActor(actor)
+    
+    Event(event_type=Event_Type.ASSET)
+    engine_status = naturalengine_client.NewEvent(event)
     
     return JsonResponse(response_status.code, safe=False)
     

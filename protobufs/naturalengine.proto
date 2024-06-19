@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+//Asset Definition
+enum Machine {
+    PHYSICAL = 0;
+    VIRTUAL = 1;
+    CONTAINER = 2;
+    SERVERLESS = 3;
+}
+
+enum Datastore_Type {
+    UNKNOWN = 0;
+    FILE_SYSTEM = 1;
+    SQL = 2;
+    LDAP = 3;
+    BUCKET = 4;
+    OTHER = 5;
+    NOSQL = 6;
+}
+
+enum Event_Type {
+    ASSET = 0;
+    WORKFLOW = 1;
+    THREAT = 2;
+    MITIGATION = 3;
+}
+
+//Update to include other failure options
+enum Status_Code {
+    SUCCESS = 0;
+    FAILURE = 1;
+}
+
+message Status {
+    Status_Code code = 1;
+}
+
+message Empty {
+    
+}
+
+message Event {
+    Event_Type event_type = 1;
+}
+
+message Threat {
+    string name = 1;
+    string threat_type = 2;
+    //add things from DSL
+}
+
+message NewEventResponse {
+    repeated Threat threats = 1;
+}
+
+service NaturalEngine {
+    
+    rpc NewEvent (Event) returns (NewEventResponse);
+    
+}
