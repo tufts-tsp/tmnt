@@ -310,3 +310,8 @@ class TM:
         trace_forwards(target, [], set())
 
         return related_attacks
+
+
+    def get_actor_by_name():
+        iterate through 
+        return particular acotr object 

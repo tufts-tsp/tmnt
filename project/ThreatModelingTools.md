@@ -85,7 +85,7 @@ pytm is a Pythonic framework designed for threat modeling. The focus of pytm is 
     - Sequence Diagram
     - Relevant threats to your system
 
-These capabilities streamline the threat modeling process, empowering developers to integrate security considerations early in the development lifecycle.
+These capabilities streamline the threat modeling process, allowing developers to integrate security considerations early in the development lifecycle.
 
 
 Advantages:
