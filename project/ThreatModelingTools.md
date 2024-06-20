@@ -60,10 +60,18 @@ Advantages:
 Limitations:
 
 ### [PlantUML](https://plantuml.com/)
-Status:
-Summary:
-Advantages:
+Status: PlantUML is actively being developed. The most recent version was released on May 26th, 2024 and the most recent commit to the GitHub repository was a few days ago.
+Summary: PlantUML is an open-source tool that allows users to create a variety of diagrams using a simple text-based language. It supports multiple diagram types such as sequence, deployment, and mind maps, and can output images in formats like PNG and SVG. PlantUML is highly versatile, integrating with various tools and aiding in effective communication and collaboration among developers and stakeholders.
+Advantages: 
+    - The plain text used by PlantUML is very straightforward and easy to understand for even novice users. 
+    - Users can define their diagrams using intuitive and concise textual descriptions, speeding up the diagram creation process
+    - Supports all important UML diagrams and can be used in a wide variety of scenarios and modeling approaches
+    - A very versatile tool as it Is able to integrate with a variety of documentation platforms and it has a wide range of supported output formats.
+
 Limitations:
+    - Does not provide any features such as drag-and-drop components or the ability to click and toggle through various system views. 
+    - It is more of a drawing tool, rather than a modeling tool. It cannot track relationships between diagram elements or information about those elements, hence it cannot give suggested threats and mitigations to users.
+    - Using plain text to describe diagrams results in loss of control. There is no way to determine the position and layout of diagram elements, as the algorithm does it for you.
 
 ## DSLs/Threat Modeling as Code
 ### [pytm](https://github.com/izar/pytm)
@@ -105,10 +113,17 @@ Advantages:
 Limitations:
 
 ### [threatcl](https://threatcl.github.io/)
-Status:
-Summary:
-Advantages:
+Status: Actively being developed, with the last commit to the GitHub repository being two days ago.
+Summary: Threagile is an open-source toolkit for agile threat modeling, enabling teams to model architectures and their assets as YAML files. Upon execution, it performs security checks using standard and custom risk rules, generates risk reports with mitigation advice, and creates detailed data-flow diagrams.
+Advantages: 
+    - Is open-source and free for anyone to use. A support subscription is also offered for anyone who needs additional guidance and assistance when using Threagile.
+    - Automatically generates data-flow diagrams for efficiency, including detailed model elements
+    - Includes a set of risk-rules that check the security of the architecture and generate a report of potential risks and mitigation advice. 
+    - Users may include their own custom coded risk rules when executing security checks against their architecture model. This allows practitioners in different domains to tailor the system to their particular context.
 Limitations:
+    - No features like drag-and-drop components or the ability to click and toggle through various system views, since the YAML file is the only source of input to Threagile. This makes it difficult for more inexperienced users to learn how to use the tool.
+    - There is no way to change the look and layout of the data-flow diagrams as they are automatically generated
+    - Does not provide a way to filter threat and mitigation suggestions to the users’ current focus. Only provides the full overwhelmingly long lists of suggestions all at once.
 
 ### [threatspec](https://github.com/threatspec/threatspec)
 Status:
@@ -124,10 +139,16 @@ Limitations:
 
 ## UIs
 ### [IriusRisk](https://www.iriusrisk.com/)
-Status:
-Summary:
+Status: IriusRisk is being actively developed with their most recent product release being two weeks ago
+Summary: IriusRisk is an open threat modeling platform that automates the creation of threat models and architectural risk analysis at the design stage. It allows teams to generate system architecture diagrams, identify threats, and suggest countermeasures, facilitating collaboration between security and development teams. 
 Advantages:
+    - Accessible for non-security experts. Its user-friendly interface and built-in guidance make it usable for developers and product managers
+    - Automatically creates threat models based on your system architecture with real-time analysis
+    - Drag and drop features as well as a quick start video make IriusRisk especially accessible and intuitive for novice users to learn as they use
 Limitations:
+    - Does not consider different possible ways the system could be deployed when analyzing the system
+    - All threats and countermeasures are presented on one screen, which may make it difficult for users to parse.
+    - Does not provide the ability to switch between different system views
 
 ### [Threat Dragon](https://www.threatdragon.com/#/)
 Status:
