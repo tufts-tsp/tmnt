@@ -13,7 +13,6 @@ class Flow(Component):
         name,
         src: Element = None,
         dst: Element = None,
-        path: list[Element] = [],
         authentication: str = None,
         multifactor_authentication: bool = True,
         **kwargs
@@ -78,5 +77,5 @@ class DataFlow(Flow):
 
 
 class WorkFlow(Flow):
-    def __init__(self, name, **kwargs):
+    def __init__(self, name, path: list[Element] = [], **kwargs):
         super().__init__(name, **kwargs)()

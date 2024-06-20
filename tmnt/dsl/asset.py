@@ -79,13 +79,14 @@ class Asset(Component):
         super().__init__(name, **kwargs)
 
 
+
 class ExternalEntity(Asset):
 
     """
     needs documentation
     """
 
-    def __init__(self, name, physical_access: bool = False, **kwargs):
+    def __init__(self, name, machine, physical_access: bool = False, **kwargs):
         if not isinstance(physical_access, bool):
             raise ValueError("Physical Access must be a boolean")
         self.physical_access = physical_access
