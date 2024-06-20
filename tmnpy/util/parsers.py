@@ -1,5 +1,5 @@
 import yaml
-from tmnt.dsl.control import Control, ControlCatalog, Part, Metadata
+from tmnpy.dsl.control import Control, ControlCatalog, Part, Metadata
 
 
 class OSCALParser:

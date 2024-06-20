@@ -1,7 +1,7 @@
 import json
 import re
 import os
-from tmnt.dsl import (
+from tmnpy.dsl import (
     Asset,
     ExternalEntity,
     Datastore,
@@ -12,7 +12,7 @@ from tmnt.dsl import (
     Issue,
 )
 
-from tmnt import kb
+from tmnpy import kb
 
 from .engine import Engine
 

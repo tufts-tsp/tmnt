@@ -1,5 +1,5 @@
 import uuid
-
+from typing import Self, Tuple, List
 from .requirement import SecurityProperty
 
 
@@ -71,7 +71,7 @@ class Element(object):
         self.__desc = val
 
     @property
-    def parent(self) -> object:
+    def parent(self) -> Self:
         """
         Parent Elements for the Element
 
@@ -80,16 +80,12 @@ class Element(object):
         """
         return self.__parent
 
-    @parent.setter
-    def parent(self, parent: object) -> None:
+    def add_parent(self, parent: Self, assign_child: bool = True) -> None:
         # If this assignment is from `add_child` it will be a tuple, and
         # we shouldn't assign a child as this will cause issues - user could
         # also specify using a tuple
-        if type(parent) == tuple:
-            assign_child = parent[1]
-            parent = parent[0]
-        else:
-            assign_child = True
+        if not isinstance(parent, Self):
+            raise ValueError("Must be of type tmnpy.dsl.Element")
         if assign_child:
             parent.add_child(self, assign_parent=False)
 
@@ -112,7 +108,7 @@ class Element(object):
         self.__parent = None
 
     @property
-    def children(self) -> object:
+    def children(self) -> List[Self]:
         """
         Children for the Element
 
@@ -121,13 +117,15 @@ class Element(object):
         """
         return self.__children
 
-    def add_child(self, child: object, assign_parent=True) -> None:
+    def add_child(self, child: Self, assign_parent: bool = True) -> None:
+        if not isinstance(child, Self):
+            raise ValueError("Must be of type tmnpy.dsl.Element")
         if assign_parent and child.parent != []:
             raise AttributeError(
                 "A different parent has already been assigned"
             )
         elif assign_parent:
-            child.parent = (self, False)
+            child.add_parent(self, False)
 
         if child is self:
             err = f"{child} cannot be a child of itself"
@@ -145,7 +143,7 @@ class Element(object):
             raise AttributeError(err)
         self.__children.append(child)
 
-    def remove_child(self, child: object, remove_parent=True) -> None:
+    def remove_child(self, child: Self, remove_parent: bool = True) -> None:
         if child not in self.__children:
             err = f"{child} has not been assigned to {self}."
             raise AttributeError(err)

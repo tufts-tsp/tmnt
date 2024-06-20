@@ -11,11 +11,13 @@ class Flow(Component):
     def __init__(
         self,
         name,
-        src: Element = None,
-        dst: Element = None,
-        authentication: str = None,
+
+        src: Element,
+        dst: Element,
+        path: list[Element] = [],
+        authentication: str = "",
         multifactor_authentication: bool = True,
-        **kwargs
+        **kwargs,
     ):
         # self.src = self.__check_parent(src)
         # self.dst = self.__check_parent(dst)
@@ -27,9 +29,9 @@ class Flow(Component):
         self.multifactor_authentication = multifactor_authentication
 
         if path == []:
-            self.__path = [src, dst]
+            self.path = [src, dst]
         else:
-            self.__path = path
+            self.path = path
         super().__init__(name, **kwargs)
 
     @property
@@ -39,7 +41,8 @@ class Flow(Component):
     @src.setter
     def src(self, elem: Element) -> None:
         if not isinstance(elem, Element):
-            raise ValueError("Source element must be an Element object")
+            err = "Destination element must be of type tmnpy.dsl.Element"
+            raise ValueError(err)
         self.__src = elem
 
     @property
@@ -49,7 +52,8 @@ class Flow(Component):
     @dst.setter
     def dst(self, elem: Element) -> None:
         if not isinstance(elem, Element):
-            raise ValueError("Destination element must be an Element object")
+            err = "Destination element must be of type tmnpy.dsl.Element"
+            raise ValueError(err)
         self.__dst = elem
 
     @property
@@ -58,7 +62,12 @@ class Flow(Component):
 
     @path.setter
     def path(self, vals: list[Element]) -> None:
-        self.__path = [self.__check_parent(val) for val in vals]
+        for val in vals:
+            if not isinstance(val, Element):
+                err = "Path must consist of tmnpy.dsl.Element,"
+                err += f" {val} is not of type tmnpy.dsl.Element"
+                raise ValueError(err)
+        self.__path = vals
 
     def __check_parent(self, obj):
         if obj.parent is None:
@@ -69,7 +78,11 @@ class Flow(Component):
 
 class DataFlow(Flow):
     def __init__(
-        self, name: str, protocol: str = None, port: int = None, **kwargs
+        self,
+        name: str,
+        protocol: str = "None",
+        port: int | None = None,
+        **kwargs,
     ) -> None:
         self.protocol = protocol
         self.port = port
@@ -78,4 +91,4 @@ class DataFlow(Flow):
 
 class WorkFlow(Flow):
     def __init__(self, name, path: list[Element] = [], **kwargs):
-        super().__init__(name, **kwargs)()
+        super().__init__(name, **kwargs)
