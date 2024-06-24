@@ -11,6 +11,7 @@ class Flow(Component):
     def __init__(
         self,
         name,
+
         src: Element,
         dst: Element,
         path: list[Element] = [],
@@ -89,5 +90,5 @@ class DataFlow(Flow):
 
 
 class WorkFlow(Flow):
-    def __init__(self, name, **kwargs):
+    def __init__(self, name, path: list[Element] = [], **kwargs):
         super().__init__(name, **kwargs)
