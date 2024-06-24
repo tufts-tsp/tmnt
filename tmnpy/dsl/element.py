@@ -1,6 +1,5 @@
 import uuid
 from typing import Self, Tuple, List
-from .requirement import SecurityProperty
 
 
 class Element(object):
@@ -39,7 +38,6 @@ class Element(object):
 
         self.__children = []
         self.__parent = []
-        self.__security_property = SecurityProperty()
 
     def __repr__(self):
         return f"<{type(self).__name__}({self.name}) - {self.eid}>"
@@ -150,15 +148,3 @@ class Element(object):
         if remove_parent:
             child.remove_parent(remove_child=False)
         self.__children.remove(child)
-
-    @property
-    def security_property(self) -> SecurityProperty:
-        return self.__security_property
-
-    @security_property.setter
-    def security_property(self, val: SecurityProperty) -> None:
-        if not isinstance(val, SecurityProperty):
-            raise ValueError(
-                "Security Property must be a SecurityProperty object"
-            )
-        self.__security_property = val

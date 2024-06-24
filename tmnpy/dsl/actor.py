@@ -10,7 +10,6 @@ class Actor(Element):
     def __init__(
         self,
         name,
-        security_property,
         actor_type: str = None,
         physical_access: bool = False,
         **kwargs

@@ -2,6 +2,7 @@ from .element import Element
 from .data import Data
 from .threat import Threat
 from .control import Control
+from .requirement import SecurityProperty
 
 
 class Component(Element):
@@ -13,15 +14,20 @@ class Component(Element):
     """
 
     def __init__(
-        self, name: str, desc: str = None, data_list: list[Data] | Data = []
+        self,
+        name: str,
+        desc: str = "N/A",
+        data: list[Data] | Data = [],
+        security_property: SecurityProperty = SecurityProperty(),
     ) -> None:
         self.__controls: list[Control] = []
         self.__threats: list[Threat] = []
         self.__data: list[Data] = []
-        if type(data_list) == Data:
-            self.data = [data_list]
-        elif type(data_list) == list[Data]:
-            self.data = data_list
+        self.__security_property = SecurityProperty()
+        if type(data) == Data:
+            self.data = [data]
+        elif type(data) == list[Data]:
+            self.data = data
         super().__init__(name, desc)
 
     @property
@@ -85,3 +91,15 @@ class Component(Element):
 
     def remove_control(self, control: Control) -> None:
         self.__controls.remove(control)
+
+    @property
+    def security_property(self) -> SecurityProperty:
+        return self.__security_property
+
+    @security_property.setter
+    def security_property(self, val: SecurityProperty) -> None:
+        if not isinstance(val, SecurityProperty):
+            raise ValueError(
+                "Security Property must be a SecurityProperty object"
+            )
+        self.__security_property = val

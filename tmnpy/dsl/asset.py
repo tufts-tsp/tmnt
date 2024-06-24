@@ -12,6 +12,7 @@ class Machine(Enum):
     needs documentation
     """
 
+    NA = "N/A"
     PHYSICAL = "PHYSICAL"
     VIRTUAL = "VIRTUAL"
     CONTAINER = "CONTAINER"
@@ -41,14 +42,17 @@ class Asset(Component):
     controls have been implemented for this component.
     """
 
+    open_ports: list[int]
+    trust_boundaries: list[Boundary]
+    machine: Machine
+    security_property: SecurityProperty
+
     def __init__(
         self,
         name: str,
         open_ports: list[int] = [],
         trust_boundaries: list[Boundary] = [],
-        machine: Machine = Machine.PHYSICAL,
-        security_property: SecurityProperty = None,
-        data: Data = None,
+        machine: Machine | str = Machine.NA,
         **kwargs
     ):
         if (
@@ -75,12 +79,14 @@ class Asset(Component):
                 )
         self.boundaries = trust_boundaries
 
+        if isinstance(machine, str):
+            machine = Machine[machine]
+
         if not isinstance(machine, Machine):
             raise ValueError("Machine must be a Machine")
         self.machine = machine
 
         super().__init__(name, **kwargs)
-
 
 
 class ExternalEntity(Asset):
@@ -89,7 +95,7 @@ class ExternalEntity(Asset):
     needs documentation
     """
 
-    def __init__(self, name, machine, security_property, data, physical_access: bool = False, **kwargs):
+    def __init__(self, name, physical_access: bool = False, **kwargs):
         if not isinstance(physical_access, bool):
             raise ValueError("Physical Access must be a boolean")
         self.physical_access = physical_access

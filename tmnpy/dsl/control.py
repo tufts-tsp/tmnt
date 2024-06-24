@@ -1,7 +1,11 @@
 from .element import Element
 
 
-class Part:
+class Mitigation(Element):
+    pass
+
+
+class Part(object):
     """
     needs documentation
     """
@@ -38,7 +42,7 @@ class Part:
         self.__part_name = name
 
 
-class Control(Element):
+class Control(Mitigation):
 
     """
     A control is a safegaurd or countermeasure prescribed for an information
