@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List
 
 from .component import Component
 from .control import Control
