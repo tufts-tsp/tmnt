@@ -57,6 +57,14 @@ class TMNTParser(Parser):
                     e += "Please assign an unique name"
                     raise SyntaxError(e)
                 v = flow_component[0]
+            elif k == "path":
+                path = []
+                for component in v:
+                    flow_component = [
+                            c for c in self.tm.components if c.name == v["name"]
+                        ]
+            elif k == "port":
+                pass
             kwargs[k] = v
         return component_type, kwargs
 

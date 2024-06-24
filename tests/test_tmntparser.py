@@ -1,25 +1,23 @@
 import unittest
 
-from tmnt.util.tmntparser import TMNTParser
-from tmnt.dsl import *
+from tmnpy.util.tmntparser import TMNTParser
+from tmnpy.dsl import *
 
 
 
 class TestTMNTParser(unittest.TestCase):
-    
+
     def __init__(self):
-        self.parser = TMNTParser()
-        self.TM = TM(name = "threatmodel")
-        file_path = "../examples/parser_examples/presentation_dsl_example.yaml"
-        self.TM = self.parser.parse(file_path, TM)
+        self.parser = TMNTParser(name="threatmodel_test", "../examples/parser_examples/presentation_dsl_example.yaml")
+        self.TM = self.parser.tm
         return super().setUp()
 
 
-    #parse workflow 
+    #parse workflow
     def test_parse_workflow(self):
 
 
-    #parse dataflow 
+    #parse dataflow
     def test_parse_dataflow(self):
 
 
@@ -142,7 +140,7 @@ class TestTMNTParser(unittest.TestCase):
         security_property_data = self.TM.components()
         #["security_property"]
         security_property = self.parser.parse_security_property(security_property_data)
-        
+
         confidentiality = security_property.confidentiality
         integrity = security_property.integrity
         availability = security_property.availability
@@ -153,7 +151,7 @@ class TestTMNTParser(unittest.TestCase):
 
 
 
-    #stride 
+    #stride
     def test_parse_stride(self):
 
 
@@ -169,4 +167,3 @@ if __name__ == "__main__":
 
     parser = TestTMNTParser()
     parser.test_parse_data()
-
