@@ -312,6 +312,21 @@ class TM:
         return related_attacks
 
 
-    def get_actor_by_name():
-        iterate through 
-        return particular acotr object 
+    def get_actor_by_name(actor_name, data):
+        """
+        Iterates through the data to get the associated Actor object.
+        param: 
+            actor_name (str): name of actor 
+            data: list of objects we are trying to find the actor from??
+
+        return: Actor object
+        """
+        for actor in self.__actors:
+            if self.__actors["name"] == data[actor_name]:
+                return actor
+
+    
+    def get_component_by_name(name, data):
+        for component in self.__components:
+            if self.__components["name"] == data[name]:
+                return component

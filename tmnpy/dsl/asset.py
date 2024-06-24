@@ -3,6 +3,7 @@ from enum import Enum
 from .component import Component
 from .data import Data
 from .boundary import Boundary
+from .requirement import SecurityProperty
 
 
 class Machine(Enum):
@@ -46,6 +47,8 @@ class Asset(Component):
         open_ports: list[int] = [],
         trust_boundaries: list[Boundary] = [],
         machine: Machine = Machine.PHYSICAL,
+        security_property: SecurityProperty = None,
+        data: Data = None,
         **kwargs
     ):
         if (
@@ -86,7 +89,7 @@ class ExternalEntity(Asset):
     needs documentation
     """
 
-    def __init__(self, name, machine, physical_access: bool = False, **kwargs):
+    def __init__(self, name, machine, security_property, data, physical_access: bool = False, **kwargs):
         if not isinstance(physical_access, bool):
             raise ValueError("Physical Access must be a boolean")
         self.physical_access = physical_access
