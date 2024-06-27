@@ -110,8 +110,20 @@ class Datastore(Asset):
     """
 
     def __init__(
-        self, name, ds_type: DATASTORE_TYPE = DATASTORE_TYPE.UNKNOWN, **kwargs
+        self, 
+        name, 
+        # machine: Machine | str = Machine.NA,
+        ds_type: DATASTORE_TYPE | str = DATASTORE_TYPE.UNKNOWN, 
+        **kwargs
     ):
+
+        if isinstance(ds_type, str):
+            ds_type = DATASTORE_TYPE[ds_type]
+
+        if not isinstance(ds_type, DATASTORE_TYPE):
+            raise ValueError("DATASTORE_TYPE must be a DATASTORE_TYPE")
+        self.ds_type = ds_type
+        
         if not isinstance(ds_type, DATASTORE_TYPE):
             raise ValueError("DS Type must be a DATASTORE_TYPE object")
         self.ds_type = ds_type
@@ -119,6 +131,7 @@ class Datastore(Asset):
             raise AttributeError(
                 "If specifying OTHER for the datastore type please include a description."
             )
+
         super().__init__(name, **kwargs)
 
 

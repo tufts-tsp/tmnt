@@ -1,0 +1,45 @@
+elements:
+  - name: "element example"
+    type: "Element"
+    desc: "element desc"
+    parent: 
+      name: "parent example"
+    children:
+      - name: "child example"
+    security_property:
+      confidentiality: "HIGH"
+      integrity: "HIGH"
+      availability: "HIGH"
+
+
+components:
+  - name: "component example"
+    type: "Component"
+
+
+boundaries:
+  - name: "boundary example"
+    type: "Boundary"
+    boundary_owner: "Actor"
+      # name: "actor example"
+      # type: "Actor"
+      # actor_type: "Individual"
+      # physical_access: true
+
+
+assets:
+  - name: "Surgeon Workstation"
+    type: "Asset"
+  
+  - name: "process example"
+    type: "Process"
+
+  - name: "datastore example"
+    type: "Datastore"
+    ds_type: "UNKNOWN"
+
+
+
+
+
+# (??) others: findings, assumptions, threats, property
