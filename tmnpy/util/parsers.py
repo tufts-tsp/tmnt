@@ -1,32 +1,27 @@
-from tmnt.dsl.threat import SecurityProperty
-import yaml
 import tmnpy.dsl as dsl
 from tmnpy.dsl import TM, Control, ControlCatalog, Data
 from tmnpy.dsl.control import Part, Metadata
+from tmnpy.dsl.threat import SecurityProperty
+
+import yaml
+
 
 class Parser(object):
     def load_yaml(self, file_path):
         with open(file_path, "r") as file:
             data = yaml.safe_load(file)
-            return data
+        return data
 
 
 class TMNTParser(Parser):
     def __init__(self, tm_name: str, yaml: str):
         self.yaml = self.load_yaml(yaml)
         self.tm = TM(tm_name)
+        self.results = []
         if "assets" in self.yaml.keys():
             for asset in self.yaml["assets"]:
-                # obj, kwargs = self.parse_component(asset)
-                # self.tm.add_component(obj(**kwargs))
-
                 obj, kwargs = self.parse_component(asset)
-                print(kwargs) 
-                obj = obj(**kwargs)
-                print(len(obj.data))
-                self.tm.add_actor(obj)
-
-
+                self.tm.add_component(obj(**kwargs))
         if "actors" in self.yaml.keys():
             for actor in self.yaml["actors"]:
                 obj, kwargs = self.parse_element(actor)
@@ -38,9 +33,7 @@ class TMNTParser(Parser):
 
     def parse_list_value(self, v):
         nm = v["name"]
-        component = [
-            c for c in self.tm.components if c.name == nm
-        ]
+        component = [c for c in self.tm.components if c.name == nm]
         if len(component) == 0:
             e = f"Could not find {nm} in the TM Components."
             e += "Have you specified that it should be created?"
@@ -61,7 +54,7 @@ class TMNTParser(Parser):
         for k, v in objs.items():
             if k == "security_property":
                 v = SecurityProperty(**v)
-                #print(v.confidentiality)
+                # print(v.confidentiality)
             elif k == "data":
                 data_elems = []
                 for d in v:
@@ -88,7 +81,6 @@ class TMNTParser(Parser):
         element_type = getattr(dsl, element["type"])
         kwargs = {k: v for k, v in element.items() if k != "type"}
         return element_type, kwargs
-
 
 
 class OSCALParser:

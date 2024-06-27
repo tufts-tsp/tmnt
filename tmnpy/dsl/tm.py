@@ -202,7 +202,8 @@ class TM:
         assets = []
         for asset in self.__assets:
             if isinstance(asset, kind):
-                asset_list.append(asset)
+                assets.append(asset)
+        return assets
 
     def find_related_attack_vectors(
         self, initial: Component | Actor

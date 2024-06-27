@@ -4,6 +4,8 @@ from .threat import Threat
 from .control import Control
 from .requirement import SecurityProperty
 
+from typing import List
+
 
 class Component(Element):
 
@@ -13,6 +15,11 @@ class Component(Element):
     threat model), i.e. assets and flows.
     """
 
+    __controls: list[Control]
+    __threats: list[Threat]
+    __data: list[Data]
+    __security_property: SecurityProperty
+
     def __init__(
         self,
         name: str,
@@ -20,14 +27,10 @@ class Component(Element):
         data: list[Data] | Data = [],
         security_property: SecurityProperty = SecurityProperty(),
     ) -> None:
-        self.__controls: list[Control] = []
-        self.__threats: list[Threat] = []
-        self.__data: list[Data] = []
-        self.__security_property = SecurityProperty()
-        if type(data) == Data:
-            self.data = [data]
-        elif type(data) == list[Data]:
-            self.data = data
+        if isinstance(data, Data):
+            data = [data]
+        self.data = data
+        self.security_property = security_property
         super().__init__(name, desc)
 
     @property
@@ -45,20 +48,12 @@ class Component(Element):
     def add_data(self, val: Data) -> None:
         if not isinstance(val, Data):
             raise ValueError("Value must be a Data object")
-
         self.__data.append(val)
 
     def remove_data(self, val: Data) -> None:
-        if val is None:
-            raise ValueError("No data value specified to remove")
-
         if not isinstance(val, Data):
             raise ValueError("Value must be a Data object")
-
         self.__data.remove(val)
-
-    def add_data(self, val: Data) -> None:
-        self.__data.append(val)
 
     @property
     def threats(self) -> list[Threat]:

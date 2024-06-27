@@ -229,7 +229,7 @@ class STRIDE(object):
     @info.setter
     def info(self, val: str) -> None:
         self.__information = val
-    
+
 
 class Property(Enum):
     HIGH = "HIGH"

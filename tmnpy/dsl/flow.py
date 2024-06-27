@@ -11,7 +11,6 @@ class Flow(Component):
     def __init__(
         self,
         name,
-
         src: Element,
         dst: Element,
         path: list[Element] = [],
@@ -27,11 +26,7 @@ class Flow(Component):
 
         self.authentication = authentication
         self.multifactor_authentication = multifactor_authentication
-
-        if path == []:
-            self.path = [src, dst]
-        else:
-            self.path = path
+        self.path = path
         super().__init__(name, **kwargs)
 
     @property
@@ -62,12 +57,21 @@ class Flow(Component):
 
     @path.setter
     def path(self, vals: list[Element]) -> None:
+        self.__path = []
+        if vals == []:
+            self.__path.append(self.src)
+            self.__path.append(self.dst)
+            return None
+        if vals[0] != self.src:
+            self.__path.append(self.src)
         for val in vals:
             if not isinstance(val, Element):
                 err = "Path must consist of tmnpy.dsl.Element,"
                 err += f" {val} is not of type tmnpy.dsl.Element"
                 raise ValueError(err)
-        self.__path = vals
+            self.__path.append(val)
+        if vals[-1] != self.dst:
+            self.__path.append(self.dst)
 
     def __check_parent(self, obj):
         if obj.parent is None:
