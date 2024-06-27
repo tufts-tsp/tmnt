@@ -2,7 +2,10 @@ from .element import Element
 
 
 class Mitigation(Element):
-    pass
+
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 class Part(object):
@@ -56,25 +59,17 @@ class Control(Mitigation):
     """
 
     def __init__(
-        self, id: str, title: str, desc: str = None, related: list = []
+        self, cid: str, name: str, desc: str = None, related: list = []
     ):
-        if not isinstance(id, str):
+        if not isinstance(cid, str):
             raise ValueError("Control ID must be a string")
-        self.__id = id
-
-        if not isinstance(title, str):
-            raise ValueError("Control title must be a string")
-        self.__title = title
-        self.__desc = desc
+        self.__cid = cid
         self.__related = related
+        super().__init__(name=name, desc=desc)
 
     @property
-    def id(self) -> str:
-        return self.__id
-
-    @property
-    def title(self) -> str:
-        return self.__title
+    def cid(self) -> str:
+        return self.__cid
 
     @property
     def parts(self) -> list[Part]:
@@ -159,6 +154,10 @@ class Control(Mitigation):
             err = f"Phase must be from following: {','.join(phases)}."
             raise ValueError(err)
         self.__development_phase = phase
+
+    @property
+    def related(self):
+        return self.__related
 
 
 class Metadata:

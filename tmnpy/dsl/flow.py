@@ -14,7 +14,7 @@ class Flow(Component):
         src: Element,
         dst: Element,
         path: list[Element] = [],
-        authentication: str = "",
+        authentication: str | None = None,
         multifactor_authentication: bool = True,
         **kwargs,
     ):

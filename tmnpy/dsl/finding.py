@@ -40,7 +40,7 @@ class Finding:
         self,
         affected_components: List[Component] | Component,
         issues: List[Issue] | Issue,
-        mitigations: List[Mitigation] | Mitigation = Mitigation("N/A"),
+        mitigations: List[Mitigation] | Mitigation | None = None,
         relevance: str = "Not Evaluated",
         likelihood: str = "Not Evaluated",
         likelihood_event_occurence: str = "Not Evaluated",

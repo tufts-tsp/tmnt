@@ -30,6 +30,8 @@ class Component(Element):
         if isinstance(data, Data):
             data = [data]
         self.data = data
+        self.__threats = []
+        self.__controls = []
         self.security_property = security_property
         super().__init__(name, desc)
 

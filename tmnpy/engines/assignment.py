@@ -93,7 +93,7 @@ class Assignment(Engine):
 
             controls_list = []
             for i, c in enumerate(controls_strs):
-                controls_list.append(Control(id=str(i), title=c[0]))
+                controls_list.append(Control(cid=str(i), name=c[0]))
 
             # TODO - Currently stores controls as a regular list, ignoring logical relationships
             # EXAMPLE EXPRESSION: s = "(target.hasDataLeaks() or any(d.isCredentials or d.isPII for d in target.data)) and (not target.controls.isEncrypted or (not target.isResponse and any(d.isStored and d.isDestEncryptedAtRest for d in target.data)) or (target.isResponse and any(d.isStored and d.isSourceEncryptedAtRest for d in target.data)))"
@@ -167,7 +167,7 @@ class Rule:
         applied_controls = []
         not_applied_controls = []
         for control in self.controls:
-            if control.title in [x.title for x in component.controls]:
+            if control.name in [x.name for x in component.controls]:
                 applied_controls.append(control)
             else:
                 not_applied_controls.append(control)

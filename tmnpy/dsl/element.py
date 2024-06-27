@@ -1,7 +1,6 @@
 import uuid
 from typing import Self, Tuple, List
 
-
 class Element(object):
     """
     The basic primitive of a threat model, which can be an asset, control, flow,
@@ -27,15 +26,8 @@ class Element(object):
         desc: str = "N/A",
     ):
         self.__id = uuid.uuid4()
-        if not isinstance(name, str):
-            raise ValueError("Element Name must be a string")
-        self.__name = name
-        if desc == None:
-            desc = "N/A"
-        if not isinstance(desc, str):
-            raise ValueError("Element Description must be a string")
-        self.__desc = desc
-
+        self.name = name
+        self.desc = desc
         self.__children = []
         self.__parent = []
 
@@ -57,6 +49,8 @@ class Element(object):
 
     @name.setter
     def name(self, val: str) -> None:
+        if not isinstance(val, str):
+            raise ValueError("Element Name must be a string")
         self.__name = val
 
     @property
@@ -66,6 +60,10 @@ class Element(object):
 
     @desc.setter
     def desc(self, val: str) -> None:
+        if val == None:
+            val = "N/A"
+        if not isinstance(val, str):
+            raise ValueError("Element Description must be a string")
         self.__desc = val
 
     @property
@@ -82,7 +80,7 @@ class Element(object):
         # If this assignment is from `add_child` it will be a tuple, and
         # we shouldn't assign a child as this will cause issues - user could
         # also specify using a tuple
-        if not isinstance(parent, Self):
+        if not isinstance(parent, Element):
             raise ValueError("Must be of type tmnpy.dsl.Element")
         if assign_child:
             parent.add_child(self, assign_parent=False)
@@ -116,7 +114,7 @@ class Element(object):
         return self.__children
 
     def add_child(self, child: Self, assign_parent: bool = True) -> None:
-        if not isinstance(child, Self):
+        if not isinstance(child, Element):
             raise ValueError("Must be of type tmnpy.dsl.Element")
         if assign_parent and child.parent != []:
             raise AttributeError(

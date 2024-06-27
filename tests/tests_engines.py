@@ -32,8 +32,8 @@ class TestThreatlib(unittest.TestCase):
         for i in range(1, 10, 2):
             for r in self.rules.threatmap:
                 for c in r.controls:
-                    if c.title not in [
-                        x.title for x in self.tm_components[i].controls
+                    if c.name not in [
+                        x.name for x in self.tm_components[i].controls
                     ]:
                         self.tm_components[i].add_control(c)
         return super().setUp()
