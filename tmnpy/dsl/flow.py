@@ -1,4 +1,4 @@
-from typing_extensions import Optional
+from typing import Optional
 from .component import Component
 from .element import Element
 
