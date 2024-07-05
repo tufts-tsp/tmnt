@@ -40,10 +40,10 @@ class TestTM(unittest.TestCase):
 
         component1 = Component("test1")
 
-        self.tm.add_component(component1)
+        self.tm.components.append(component1)
         component_list = self.tm.components
 
-        self.tm.remove_component(component1)
+        self.tm.components.remove(component1)
         component_list = self.tm.components
 
     def tearDown(self):
@@ -60,14 +60,14 @@ class TestElement(unittest.TestCase):
         self.assertEqual(self.element.name, "Test Element")
         self.assertEqual(self.element.desc, "Description")
         self.assertEqual(len(self.element.children), 0)
-        self.assertEqual(len(self.element.parent), 0)
+        self.assertEqual(self.element.parent, None)
 
     def test_parent_child_assignments(self):
         elem1 = Element("test1")
         elem2 = Element("test2")
         elem3 = Element("test3")
 
-        elem1.parent = elem2
+        elem1.add_parent(elem2)
         # no child setter
 
         # a parent node should not assign itself as a parent
@@ -136,7 +136,7 @@ class TestComponent(unittest.TestCase):
         self.assertEqual(len(self.component.data), 0)
 
     def test_control(self):
-        control = Control(id="1", title="Test", desc="Description")
+        control = Control(cid="1", name="Test", desc="Description")
         self.component.add_control(control)
         self.assertEqual(len(self.component.controls), 1)
         self.component.remove_control(control)

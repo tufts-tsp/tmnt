@@ -32,15 +32,6 @@ assets:
         desc: "Retained according to maintenance schedule"
         lifetime: "AUTO"
 
-  - name: "Surgeon Workstation"
-    type: "Asset"
-
-  - name: "Surgical Robot"
-    type: "Asset"
-
-  - name: "Hospital Network"
-    type: "ExternalEntity"
-
 actors:
   - name: "Surgeon"
     type: "Actor"
@@ -60,7 +51,7 @@ flows:
     multifactor_authentication: false
 
   - name: "Surgical Procedure Execution Flow"
-    type: "WorkFlow"
+    type: "Workflow"
     src:
       name: "Surgeon Workstation"
     dst:

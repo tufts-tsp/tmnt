@@ -3,6 +3,7 @@ from enum import Enum
 from .component import Component
 from .data import Data
 from .boundary import Boundary
+from .requirement import SecurityProperty
 
 
 class Machine(Enum):
@@ -11,6 +12,7 @@ class Machine(Enum):
     needs documentation
     """
 
+    NA = "N/A"
     PHYSICAL = "PHYSICAL"
     VIRTUAL = "VIRTUAL"
     CONTAINER = "CONTAINER"
@@ -40,12 +42,16 @@ class Asset(Component):
     controls have been implemented for this component.
     """
 
+    open_ports: list[int]
+    trust_boundaries: list[Boundary]
+    machine: Machine
+
     def __init__(
         self,
         name: str,
         open_ports: list[int] = [],
         trust_boundaries: list[Boundary] = [],
-        machine: Machine = Machine.PHYSICAL,
+        machine: Machine | str = Machine.NA,
         **kwargs
     ):
         if (
@@ -71,6 +77,9 @@ class Asset(Component):
                     "Trust Boundaries must be a list of Boundary objects"
                 )
         self.boundaries = trust_boundaries
+
+        if isinstance(machine, str):
+            machine = Machine[machine]
 
         if not isinstance(machine, Machine):
             raise ValueError("Machine must be a Machine")
@@ -100,8 +109,19 @@ class Datastore(Asset):
     """
 
     def __init__(
-        self, name, ds_type: DATASTORE_TYPE = DATASTORE_TYPE.UNKNOWN, **kwargs
+        self,
+        name,
+        # machine: Machine | str = Machine.NA,
+        ds_type: DATASTORE_TYPE | str = DATASTORE_TYPE.UNKNOWN,
+        **kwargs
     ):
+        if isinstance(ds_type, str):
+            ds_type = DATASTORE_TYPE[ds_type]
+
+        if not isinstance(ds_type, DATASTORE_TYPE):
+            raise ValueError("DATASTORE_TYPE must be a DATASTORE_TYPE")
+        self.ds_type = ds_type
+
         if not isinstance(ds_type, DATASTORE_TYPE):
             raise ValueError("DS Type must be a DATASTORE_TYPE object")
         self.ds_type = ds_type
@@ -109,6 +129,7 @@ class Datastore(Asset):
             raise AttributeError(
                 "If specifying OTHER for the datastore type please include a description."
             )
+
         super().__init__(name, **kwargs)
 
 

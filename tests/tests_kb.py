@@ -11,12 +11,12 @@ class TestASVS(unittest.TestCase):
         asvs = kb.load_owasp_asvs()
         # assertEqual
         for c in asvs:
-            self.assertEqual(type(c.id), str)
-            self.assertEqual(type(c.title), str)
-            self.assertEqual(type(c.desc), str)
-            self.assertEqual(type(c.related), list)
+            self.assertIsInstance(c.cid, str)
+            self.assertIsInstance(c.name, str)
+            self.assertIsInstance(c.desc, str)
+            self.assertIsInstance(c.related, list)
             for id in c.related:
-                self.assertEqual(type(id), dict)
+                self.assertIsInstance(id, dict)
 
     def tearDown(self):
         return super().tearDown()

@@ -1,5 +1,70 @@
+import tmnpy.dsl as dsl
+from tmnpy.dsl import TM, Control, ControlCatalog, Data
+from tmnpy.dsl.control import Part, Metadata
+from tmnpy.dsl.threat import SecurityProperty
+
 import yaml
-from tmnpy.dsl.control import Control, ControlCatalog, Part, Metadata
+
+
+class Parser(object):
+    def load_yaml(self, file_path):
+        with open(file_path, "r") as file:
+            data = yaml.safe_load(file)
+        return data
+
+
+class TMNTParser(Parser):
+    def __init__(self, tm_name: str, yaml: str):
+        self.yaml = self.load_yaml(yaml)
+        self.tm = TM(tm_name)
+        self.results = []
+        for k, v in self.yaml.items():
+            for elem in v:
+                if k in ["assets", "flows"]:
+                    elem_type, kwargs = self.parse_component(elem)
+                    instance = elem_type(**kwargs)
+                    self.tm.components.append(instance)
+                else:
+                    elem_type, kwargs = self.parse_element(elem)
+                    self.tm.actors.append(elem_type(**kwargs))
+
+    def parse_list_value(self, v):
+        idx = self.tm.components.index(v["name"])
+        return self.tm.components[idx]
+
+    def parse_component(self, component):
+        component_type, kwargs = self.parse_element(component)
+        objs = {
+            k: v
+            for k, v in kwargs.items()
+            if type(v) != str and type(v) != bool
+        }
+        for k, v in objs.items():
+            if k == "security_property":
+                v = SecurityProperty(**v)
+            elif k == "data":
+                data_elems = []
+                for d in v:
+                    data_elems.append(Data(**d))
+                v = data_elems
+            elif k == "path":
+                path = []
+                for component in v:
+                    path.append(self.parse_list_value(component))
+                v = path
+            elif k in ["src", "dst"]:
+                v = self.parse_list_value(v)
+            elif k == "port":
+                pass
+            kwargs[k] = v
+        return component_type, kwargs
+
+    def parse_element(self, element):
+        if not isinstance(element, dict):
+            raise TypeError(f"Issue parsing {element}")
+        element_type = dsl.__dict__[element["type"]]
+        kwargs = {k: v for k, v in element.items() if k != "type"}
+        return element_type, kwargs
 
 
 class OSCALParser:
@@ -29,8 +94,8 @@ class OSCALParser:
             part_list.append(part)
 
         control = Control(
-            id=control_data["id"],
-            title=control_data["title"],
+            cid=control_data["id"],
+            name=control_data["title"],
             parts=part_list,
         )
 

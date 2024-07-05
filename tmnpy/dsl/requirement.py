@@ -231,6 +231,12 @@ class STRIDE(object):
         self.__information = val
 
 
+class Property(Enum):
+    HIGH = "HIGH"
+    LOW = "LOW"
+    NONE = "NONE"
+
+
 class SecurityProperty(object):
     """
     Determine what are the security properties associated with an element,
@@ -264,11 +270,6 @@ class SecurityProperty(object):
         `LOW`, `HIGH`. Case-insensitive.
     """
 
-    class Property(Enum):
-        HIGH = "HIGH"
-        LOW = "LOW"
-        NONE = "NONE"
-
     def __init__(
         self,
         confidentiality: Property = Property.NONE,
@@ -278,13 +279,13 @@ class SecurityProperty(object):
         non_repudiation: Property = Property.NONE,
         authorization: Property = Property.NONE,
     ) -> None:
-        self.__confidentiality = confidentiality
-        self.__integrity = integrity
-        self.__availability = availability
-        self.__authenticity = authenticity
-        self.__non_repudiation = non_repudiation
-        self.__authorization = authorization
-        self.__information = None
+        self.confidentiality = confidentiality
+        self.integrity = integrity
+        self.availability = availability
+        self.authenticity = authenticity
+        self.non_repudiation = non_repudiation
+        self.authorization = authorization
+        self.information = None
 
     @classmethod
     def __properties__(cls):
@@ -310,9 +311,11 @@ class SecurityProperty(object):
         return self.__confidentiality
 
     @confidentiality.setter
-    def confidentiality(self, val: str) -> None:
-        if val:
-            self.__confidentiality = self.Property[val.upper()]
+    def confidentiality(self, val: str | Property) -> None:
+        if isinstance(val, str):
+            self.__confidentiality = Property[val.upper()]
+        elif isinstance(val, Property):
+            self.__confidentiality = val
 
     @property
     def integrity(self) -> Property:
@@ -331,9 +334,11 @@ class SecurityProperty(object):
         return self.__integrity
 
     @integrity.setter
-    def integrity(self, i: str) -> None:
-        if i:
-            self.__integrity = self.Property[i.upper()]
+    def integrity(self, i: str | Property) -> None:
+        if isinstance(i, str):
+            self.__integrity = Property[i.upper()]
+        elif isinstance(i, Property):
+            self.__integrity = i
 
     @property
     def availability(self) -> Property:
@@ -350,9 +355,11 @@ class SecurityProperty(object):
         return self.__availability
 
     @availability.setter
-    def availability(self, a: str) -> None:
-        if a:
-            self.__availability = self.Property[a.upper()]
+    def availability(self, a: str | Property) -> None:
+        if isinstance(a, str):
+            self.__availability = Property[a.upper()]
+        elif isinstance(a, Property):
+            self.__availability = a
 
     @property
     def authenticity(self) -> Property:
@@ -372,9 +379,11 @@ class SecurityProperty(object):
         return self.__authenticity
 
     @authenticity.setter
-    def authenticity(self, a: str) -> None:
-        if a:
-            self.__authenticity = self.Property[a.upper()]
+    def authenticity(self, a: str | Property) -> None:
+        if isinstance(a, str):
+            self.__authenticity = Property[a.upper()]
+        elif isinstance(a, Property):
+            self.__authenticity = a
 
     @property
     def non_repudiation(self) -> Property:
@@ -393,9 +402,11 @@ class SecurityProperty(object):
         return self.__non_repudiation
 
     @non_repudiation.setter
-    def non_repudiation(self, nr: str) -> None:
-        if nr:
-            self.__non_repudiation = self.Property[nr.upper()]
+    def non_repudiation(self, nr: str | Property) -> None:
+        if isinstance(nr, str):
+            self.__non_repudiation = Property[nr.upper()]
+        elif isinstance(nr, Property):
+            self.__non_repudiation = nr
 
     @property
     def authorization(self) -> Property:
@@ -414,9 +425,11 @@ class SecurityProperty(object):
         return self.__authorization
 
     @authorization.setter
-    def authorization(self, a: str) -> None:
-        if a:
-            self.__authorization = self.Property[a.upper()]
+    def authorization(self, a: str | Property) -> None:
+        if isinstance(a, str):
+            self.__authorization = Property[a.upper()]
+        elif isinstance(a, Property):
+            self.__authorization = a
 
     @property
     def info(self) -> str:
