@@ -33,7 +33,7 @@ class TestTMNTParser(unittest.TestCase):
     def test_parse_asset(self):
         asset_data = [
             a
-            for a in self.tm.enumerate_all_assets(Asset)
+            for a in self.tm.enumerate_assets(Asset)
             if a.name == "Life Support/Monitoring Equipment"
         ]
         self.assertEqual(len(asset_data), 1)
@@ -61,7 +61,7 @@ class TestTMNTParser(unittest.TestCase):
     def test_parse_external_entities(self):
         external_entities_data = [
             a
-            for a in self.tm.enumerate_all_assets(ExternalEntity)
+            for a in self.tm.enumerate_assets(ExternalEntity)
             if a.name == "Remote Maintenance Provider"
         ]
         self.assertEqual(len(external_entities_data), 1)
@@ -93,7 +93,7 @@ class TestTMNTParser(unittest.TestCase):
     def test_parse_dataflow(self):
         dataflow_data = [
             a
-            for a in self.tm.enumerate_all_flows(DataFlow)
+            for a in self.tm.enumerate_flows(DataFlow)
             if a.name
             == "Data Transfer from Life Support to Surgeon Workstation"
         ]
@@ -123,7 +123,7 @@ class TestTMNTParser(unittest.TestCase):
     def test_parse_workflow(self):
         workflow_data = [
             a
-            for a in self.tm.enumerate_all_flows(WorkFlow)
+            for a in self.tm.enumerate_flows(WorkFlow)
             if a.name == "Surgical Procedure Execution Flow"
         ]
         self.assertEqual(len(workflow_data), 1)
@@ -134,7 +134,6 @@ class TestTMNTParser(unittest.TestCase):
         src = workflow.src
         dst = workflow.dst
         path = workflow.path
-        print(path)
         self.assertEqual(len(path), 3)
         authentication = workflow.authentication
         multifactor_authentication = workflow.multifactor_authentication
@@ -142,7 +141,9 @@ class TestTMNTParser(unittest.TestCase):
         self.assertEqual(name, "Surgical Procedure Execution Flow")
         self.assertEqual(src.name, "Surgeon Workstation")
         self.assertEqual(dst.name, "Surgical Robot")
-        self.assertEqual(path[0].name, "Hospital Network")
+        self.assertEqual(path[0].name, "Surgeon Workstation")
+        self.assertEqual(path[1].name, "Hospital Network")
+        self.assertEqual(path[2].name, "Surgical Robot")
         self.assertEqual(authentication, "Certificate-based")
         self.assertEqual(multifactor_authentication, True)
 

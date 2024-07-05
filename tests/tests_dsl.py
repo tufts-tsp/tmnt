@@ -40,10 +40,10 @@ class TestTM(unittest.TestCase):
 
         component1 = Component("test1")
 
-        self.tm.add_component(component1)
+        self.tm.components.append(component1)
         component_list = self.tm.components
 
-        self.tm.remove_component(component1)
+        self.tm.components.remove(component1)
         component_list = self.tm.components
 
     def tearDown(self):
@@ -60,7 +60,7 @@ class TestElement(unittest.TestCase):
         self.assertEqual(self.element.name, "Test Element")
         self.assertEqual(self.element.desc, "Description")
         self.assertEqual(len(self.element.children), 0)
-        self.assertEqual(len(self.element.parent), 0)
+        self.assertEqual(self.element.parent, None)
 
     def test_parent_child_assignments(self):
         elem1 = Element("test1")

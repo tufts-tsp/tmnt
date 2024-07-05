@@ -1,153 +1,89 @@
-import random
-import logging
-from typing import List
-
-from tmnpy.dsl.boundary import Boundary
-
-from .data import Data
-from .component import Component
-from .finding import Finding
-from .flow import Flow
+from .actor import Actor, Actors
 from .asset import Asset
+from .boundary import Boundary, Boundaries
+from .component import Component, Components
+from .data import Data
 from .element import Element
-from .actor import Actor
+from .finding import Finding, Findings
+from .flow import Flow
+
+import logging
+import random
+from typing import List, Optional
+import uuid
 
 logger = logging.getLogger(__name__)
 
 
 class TM:
-    """Describes the threat model administratively,
-    and holds all details during a run"""
+    """
+    Describes the threat model administratively, and holds all details during
+    a run.
+
+    Parameters
+    ----------
+    name : str
+    components : List[Component], default []
+    actors : List[Actor], default []
+    boundaries : List[Boundary], default []
+
+    Attributes
+    ----------
+    name : str
+    components : List[Component], default Components()
+    actors : List[Actor], default Actors()
+    boundaries : List[Boundary], default Boundaries()
+    findings : List[Finding], default Findings()
+    assumptions : List[str], default []
+
+
+    Methods
+    -------
+
+    """
+    __actors: Actors
+    __assumptions: list
+    __boundaries: Boundaries
+    __components: Components
 
     def __init__(
         self,
         name: str,
-        components: List[Component] = [],
-        actors: List[Actor] = [],
-        boundaries: List[Boundary] = [],
+        components: Optional[List[Component]] = None,
+        actors: Optional[List[Actor]] = None,
+        boundaries: Optional[List[Boundary]] = None,
     ):
         self.__assumptions = []
-        self.__assets = []
-        self.__actors = []
-        self.__components = []
-        self.__boundaries = []
-        self.__flows = []
+        self.__actors = Actors()
+        self.__components = Components()
+        self.__boundaries = Boundaries()
+        self.__findings = Findings()
 
-        self._name = name
-
-        for c in components:
-            self.add_component(c)
-        for a in actors:
-            self.add_actor(a)
-        for b in boundaries:
-            self.add_boundary(b)
+        self.__name = name
+        if components:
+            self.components = components
+        if actors:
+            self.actors = actors
+        if boundaries:
+            self.boundaries = boundaries
 
     @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def components(self) -> List[Component]:
-        return self.__components
-
-    def add_component(self, component: Component):
-        if component is None:
-            raise ValueError("No component specified to add")
-        elif not isinstance(component, Component):
-            raise TypeError(
-                "Specified component is not of type tmnpy.dsl.Component"
-            )
-
-        if component in self.__components:
-            print("Component is already in the model")
-        else:
-            self.__components.append(component)
-
-        if isinstance(component, Asset):
-            self.__assets.append(component)
-        elif isinstance(component, Flow):
-            self.__flows.append(component)
-
-    def remove_component(self, component: Component):
-        if component is None:
-            raise ValueError("No component specified to remove")
-        elif not isinstance(component, Component):
-            raise TypeError(
-                "Specified component is not of type tmnpy.dsl.Component"
-            )
-
-        self.__components.remove(component)
-
-    @property
-    def actors(self) -> List[Actor]:
+    def actors(self) -> Actors:
         return self.__actors
 
-    def add_actor(self, actor: Actor):
-        if actor is None:
-            raise ValueError("No actor specified to add")
-        elif not isinstance(actor, Actor):
-            raise TypeError("Specified actor is not of type tmnpy.dsl.Actor")
-
-        if actor in self.__actors:
-            print("Actor is already in the model")
-        else:
+    @actors.setter
+    def actors(self, actors: List[Actor]) -> None:
+        self.__actors = Actors()
+        if not isinstance(actors, list):
+            raise TypeError(
+                "Must use a list of type tmnpy.dsl.Actor"
+            )
+        for actor in actors:
             self.__actors.append(actor)
 
-    def remove_actor(self, actor: Actor):
-        if actor is None:
-            raise ValueError("No actor specified to remove")
-        elif not isinstance(actor, Actor):
-            raise TypeError("Specified actor is not of type tmnpy.dsl.Actor")
-
-        self.__actors.remove(actor)
-
-    @property
-    def boundaries(self) -> List[Boundary]:
-        return self.__boundaries
-
-    def add_boundary(self, boundary: Boundary):
-        if boundary is None:
-            raise ValueError("No boundary specified to add")
-        elif not isinstance(boundary, Boundary):
-            raise TypeError(
-                "Specified boundary is not of type tmnpy.dsl.Boundary"
-            )
-
-        if boundary in self.__boundaries:
-            print("Boundary is already in the model")
-        else:
-            self.__boundaries.append(boundary)
-
-    def remove_boundary(self, boundary: Boundary):
-        if boundary is None:
-            raise ValueError("No boundary specified to remove")
-        elif not isinstance(boundary, Boundary):
-            err = "Specified boundary is not of type tmnpy.dsl.Boundary"
-            raise TypeError(err)
-
-        self.__boundaries.remove(boundary)
-
-    @property
-    def findings(self) -> List[Finding]:
-        return self.findings
-
-    def add_finding(self, finding: Finding):
-        if not isinstance(finding, Finding):
-            raise ValueError("No finding specified to add")
-
-        if finding in self.findings:
-            print("Finding is already in the model")
-        else:
-            self.findings.append(finding)
-
-    def remove_finding(self, finding: Finding):
-        if finding is None:
-            raise ValueError("No finding specified to remove")
-        elif not isinstance(finding, Finding):
-            err = "Specified boundary is not of type tmnpy.dsl.Finding"
-            raise TypeError(err)
-
-        self.findings.remove(finding)
+    @actors.deleter
+    def actors(self) -> None:
+        self.__actors = Actors()
 
     @property
     def assumptions(self):
@@ -164,19 +100,77 @@ class TM:
 
         self.__assumptions = assumption_list
 
+    @property
+    def boundaries(self) -> Boundaries:
+        return self.__boundaries
+
+    @boundaries.setter
+    def boundaries(self, boundaries: List[Boundary]) -> None:
+        self.__boundaries = Boundaries()
+        if not isinstance(boundaries, list):
+            raise TypeError(
+                "Must use a list of type tmnpy.dsl.Boundary"
+            )
+        for boundary in boundaries:
+            self.__boundaries.append(boundary)
+
+    @boundaries.deleter
+    def boundaries(self) -> None:
+        self.__boundaries = Boundaries()
+
+    @property
+    def components(self) -> Components:
+        return self.__components
+
+    @components.setter
+    def components(self, components: List[Component]) -> None:
+        self.__components = Components()
+        if not isinstance(components, list):
+            raise TypeError(
+                "Must use a list of type tmnpy.dsl.Component"
+            )
+        for component in components:
+            self.__components.append(component)
+
+    @components.deleter
+    def components(self) -> None:
+        self.__components = Components()
+
+    @property
+    def findings(self) -> Findings:
+        return self.__findings
+
+    @findings.setter
+    def findings(self, findings: List[Finding]) -> None:
+        self.__findings = Findings()
+        if not isinstance(findings, list):
+            raise TypeError(
+                "Must use a list of type tmnpy.dsl.Finding"
+            )
+        for finding in findings:
+            self.__findings.append(finding)
+
+    @findings.deleter
+    def findings(self) -> None:
+        self.__findings = Findings()
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
     def reset(self):
-        self.__components = []
-        self.__actors = []
-        self.__boundaries = []
+        self.__components = Components()
+        self.__actors = Actors()
+        self.__boundaries = Boundaries()
         self.__assumptions = []
+        self.__findings = Findings()
 
     def describe_data(self, data: Data):
         # Provide user with the components that process, send, receive, store
         # this data
 
-        if data is None:
-            raise ValueError("Data object must be provided")
-
+        if not isinstance(data, Data):
+            raise ValueError("Must provide a tmnpy.Data object")
         associated_components = []
 
         for component in self.__components:
@@ -185,25 +179,14 @@ class TM:
 
         return associated_components
 
-    def enumerate_all_flows(self, kind: Flow) -> List[Flow]:
+    def enumerate_flows(self, kind: type[Flow] = Flow) -> Components:
         # Give a list of all the flows, able to filter with kind
-        if kind is None:
-            return self.__flows
-        flows = []
-        for flow in self.__flows:
-            if isinstance(flow, kind):
-                flows.append(flow)
-        return flows
+        return self.components.subset(kind)
 
-    def enumerate_all_assets(self, kind: Asset) -> List[Asset]:
+    def enumerate_assets(self, kind: type[Asset] = Asset) -> Components:
         ## Give a list of all the assets, able to filter with kind
-        if kind is not None:
-            return self.__assets
-        assets = []
-        for asset in self.__assets:
-            if isinstance(asset, kind):
-                assets.append(asset)
-        return assets
+        return self.components.subset(kind)
+
 
     def find_related_attack_vectors(
         self, initial: Component | Actor
@@ -219,7 +202,7 @@ class TM:
                 return
             visited_assets.add(current_asset)
 
-            for flow in self.__flows:
+            for flow in self.enumerate_flows():
                 # go one step upstream from asset
                 if flow.dst == current_asset:
                     new_path = [flow] + path
@@ -274,7 +257,7 @@ class TM:
 
             visited_components.add(current_component)
             # print(f"added: {current_component} to visited components")
-            for flow in self.__flows:
+            for flow in self.enumerate_flows():
                 # print(f"analyzing flow with src: {flow.src} and dst: {flow.dst}")
                 if flow.src == current_component:
                     # print(f"we matched component: {current_component}, with src: {flow.src}")
@@ -311,21 +294,3 @@ class TM:
         trace_forwards(target, [], set())
 
         return related_attacks
-
-    def get_actor_by_name(actor_name, data):
-        """
-        Iterates through the data to get the associated Actor object.
-        param:
-            actor_name (str): name of actor
-            data: list of objects we are trying to find the actor from??
-
-        return: Actor object
-        """
-        for actor in self.__actors:
-            if self.__actors["name"] == data[actor_name]:
-                return actor
-
-    def get_component_by_name(name, data):
-        for component in self.__components:
-            if self.__components["name"] == data[name]:
-                return component

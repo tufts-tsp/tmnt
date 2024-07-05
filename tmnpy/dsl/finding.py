@@ -1,10 +1,10 @@
-from typing import List
-
 from .component import Component
 from .control import Mitigation
 from .threat import Issue
 from .requirement import SecurityProperty, SafetyImpact
 
+from collections import UserList
+from typing import List
 
 class Finding:
     """
@@ -120,3 +120,25 @@ class Finding:
                 err = f"{kwarg} not a valid likelihood key. Must be {[keys]}"
                 raise ValueError(err)
             self.__likelihood[kwarg] = val
+
+class Findings(UserList):
+    def append(self, item: Finding) -> None:
+        if not isinstance(item, Finding):
+            raise TypeError(
+                f"{item} is not of type tmnpy.dsl.Finding."
+            )
+        for i in range(len(self.data)):
+            if self.data[i] == item:
+                raise ValueError(f"{item} is already in this list.")
+        super().append(item)
+
+    def index(self, name: str, *args) -> int:
+        ctype = None
+        if args:
+            ctype = args[0]
+        for i in range(len(self.data)):
+            if name == self.data[i].name and ctype == None:
+                return i
+            elif name == self.data[i].name and ctype == type(self.data[i]):
+                return i
+        raise ValueError(f"{name} is not in list.")

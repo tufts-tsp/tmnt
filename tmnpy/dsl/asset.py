@@ -45,7 +45,6 @@ class Asset(Component):
     open_ports: list[int]
     trust_boundaries: list[Boundary]
     machine: Machine
-    security_property: SecurityProperty
 
     def __init__(
         self,

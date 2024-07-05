@@ -18,31 +18,19 @@ class TMNTParser(Parser):
         self.yaml = self.load_yaml(yaml)
         self.tm = TM(tm_name)
         self.results = []
-        if "assets" in self.yaml.keys():
-            for asset in self.yaml["assets"]:
-                obj, kwargs = self.parse_component(asset)
-                self.tm.add_component(obj(**kwargs))
-        if "actors" in self.yaml.keys():
-            for actor in self.yaml["actors"]:
-                obj, kwargs = self.parse_element(actor)
-                self.tm.add_actor(obj(**kwargs))
-        if "flows" in self.yaml.keys():
-            for flow in self.yaml["flows"]:
-                obj, kwargs = self.parse_component(flow)
-                self.tm.add_component(obj(**kwargs))
+        for k, v in self.yaml.items():
+            for elem in v:
+                if k in ["assets","flows"]:
+                    elem_type, kwargs = self.parse_component(elem)
+                    instance = elem_type(**kwargs)
+                    self.tm.components.append(instance)
+                else:
+                    elem_type, kwargs = self.parse_element(elem)
+                    self.tm.actors.append(elem_type(**kwargs))
 
     def parse_list_value(self, v):
-        nm = v["name"]
-        component = [c for c in self.tm.components if c.name == nm]
-        if len(component) == 0:
-            e = f"Could not find {nm} in the TM Components."
-            e += "Have you specified that it should be created?"
-            raise SyntaxError(e)
-        elif len(component) > 1:
-            e = f"Found multiple components named {nm}."
-            e += "Please assign an unique name"
-            raise SyntaxError(e)
-        return component[0]
+        idx = self.tm.components.index(v["name"])
+        return self.tm.components[idx]
 
     def parse_component(self, component):
         component_type, kwargs = self.parse_element(component)
@@ -54,13 +42,10 @@ class TMNTParser(Parser):
         for k, v in objs.items():
             if k == "security_property":
                 v = SecurityProperty(**v)
-                # print(v.confidentiality)
             elif k == "data":
                 data_elems = []
                 for d in v:
-                    # print(d)
                     data_elems.append(Data(**d))
-                # print(v)
                 v = data_elems
             elif k == "path":
                 path = []
@@ -71,14 +56,13 @@ class TMNTParser(Parser):
                 v = self.parse_list_value(v)
             elif k == "port":
                 pass
-            # print(k, v)
             kwargs[k] = v
         return component_type, kwargs
 
     def parse_element(self, element):
         if not isinstance(element, dict):
             raise TypeError(f"Issue parsing {element}")
-        element_type = getattr(dsl, element["type"])
+        element_type = dsl.__dict__[element["type"]]
         kwargs = {k: v for k, v in element.items() if k != "type"}
         return element_type, kwargs
 
@@ -110,8 +94,8 @@ class OSCALParser:
             part_list.append(part)
 
         control = Control(
-            id=control_data["id"],
-            title=control_data["title"],
+            cid=control_data["id"],
+            name=control_data["title"],
             parts=part_list,
         )
 
