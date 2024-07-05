@@ -17,7 +17,7 @@ from .tests_dsl import (
     TestControlCatalog,
     TestActor,
 )
-from test_tmntparser import TestTMNTParser
+from .test_tmntparser import TestTMNTParser
 import unittest
 
 if __name__ == "__main__":
