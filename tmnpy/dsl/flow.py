@@ -8,6 +8,7 @@ class Flow(Component):
     """
     A flow from a source to a destination
     """
+
     __src: Element
     __dst: Element
     __authentication: str
@@ -103,11 +104,18 @@ class DataFlow(Flow):
     def port(self, value: int) -> None:
         self.__port = value
 
+
 class WorkFlow(Flow):
     __path: list
 
-    def __init__(self, name, src: Element,
-    dst: Element,  path: list[Element] = [], **kwargs):
+    def __init__(
+        self,
+        name,
+        src: Element,
+        dst: Element,
+        path: list[Element] = [],
+        **kwargs,
+    ):
         super().__init__(name, src=src, dst=dst, **kwargs)
         if path == []:
             self.path = [src, dst]

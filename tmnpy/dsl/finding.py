@@ -6,6 +6,7 @@ from .requirement import SecurityProperty, SafetyImpact
 from collections import UserList
 from typing import List
 
+
 class Finding:
     """
     A finding consists of a Component(s), the associated Issue(s) and the
@@ -121,12 +122,11 @@ class Finding:
                 raise ValueError(err)
             self.__likelihood[kwarg] = val
 
+
 class Findings(UserList):
     def append(self, item: Finding) -> None:
         if not isinstance(item, Finding):
-            raise TypeError(
-                f"{item} is not of type tmnpy.dsl.Finding."
-            )
+            raise TypeError(f"{item} is not of type tmnpy.dsl.Finding.")
         for i in range(len(self.data)):
             if self.data[i] == item:
                 raise ValueError(f"{item} is already in this list.")

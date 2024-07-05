@@ -3,8 +3,6 @@ from .element import Element
 
 
 class Mitigation(Element):
-
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -14,7 +12,9 @@ class Part(object):
     needs documentation
     """
 
-    def __init__(self, id: Optional[str] = None, prose: Optional[str] = None) -> None:
+    def __init__(
+        self, id: Optional[str] = None, prose: Optional[str] = None
+    ) -> None:
         if not isinstance(id, str):
             raise ValueError("Part ID must be a string")
         self.__part_id = id
@@ -60,7 +60,11 @@ class Control(Mitigation):
     """
 
     def __init__(
-        self, cid: str, name: str, desc: Optional[str] = None, related: list = []
+        self,
+        cid: str,
+        name: str,
+        desc: Optional[str] = None,
+        related: list = [],
     ):
         if not isinstance(cid, str):
             raise ValueError("Control ID must be a string")

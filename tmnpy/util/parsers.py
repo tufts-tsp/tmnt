@@ -20,7 +20,7 @@ class TMNTParser(Parser):
         self.results = []
         for k, v in self.yaml.items():
             for elem in v:
-                if k in ["assets","flows"]:
+                if k in ["assets", "flows"]:
                     elem_type, kwargs = self.parse_component(elem)
                     instance = elem_type(**kwargs)
                     self.tm.components.append(instance)

@@ -41,6 +41,7 @@ class TM:
     -------
 
     """
+
     __actors: Actors
     __assumptions: list
     __boundaries: Boundaries
@@ -75,9 +76,7 @@ class TM:
     def actors(self, actors: List[Actor]) -> None:
         self.__actors = Actors()
         if not isinstance(actors, list):
-            raise TypeError(
-                "Must use a list of type tmnpy.dsl.Actor"
-            )
+            raise TypeError("Must use a list of type tmnpy.dsl.Actor")
         for actor in actors:
             self.__actors.append(actor)
 
@@ -108,9 +107,7 @@ class TM:
     def boundaries(self, boundaries: List[Boundary]) -> None:
         self.__boundaries = Boundaries()
         if not isinstance(boundaries, list):
-            raise TypeError(
-                "Must use a list of type tmnpy.dsl.Boundary"
-            )
+            raise TypeError("Must use a list of type tmnpy.dsl.Boundary")
         for boundary in boundaries:
             self.__boundaries.append(boundary)
 
@@ -126,9 +123,7 @@ class TM:
     def components(self, components: List[Component]) -> None:
         self.__components = Components()
         if not isinstance(components, list):
-            raise TypeError(
-                "Must use a list of type tmnpy.dsl.Component"
-            )
+            raise TypeError("Must use a list of type tmnpy.dsl.Component")
         for component in components:
             self.__components.append(component)
 
@@ -144,9 +139,7 @@ class TM:
     def findings(self, findings: List[Finding]) -> None:
         self.__findings = Findings()
         if not isinstance(findings, list):
-            raise TypeError(
-                "Must use a list of type tmnpy.dsl.Finding"
-            )
+            raise TypeError("Must use a list of type tmnpy.dsl.Finding")
         for finding in findings:
             self.__findings.append(finding)
 
@@ -186,7 +179,6 @@ class TM:
     def enumerate_assets(self, kind: type[Asset] = Asset) -> Components:
         ## Give a list of all the assets, able to filter with kind
         return self.components.subset(kind)
-
 
     def find_related_attack_vectors(
         self, initial: Component | Actor

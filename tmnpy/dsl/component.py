@@ -7,6 +7,7 @@ from .requirement import SecurityProperty
 from typing import List
 from collections import UserList
 
+
 class Component(Element):
 
     """
@@ -101,12 +102,11 @@ class Component(Element):
             )
         self.__security_property = val
 
+
 class Components(UserList):
     def append(self, item: Component) -> None:
         if not isinstance(item, Component):
-            raise TypeError(
-                f"{item} is not of type tmnpy.dsl.Component."
-            )
+            raise TypeError(f"{item} is not of type tmnpy.dsl.Component.")
         for i in range(len(self.data)):
             if self.data[i] == item:
                 raise ValueError(f"{item} is already in this list.")

@@ -1,6 +1,7 @@
 import uuid
 from typing import Self, Tuple, List, Optional
 
+
 class Element(object):
     """
     The basic primitive of a threat model, which can be an asset, control,
@@ -48,7 +49,10 @@ class Element(object):
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, Element):
             raise TypeError("Can only compare to tmnpy.dsl.Element")
-        if self.name == value.name and type(self).__name__ == type(value).__name__:
+        if (
+            self.name == value.name
+            and type(self).__name__ == type(value).__name__
+        ):
             return True
         return False
 

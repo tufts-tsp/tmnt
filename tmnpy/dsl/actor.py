@@ -3,6 +3,7 @@ from .element import Element
 from collections import UserList
 from typing import Optional
 
+
 class Actor(Element):
 
     """
@@ -14,7 +15,7 @@ class Actor(Element):
         name,
         actor_type: Optional[str] = None,
         physical_access: bool = False,
-        **kwargs
+        **kwargs,
     ):
         """
         Actor
@@ -41,12 +42,11 @@ class Actor(Element):
 
         super().__init__(name, **kwargs)
 
+
 class Actors(UserList):
     def append(self, item: Actor) -> None:
         if not isinstance(item, Actor):
-            raise TypeError(
-                f"{item} is not of type tmnpy.dsl.Actor."
-            )
+            raise TypeError(f"{item} is not of type tmnpy.dsl.Actor.")
         for i in range(len(self.data)):
             if self.data[i] == item:
                 raise ValueError(f"{item} is already in this list.")
