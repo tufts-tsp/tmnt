@@ -10,14 +10,14 @@ class Boundary(Element):
     needs documentation
     """
 
-    def __init__(self, name, boundary_owner: Actor = None, **kwargs):
+    def __init__(self, name, boundary_owner: Actor | None = None, elements: list[Element] = [], **kwargs):
         if (
             not isinstance(boundary_owner, Actor)
             and boundary_owner is not None
         ):
             raise ValueError("Boundary Owner must be an Actor object")
         self.boundary_owner = boundary_owner
-
+        self.elements = elements
         super().__init__(name, **kwargs)
 
 

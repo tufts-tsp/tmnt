@@ -50,7 +50,6 @@ class Asset(Component):
         self,
         name: str,
         open_ports: list[int] = [],
-        trust_boundaries: list[Boundary] = [],
         machine: Machine | str = Machine.NA,
         **kwargs
     ):
@@ -63,20 +62,6 @@ class Asset(Component):
             else:
                 raise ValueError("Open Ports must be a list of integers")
         self.open_ports = open_ports
-
-        if (
-            not isinstance(trust_boundaries, list)
-            or not all(
-                isinstance(boundary, Boundary) for boundary in trust_boundaries
-            )
-        ) and trust_boundaries is not None:
-            if isinstance(trust_boundaries, Boundary):
-                self.boundaries = [trust_boundaries]
-            else:
-                raise ValueError(
-                    "Trust Boundaries must be a list of Boundary objects"
-                )
-        self.boundaries = trust_boundaries
 
         if isinstance(machine, str):
             machine = Machine[machine]
