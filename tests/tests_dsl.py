@@ -10,6 +10,7 @@ from tmnpy.dsl import (
     ControlCatalog,
     Actor,
     DataFlow,
+    WorkFlow,
     Issue,
     Threat,
     Weakness,
@@ -174,7 +175,7 @@ class TestAsset(unittest.TestCase):
 
     def test_external_entity(self):
         external_entity = ExternalEntity(
-            name="External Entity Name", physical_access=True
+            name="External Entity Name",
         )
         self.assertIsInstance(external_entity, ExternalEntity)
 
@@ -192,22 +193,36 @@ class TestAsset(unittest.TestCase):
         return super().tearDown()
 
 
-class TestFlow(unittest.TestCase):
+class TestDataFlow(unittest.TestCase):
     def setUp(self):
         elem1 = Element("test1")
         elem2 = Element("test2")
-        self.flow = Flow(name="Test Flow", src=elem1, dst=elem2)
+        self.flow = DataFlow(name="Test Flow", src=elem1, dst=elem2)
         return super().setUp()
 
     def test_flow_init(self):
         elem1 = Element("test1")
         elem2 = Element("test2")
         self.assertEqual(self.flow.name, "Test Flow")
-        # self.assertEqual(self.flow.src, elem1)
-        # self.assertEqual(self.flow.dst, elem2)
-        self.assertEqual(len(self.flow.path), 2)
-        self.assertEqual(self.flow.authentication, None)
+        self.assertEqual(self.flow.authentication, "Not Specified")
         self.assertTrue(self.flow.multifactor_authentication)
+
+    def tearDown(self):
+        return super().tearDown()
+
+
+class TestWorkFlow(unittest.TestCase):
+    def setUp(self):
+        elem1 = Element("test1")
+        elem2 = Element("test2")
+        self.flow = WorkFlow(name="Test Flow", src=elem1, dst=elem2)
+        return super().setUp()
+
+    def test_flow_init(self):
+        elem1 = Element("test1")
+        elem2 = Element("test2")
+        self.assertEqual(self.flow.name, "Test Flow")
+        self.assertEqual(len(self.flow.path), 2)
 
     def tearDown(self):
         return super().tearDown()

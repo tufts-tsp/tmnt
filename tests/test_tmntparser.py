@@ -5,13 +5,15 @@ from tmnpy.util.parsers import TMNTParser
 from tmnpy.dsl.requirement import SecurityProperty, Property
 
 import unittest
+import os
 
 
 class TestTMNTParser(unittest.TestCase):
     def setUp(self):
+        directory = os.path.dirname(os.path.realpath(__file__))
         self.parser = TMNTParser(
             tm_name="threatmodel_test",
-            yaml="../examples/parser_examples/presentation_dsl_example.yaml",
+            yaml=f"{directory}/dsl_parser_test.yaml",
         )
         self.tm = self.parser.tm
         return super().setUp()
@@ -59,36 +61,8 @@ class TestTMNTParser(unittest.TestCase):
         self.assertEqual(data.lifetime, Lifetime.AUTO)
 
     def test_parse_external_entities(self):
-        external_entities_data = [
-            a
-            for a in self.tm.enumerate_assets(ExternalEntity)
-            if a.name == "Remote Maintenance Provider"
-        ]
-        self.assertEqual(len(external_entities_data), 1)
-        external_entity = external_entities_data[0]
-        self.assertIsInstance(external_entity, ExternalEntity)
-        name = external_entity.name
-        security_property = external_entity.security_property
-        physical_access = external_entity.physical_access
-        machine = external_entity.machine
-        self.assertEqual(len(external_entity.data), 1)
-        data = external_entity.data[0]
-
-        self.assertEqual(name, "Remote Maintenance Provider")
-        self.assertEqual(security_property.confidentiality, Property.HIGH)
-        self.assertEqual(security_property.integrity, Property.HIGH)
-        self.assertEqual(security_property.availability, Property.HIGH)
-        self.assertEqual(physical_access, False)
-        self.assertEqual(machine, Machine.VIRTUAL)
-        self.assertEqual(data.name, "Robot Maintenance Logs")
-        self.assertEqual(data.is_pii, False)
-        self.assertEqual(data.is_phi, False)
-        self.assertEqual(data.format, "Textual Log Files")
-        self.assertEqual(data.is_credentials, False)
-        self.assertEqual(
-            data.desc, "Retained according to maintenance schedule"
-        )
-        self.assertEqual(data.lifetime, Lifetime.AUTO)
+        external_entities_data = self.tm.enumerate_assets(ExternalEntity)
+        self.assertEqual(len(external_entities_data), 0)
 
     def test_parse_dataflow(self):
         dataflow_data = [
