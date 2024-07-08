@@ -77,5 +77,3 @@ flows:
       name: "Surgical Robot"
     path:
       - name: "Hospital Network"
-    authentication: "Certificate-based"
-    multifactor_authentication: true

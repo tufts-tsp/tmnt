@@ -2,6 +2,7 @@ import tmnpy.dsl as dsl
 from tmnpy.dsl import TM, Control, ControlCatalog, Data
 from tmnpy.dsl.control import Part, Metadata
 from tmnpy.dsl.threat import SecurityProperty
+from tmnpy.dsl.asset import Datastore
 
 import yaml
 
@@ -18,19 +19,54 @@ class TMNTParser(Parser):
         self.yaml = self.load_yaml(yaml)
         self.tm = TM(tm_name)
         self.results = []
-        for k, v in self.yaml.items():
-            for elem in v:
-                if k in ["assets", "flows"]:
-                    elem_type, kwargs = self.parse_component(elem)
-                    instance = elem_type(**kwargs)
-                    self.tm.components.append(instance)
-                else:
-                    elem_type, kwargs = self.parse_element(elem)
-                    self.tm.actors.append(elem_type(**kwargs))
 
+        if "actors" in self.yaml.keys():
+            for actor in self.yaml["actors"]:
+                elem_type, kwargs = self.parse_element(actor)
+                self.tm.actors.append(elem_type(**kwargs))
+        if "assets" in self.yaml.keys():
+            for asset in self.yaml["assets"]:
+                elem_type, kwargs = self.parse_component(asset)
+                self.tm.components.append(elem_type(**kwargs))
+        if "flows" in self.yaml.keys():
+            for flow in self.yaml["flows"]:
+                elem_type, kwargs = self.parse_component(flow)
+                self.tm.components.append(elem_type(**kwargs))
+        if "boundaries" in self.yaml.keys():
+            for boundary in self.yaml["boundaries"]:
+                elem_type, kwargs = self.parse_boundary(boundary)
+                self.tm.boundaries.append(elem_type(**kwargs)) 
+        
     def parse_list_value(self, v):
-        idx = self.tm.components.index(v["name"])
-        return self.tm.components[idx]
+        for item in self.tm.components:
+            if v["name"] == item.name:
+                idx = self.tm.components.index(v["name"])
+                return self.tm.components[idx]
+        for item in self.tm.actors:
+            if v["name"] == item.name:
+                idx = self.tm.actors.index(v["name"])
+                return self.tm.actors[idx]
+
+    def parse_boundary(self, boundary):
+        boundary_type, kwargs = self.parse_element(boundary)
+        objs = {
+            k: v
+            for k, v in kwargs.items()
+            if type(v) != str and type(v) != bool
+        }
+        physical_access = []
+        for k, v in objs.items():   
+            if k == "elements":
+                elements = []
+                for component in v:
+                    elem = self.parse_list_value(component)
+                    elements.append(elem) 
+                    if "physical_access" in component.keys():
+                        physical_access.append(elem)
+                v  = elements
+            kwargs[k] = v
+        kwargs["physical_access"] = physical_access
+        return boundary_type, kwargs
 
     def parse_component(self, component):
         component_type, kwargs = self.parse_element(component)
@@ -54,6 +90,8 @@ class TMNTParser(Parser):
                 v = path
             elif k in ["src", "dst"]:
                 v = self.parse_list_value(v)
+            elif k == "ds_type":
+                v = Datastore(**v)
             elif k == "port":
                 pass
             kwargs[k] = v
