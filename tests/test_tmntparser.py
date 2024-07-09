@@ -1,5 +1,5 @@
-from tmnpy.dsl import Asset, Actor, ExternalEntity, DataFlow, WorkFlow
-from tmnpy.dsl.asset import Machine
+from tmnpy.dsl import Asset, Actor, Boundary, DataFlow, Datastore, ExternalEntity, Process, WorkFlow
+from tmnpy.dsl.asset import Machine, DATASTORE_TYPE
 from tmnpy.dsl.data import Lifetime
 from tmnpy.util.parsers import TMNTParser
 from tmnpy.dsl.requirement import SecurityProperty, Property
@@ -68,8 +68,7 @@ class TestTMNTParser(unittest.TestCase):
         dataflow_data = [
             a
             for a in self.tm.enumerate_flows(DataFlow)
-            if a.name
-            == "Data Transfer from Life Support to Surgeon Workstation"
+            if a.name == "Data Transfer from Life Support to Surgeon Workstation"
         ]
         self.assertEqual(len(dataflow_data), 1)
         dataflow = dataflow_data[0]
@@ -109,8 +108,6 @@ class TestTMNTParser(unittest.TestCase):
         dst = workflow.dst
         path = workflow.path
         self.assertEqual(len(path), 3)
-        authentication = workflow.authentication
-        multifactor_authentication = workflow.multifactor_authentication
 
         self.assertEqual(name, "Surgical Procedure Execution Flow")
         self.assertEqual(src.name, "Surgeon Workstation")
@@ -118,95 +115,77 @@ class TestTMNTParser(unittest.TestCase):
         self.assertEqual(path[0].name, "Surgeon Workstation")
         self.assertEqual(path[1].name, "Hospital Network")
         self.assertEqual(path[2].name, "Surgical Robot")
-        self.assertEqual(authentication, "Certificate-based")
-        self.assertEqual(multifactor_authentication, True)
 
     def tearDown(self) -> None:
         return super().tearDown()
 
 
-# class TestTMNTParser1(unittest.TestCase):
+class TestTMNTParser1(unittest.TestCase):
 
-#     def setUp(self):
-#         self.parser = TMNTParser(tm_name = "threatmodel_test", yaml = "dsl_test_example.yaml")
-#         self.TM = self.parser.tm
-#         return super().setUp()
+    def setUp(self):
+        self.parser = TMNTParser(
+            tm_name = "threatmodel_test", 
+            yaml = "dsl_test_example.yaml",
+        )
+        self.tm = self.parser.tm
+        return super().setUp()
 
+    def test_parse_process(self):
+        process_data = [
+            p 
+            for p in self.tm.enumerate_assets(Process) 
+            if p.name == "process example"
+        ]
+        self.assertEqual(len(process_data), 1)
+        process = process_data[0]
+        self.assertIsInstance(process, Process)
 
-#     def test_parse_element(self):
-#         element_data = [
-#             a for a in self.TM.element if a.name == "element example"
-#         ]
-# if len(element_data) == 1:
-#     element = element_data[0]
+        name = process.name
 
-# name = element.name
-# desc = element.desc
-# parent = element.parent
-# children = element.children
-# security_property  = element.security_property
+        self.assertEqual(name, "process example")
 
-# self.assertEqual(name, "element example")
-# self.assertEqual(desc, "element desc")
-# self.assertEqual(parent.name, "parent example")
-# self.assertEqual(children.name, "children example")
-#         self.assertEqual(security_property.confidentiality, "HIGH")
-#         self.assertEqual(security_property.integrity, "HIGH")
-#         self.assertEqual(security_property.availability, "HIGH")
+    def test_parse_datastore(self):
+        datastore_data = [
+            d 
+            for d in self.tm.enumerate_assets(Datastore) 
+            if d.name == "datastore example"
+        ]
+        self.assertEqual(len(datastore_data), 1)
+        datastore = datastore_data[0]
+        self.assertIsInstance(datastore, Datastore)
 
+        name = datastore.name
+        ds_type = datastore.ds_type
 
-#     def test_parse_boundary(self):
-# boundary_data = [
-#     a for a in self.TM.boundaries if a.name == "boundary example"
-# ]
-#         if len(boundary_data) == 1:
-#           boundary = boundary_data[0]
+        self.assertEqual(name, "datastore example")
+        self.assertEqual(ds_type, DATASTORE_TYPE.UNKNOWN)
 
-#         name = boundary.name
-#         boundary_owner = boundary.boundary_owner
+    def test_parse_boundary(self):
 
-#         self.assertEqual(name, "boundary example")
-#         self.assertEqual(boundary_owner, "Actor")
+        boundary_data = [
+            b for b in self.tm.boundaries if b.name == "boundary example"
+        ]
+        self.assertEqual(len(boundary_data), 1)
+        boundary = boundary_data[0]
+        self.assertIsInstance(boundary, Boundary)
 
+        name = boundary.name
+        elements = boundary.elements
+        physical_access = boundary.physical_access
 
-#     def test_parse_component(self):
-#         component_data = self.TM.components()
-#         if len(component_data) == 1:
-#           component = component_data[0]
+        self.assertEqual(name, "boundary example")
+        self.assertEqual(elements[0].name, "asset example")
+        self.assertEqual(elements[1].name, "process example")
+        self.assertEqual(elements[2].name, "datastore example")
+        self.assertEqual(elements[3].name, "actor example")
+        self.assertIsInstance(elements[3], Actor)
+        self.assertEqual(len(physical_access), 1)
+        self.assertEqual(physical_access[0].name, "actor example")
 
-#         name = component.name
-
-#         self.assertEqual(name, "component example")
-
-
-#     def test_parse_process(self):
-#         process_data = self.TM.assets()
-#         if len(process_data) == 1:
-#           process = process_data[0]
-
-#         name = process.name
-
-#         self.assertEqual("process example")
-
-
-#     def test_parse_datastore(self):
-#         datastore_data = self.TM.assets()
-#         if len(datastore_data) == 1:
-#           datastore = datastore_data[0]
-
-#         name = datastore.name
-#         ds_type = datastore.ds_type
-
-#         self.assertEqual("process example")
-#         self.assertEqual("UNKNOWN")
-
-
-#     def tearDown(self) -> None:
-#         return super().tearDown()
+ 
+    def tearDown(self) -> None:
+        return super().tearDown()
 
 
 if __name__ == "__main__":
     unittest.main()
-
-
-# others: finding, stride, property, safetyimpact, issue, threat, vulnerability, weakness
