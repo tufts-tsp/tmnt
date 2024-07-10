@@ -76,13 +76,13 @@
 
             <div>Add components in the order in which they occur:</div>
             <div id="adding_workflows">
-                <label for="component_dropdown1">1st:</label>
-                <select name="component_dropdown1" class="dropdown" id="component_dropdown1" disabled>
+                <label>1st:</label>
+                <select name="component_dropdown" class="dropdown" disabled>
                     <option value="invalid">Add an asset first!</option>
                 </select>
             </div>
 
-            <button type="button" class="add_button" id="components_button" value="1" onclick="addComponents(this.value)" disabled>Add More Components</button>
+            <button type="button" class="add_button" id="components_button" onclick="addComponents()" disabled>Add More Components</button>
 
             <br>
             <button type="button" class="add_button" onclick="addWorkFlow()" disabled>Add Work Flow</button>
@@ -243,7 +243,7 @@
         <!-- svg is generated into here -->
         <svg id="dfd_svg"></svg>
         <!-- bottom bar is generated into here -->
-        <div class="dfd_detailsbar" id="bottom_bar">
+        <div class="dfd_detailsbar" id="bottom_bar">        
             <h2 style="color: gray">No asset selected...</h2>
             <br>
             <h2 style="color: gray">Select a Workflow: </h2>
@@ -260,6 +260,7 @@
 <script>
     // Static variables
     var nodes = [];
+    var total_nodes = 0;
     var links = [];
     var workflows = {};
     var svg;
@@ -309,15 +310,7 @@
                 d3.selectAll(".asset")
                     .style("stroke", "black")
                     .style("stroke-width", "1");
-                document.getElementById("bottom_bar").innerHTML =
-                "<h2 style=\"color: gray\">No asset selected...</h2>" 
-                + "<br>" 
-                + "<h2 style=\"color: gray\">Select a Workflow: </h2>" 
-                + "<select name=\"workflow_dropdown\" class=\"workflow_dropdown\" id=\"workflow_dropdown\" disabled>" 
-                + "<option value=\"invalid\">Add a workflow first!</option>" 
-                + "</select>"
-                + "<button type=\"button\" class=\"view_button\" id=\"view_button\" onclick=\"viewWorkflow()\" disabled>View</button>";
-                updateWorkflowDropdown();
+                resetBottomBar();
             }
         })
     }
@@ -395,7 +388,7 @@
         let rand_x = area.width/2 + Math.random()*5 - 10;
         let rand_y = area.height/2 + Math.random()*5 - 10;
         nodes.push({
-            "id": nodes.length,
+            "id": total_nodes,
             "asset_type": asset_type,
             "asset_name": asset_name,
             'x': rand_x,
@@ -404,6 +397,7 @@
             "controls": [],
             "selected": false
         })
+        total_nodes++;
 
         // Select every node and attach it to an asset
         var node_update = svg.selectAll(".node_group")
@@ -552,6 +546,12 @@
         simulation.alpha(1.0).restart();
 
         updateAssetDropdowns();
+
+        // Update list of nodes in options dropdown
+        if (document.getElementById("options")) {
+            var curr_asset = document.getElementById("options").children[0].value;
+            document.getElementById("add_dataflow").replaceChild(createDataflowList(curr_asset), document.getElementById("dataflow_button"));
+        }
     }
 
     // gives nodes new location every time the force simulation runs
@@ -592,15 +592,6 @@
             .style("stroke", "black")
             .style("stroke-width", "1");
             
-        let bottom_bar_html = 
-            "<h2 style=\"color: gray\">No asset selected...</h2>" 
-            + "<br>" 
-            + "<h2 style=\"color: gray\">Select a Workflow: </h2>" 
-            + "<select name=\"workflow_dropdown\" class=\"workflow_dropdown\" id=\"workflow_dropdown\" disabled>" 
-            + "<option value=\"invalid\">Add a workflow first!</option>" 
-            + "</select>"
-            + "<button type=\"button\" class=\"view_button\" id=\"view_button\" onclick=\"viewWorkflow()\" disabled>View</button>";
-
         // Reselect the clicked on node
         selected_node.selected = !already_selected;
         if (!already_selected) {
@@ -609,7 +600,8 @@
                 .style("stroke-width", "4");
 
             bottom_bar_html =
-                "<h2>"+ selected_node.asset_name +"</h2>" +
+                "<ul class=\"options\" id=\"options\"><li value=\"" + selected_node.id + "\"><a href=\"#\">Options &#9662;</a><ul></ul></li></ul>" + 
+                "<h2>" + selected_node.asset_name + "</h2>" + 
                 selected_node.asset_type +
                 "<br><br>" +
                 "<h3>Threats</h3>";
@@ -627,15 +619,18 @@
             if (selected_node.controls.length == 0) {
                 bottom_bar_html += "No controls added...<br>"
             } else {
-            for (let control of selected_node.controls) {
-                bottom_bar_html +=
-                    control.control_title + "<br>";
-            }
+                for (let control of selected_node.controls) {
+                    bottom_bar_html +=
+                        control.control_title + "<br>";
+                }
             }
         }
 
         // places information about the selected node in the bottom bar
         document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+
+        // create the options button for the asset
+        createAssetOptions();
     }
 
     // Helper function that gets the value of an HTML dropdown given
@@ -644,6 +639,372 @@
         let dropdown = document.getElementById(html_id);
         let value = parseInt(dropdown.options[dropdown.selectedIndex].value);
         return value;
+    }
+
+    // Helper function that finds the index of an asset in the nodes array 
+    // given the asset's id 
+    function nodeIndex(node_id) {
+        return nodes.findIndex(i => i.id == node_id);
+    }
+
+    // Resets the bottom details bar to default state (nothing selected)
+    function resetBottomBar() {
+        document.getElementById("bottom_bar").innerHTML =
+        "<h2 style=\"color: gray\">No asset selected...</h2>" 
+        + "<br>" 
+        + "<h2 style=\"color: gray\">Select a Workflow: </h2>" 
+        + "<select name=\"workflow_dropdown\" class=\"workflow_dropdown\" id=\"workflow_dropdown\" disabled>" 
+        + "<option value=\"invalid\">Add a workflow first!</option>" 
+        + "</select>"
+        + "<button type=\"button\" class=\"view_button\" id=\"view_button\" onclick=\"viewWorkflow()\" disabled>View</button>";
+        updateWorkflowDropdown();
+    }
+
+    // Create the options dropdown button when viewing an asset
+    function createAssetOptions() {
+        var assetID = document.getElementById("options").children[0].value;
+        var options = document.getElementById("options").children[0].children[1];
+
+        // creating the button to add new dataflows to the current asset
+        var listItem = document.createElement('li');
+        listItem.id = "add_dataflow";
+        var new_dataflow = document.createElement('a');
+        new_dataflow.href = "#";
+        new_dataflow.innerHTML = "Create dataflow to...";
+        new_dataflow.onclick = function () {
+            if (nodes.length < 2) {
+                alert("Add more assets first!")
+            }
+        }
+        listItem.appendChild(new_dataflow);
+        listItem.appendChild(createDataflowList(assetID));
+        options.appendChild(listItem);
+
+        // creating the button to view workflows connected to current asset
+        listItem = document.createElement('li');
+        listItem.id = "view_workflow";
+        var view_workflow = document.createElement('a');
+        view_workflow.href = "#";
+        view_workflow.innerHTML = "View workflow...";
+        view_workflow.onclick = function() {
+            var has_workflows = false;
+            for (let components of Object.values(workflows)) {
+                if (components.includes(assetID)) {
+                    has_workflows = true;
+                }
+            }
+            if (!has_workflows) {
+                alert("There are no workflows with this asset!");
+            }
+        }
+        listItem.appendChild(view_workflow);
+        listItem.appendChild(createWorkflowList(assetID));
+        options.appendChild(listItem);
+
+        // creating nested delete dropdown menu
+        listItem = document.createElement('li');
+        var delete_button = document.createElement('a')
+        delete_button.href = "#";
+        delete_button.innerHTML = "Delete...";
+        listItem.appendChild(delete_button);
+        var delete_list = document.createElement('ul');
+
+        // creating button for deleting threats
+        var threat_li = document.createElement('li');
+        var remove_threat = document.createElement('a');
+        remove_threat.href = "#";
+        remove_threat.innerHTML = "Threat...";
+        remove_threat.onclick = function() {
+            var threats = nodes[nodeIndex(assetID)].threats;
+            if (threats.length == 0) {
+                alert("There are no threats added to this asset!");
+                return;
+            }
+            var ul = document.getElementById("options");
+            ul.style.display = "none";
+            
+            // creating the checklist to select threats to delete
+            var new_ul = document.createElement("ul");
+            new_ul.style.background = "#f3f3f3";
+            new_ul.style.borderRadius = "20px";
+            new_ul.style.padding = "10px";
+            new_ul.style.width = "fit-content";
+            new_ul.style.float = "right";
+            var new_div = document.createElement("div");
+            new_div.innerHTML = "Select threats to be deleted:";
+            new_ul.appendChild(new_div);
+            for (let threat of threats) {
+                let new_li = document.createElement("li");
+                let new_label = document.createElement("label");
+                new_label.innerHTML = threat.threat_title + " ("+ threat.threat_num + ")";
+                let new_input = document.createElement("input");
+                new_input.classList.add("flowChecks");
+                new_input.type = "checkbox";
+                new_label.appendChild(new_input);
+                new_li.appendChild(new_label);
+                new_ul.appendChild(new_li);
+            }
+            var submit = document.createElement("button");
+            submit.innerHTML = "Done"
+            var bar = document.getElementById("bottom_bar");
+            submit.onclick = function () {
+                var flow_checks = document.getElementsByClassName("flowChecks");
+                for (let i = flow_checks.length - 1; i >= 0; i--) {
+                    if (flow_checks[i].checked) {
+                        threats.splice(i, 1);
+                    }
+                }
+                nodes[nodeIndex(assetID)].threats = threats;
+                let options = document.getElementById("options")
+                options.style.display = "block"; 
+                svg.selectAll(".node_group").filter(d => d.id === assetID).dispatch('click').dispatch('click');
+            }
+            new_ul.appendChild(document.createElement("br"));
+            new_ul.appendChild(submit);
+            new_ul.style.display = "block";
+            bar.insertBefore(new_ul, bar.children[0]);
+        }
+        threat_li.appendChild(remove_threat);
+        delete_list.appendChild(threat_li);
+
+        // creating button for deleting controls
+        var control_li = document.createElement('li');
+        var remove_control = document.createElement('a');
+        remove_control.href = "#";
+        remove_control.innerHTML = "Control...";
+        remove_control.onclick = function() {
+            var controls = nodes[nodeIndex(assetID)].controls;
+            if (controls.length == 0) {
+                alert("There are no controls added to this asset!");
+                return;
+            }
+            var ul = document.getElementById("options");
+            ul.style.display = "none";
+            
+            // creating checklist to select controls to delete
+            var new_ul = document.createElement("ul");
+            new_ul.style.background = "#f3f3f3";
+            new_ul.style.borderRadius = "20px";
+            new_ul.style.padding = "10px";
+            new_ul.style.width = "fit-content";
+            new_ul.style.float = "right";
+            var new_div = document.createElement("div");
+            new_div.innerHTML = "Select controls to be deleted:";
+            new_ul.appendChild(new_div);
+            for (let control of controls) {
+                let new_li = document.createElement("li");
+                let new_label = document.createElement("label");
+                new_label.innerHTML = control.control_title;
+                let new_input = document.createElement("input");
+                new_input.classList.add("flowChecks");
+                new_input.type = "checkbox";
+                new_label.appendChild(new_input);
+                new_li.appendChild(new_label);
+                new_ul.appendChild(new_li);
+            }
+            var submit = document.createElement("button");
+            submit.innerHTML = "Done"
+            var bar = document.getElementById("bottom_bar");
+            submit.onclick = function () {
+                var flow_checks = document.getElementsByClassName("flowChecks");
+                for (let i = flow_checks.length - 1; i >= 0; i--) {
+                    if (flow_checks[i].checked) {
+                        controls.splice(i, 1);
+                    }
+                }
+                nodes[nodeIndex(assetID)].controls = controls;
+                let options = document.getElementById("options")
+                options.style.display = "block"; 
+                svg.selectAll(".node_group").filter(d => d.id === assetID).dispatch('click').dispatch('click');
+            }
+            new_ul.appendChild(document.createElement("br"));
+            new_ul.appendChild(submit);
+            new_ul.style.display = "block";
+            bar.insertBefore(new_ul, bar.children[0]);
+        }
+        control_li.appendChild(remove_control);
+        delete_list.appendChild(control_li);
+
+        // creating button for deleting dataflows
+        flow_li = document.createElement('li');
+        var remove_flow = document.createElement('a');
+        remove_flow.href = "#";
+        remove_flow.innerHTML = "Dataflow...";
+        remove_flow.onclick = function() {
+            var flows = [];
+            for (let i = 0; i < links.length; i++) {
+                if (links[i].source.id == assetID || links[i].target.id === assetID) {
+                    flows.push(i);
+                }
+            }
+            if (flows.length == 0) {
+                alert("There are no dataflows connected to this asset!");
+                return;
+            }
+            var ul = document.getElementById("options");
+            ul.style.display = "none";
+            var new_ul = document.createElement("ul");
+            new_ul.style.background = "#f3f3f3";
+            new_ul.style.borderRadius = "20px";
+            new_ul.style.padding = "10px";
+            new_ul.style.width = "fit-content";
+            new_ul.style.float = "right";
+            var new_div = document.createElement("div");
+            new_div.innerHTML = "Select data flows to be deleted:";
+            new_ul.appendChild(new_div);
+            for (let flow of flows) {
+                let new_li = document.createElement("li");
+                let new_label = document.createElement("label");
+                new_label.innerHTML = links[flow].source.asset_name + " &#8594 " + links[flow].target.asset_name;
+                let new_input = document.createElement("input");
+                new_input.classList.add("flowChecks");
+                new_input.type = "checkbox";
+                new_label.appendChild(new_input);
+                new_li.appendChild(new_label);
+                new_ul.appendChild(new_li);
+            }
+            var submit = document.createElement("button");
+            submit.innerHTML = "Done"
+            var bar = document.getElementById("bottom_bar");
+            submit.onclick = function () {
+                if (!confirm("This will delete all workflows that include the selected dataflows. Continue?")) {
+                    return;
+                }
+                var flow_checks = document.getElementsByClassName("flowChecks");
+
+                // Find and remove connected workflows
+                var removed_workflows = false;
+                for (let i = 0; i < flows.length; i++) {
+                    if (flow_checks[i].checked) {
+                        var source = links[flows[i]].source.id;
+                        var target = links[flows[i]].target.id;
+                        for (let key of Object.keys(workflows)) {
+                            var components = workflows[key];
+                            if (components.includes(source) && components.indexOf(source) == components.indexOf(target) - 1) {
+                                removed_workflows = true;
+                                delete workflows[key];
+                            }
+                        }
+                    }
+                }
+                if (removed_workflows) {
+                    document.getElementById("view_workflow").replaceChild(createWorkflowList(assetID), document.getElementById("workflow_button"));
+                }
+
+                // Remove selected dataflows
+                for (let i = flows.length - 1; i >= 0; i--) {
+                    if (flow_checks[i].checked) {
+                        links.splice(flows[i], 1);
+                    }
+                }
+                var link_update = svg.selectAll(".link_group").data(links, function(d) { return d.source.id + "-" + d.target.id; });
+                link_update.exit().remove();
+
+                let options = document.getElementById("options")
+                options.style.display = "block";
+                bar.removeChild(bar.children[0]);                   
+            }
+            new_ul.appendChild(document.createElement("br"));
+            new_ul.appendChild(submit);
+            new_ul.style.display = "block";
+            bar.insertBefore(new_ul, bar.children[0]);
+        }
+        flow_li.appendChild(remove_flow);
+        delete_list.appendChild(flow_li);
+
+        // creating button to delete current asset
+        var asset_li = document.createElement('li');
+        var del = document.createElement('a');
+        del.href = "#";
+        del.innerHTML = "Asset";
+        del.onclick = function() {
+            if (!confirm("This will delete all dataflows and workflows connected to this asset. Continue?")) {
+                return;
+            }
+            nodes.splice(nodeIndex(assetID), 1);
+            svg.selectAll(".node_group").each(function (d) {
+                if (assetID == d.id) {
+                    d3.select(this).remove();
+                }
+            });
+            updateAssetDropdowns();
+
+            // removing all dataflows connected to this asset
+            for (let i = 0; i < links.length; i++) {
+                if (links[i].source.id == assetID || links[i].target.id === assetID) {
+                    links.splice(i, 1);
+                    i--;
+                }
+            }
+            console.log("links length: " + links.length);
+            var link_update = svg.selectAll(".link_group").data(links, function(d) { return d.source.id + "-" + d.target.id; });
+            link_update.exit().remove();
+
+            // removing all workflows connected to this asset
+            for (let key of Object.keys(workflows)) {
+                if (workflows[key].includes(assetID)) {
+                    console.log("deleting: " + key);
+                    delete workflows[key];
+                }
+            }
+            resetBottomBar();
+        }
+        asset_li.appendChild(del);
+        delete_list.appendChild(asset_li);
+        listItem.appendChild(delete_list);
+        options.appendChild(listItem);
+    }
+
+    // Helper function to create/update list of possible new dataflows in   
+    // options dropdown menu
+    function createDataflowList(assetID) {
+        var dataflow_list = document.createElement('ul');
+        dataflow_list.id = "dataflow_button";
+        for (let node of nodes) {
+            if (node.id == assetID) {
+                continue;
+            }
+            var node_li = document.createElement('li');
+            var node_a = document.createElement('a');
+            node_a.href = "#";
+            node_a.innerHTML = node.asset_name;
+            node_a.onclick = function() {
+                let dropdowns = document.getElementsByClassName('dropdown');
+                dropdowns[0].selectedIndex = nodeIndex(assetID) + 1;
+                dropdowns[1].selectedIndex = nodes.indexOf(node) + 1;
+                addDataFlow();
+            }
+            node_li.appendChild(node_a);
+            dataflow_list.appendChild(node_li);
+        }
+        return dataflow_list;
+    }
+
+    // Helper function to create/update list of workflows to view in options 
+    // dropdown menu
+    function createWorkflowList(assetID) {
+        var workflow_keys = [];
+        for (let name of Object.keys(workflows)) {
+            if (workflows[name].includes(assetID)) {
+                workflow_keys.push(name);
+            }
+        }
+        var workflow_list = document.createElement('ul');
+        workflow_list.id = "workflow_button";
+        for (let key of workflow_keys) {
+            var node_li = document.createElement('li');
+            var node_a = document.createElement('a');
+            node_a.href = "#";
+            node_a.innerHTML = key;
+            node_a.onclick = function() {
+                resetBottomBar();
+                document.getElementById("workflow_dropdown").selectedIndex = Object.keys(workflows).indexOf(key) + 1;
+                viewWorkflow();
+            }
+            node_li.appendChild(node_a);
+            workflow_list.appendChild(node_li);
+        }
+        return workflow_list;
     }
 
     // Clears the workflow dropdown list, then regenerates them
@@ -682,8 +1043,25 @@
                 dropdown.remove(0);
             }
         }
-        for (let dropdown of dropdowns) {
-            dropdown.add(new Option("Select an asset...", -1));
+
+        let elems = document.getElementsByClassName('add_button');
+        for (let elem of elems) {
+            elem.disabled = (nodes.length == 0);
+        }
+
+        if (nodes.length != 0) {
+            for (let dropdown of dropdowns) {
+                dropdown.disabled = false;
+                dropdown.selectedIndex = 0;
+                dropdown.add(new Option("Select an asset...", -1));
+            }
+        }
+        else {
+            for (let dropdown of dropdowns) {
+                dropdown.disabled = true;
+                dropdown.add(new Option("Add an asset first!", -1));
+            }
+            return;
         }
 
         const svg = d3.select(document.getElementById("dfd")).select("svg");
@@ -691,21 +1069,12 @@
             for (let dropdown of dropdowns) {
                 dropdown.add(new Option(
                     d3.select(this).select(".asset_label").text(),
-                    d.id
+                    nodeIndex(d.id)
                 ))
             }
         });
-
-        for (let dropdown of dropdowns) {
-            dropdown.disabled = false;
-            dropdown.selectedIndex = 0;
-        }
-
-        let elems = document.getElementsByClassName('add_button');
-        for (let elem of elems) {
-            elem.disabled = (nodes.length == 0);
-        }
     }
+
     // Clears the threat dropdown lists, then regenerates them
     // with the names of every existing element
     function updateThreatDropdown() {
@@ -918,11 +1287,11 @@
 
         for (let link of links) {
             // Prevent duplicate dataflows
-            if (link.source.id === source && link.target.id === target) {
+            if (link.source.id === nodes[source].id && link.target.id === nodes[target].id) {
                 alert("Cannot add a duplicate dataflow!");
                 return;
             }
-            else if (link.source.id === target && link.target.id === source) {
+            else if (link.source.id === nodes[target].id && link.target.id === nodes[source].id) {
                 double_headed = true
             }
         }
@@ -983,56 +1352,49 @@
     }
 
     // Defines the process of adding components to create a new workflow 
-    function addComponents(numComponents) {
+    function addComponents() {
         if (links.length < 1) {
             alert("Please add a data flow first!");
             return;
         }
+        var comp_buttons = document.getElementsByName("component_dropdown");
         
         // Remove the button next to the last asset dropdown
-        if (numComponents > 1) {
+        if (comp_buttons.length > 1) {
             let toRemove = document.getElementById("remove_button");
             if (toRemove != null) { toRemove.remove() };
         }
 
-        // Update the counter value on the button
-        numComponents++;
-        var componentsButton = document.getElementById('components_button');
-        componentsButton.value = numComponents;
-
         // Create the new div to be appended to the existing dropdowns
         var newDiv = document.createElement('div');
-        newDiv.id = 'div' + numComponents;
+        newDiv.classList.add("component_div");
 
         // Create the label for the next selection
         var label = document.createElement('label');
-        var ordinal = numComponents;
-        if (numComponents % 10 == 1 && numComponents % 100 != 11) {
+        var ordinal = comp_buttons.length + 1;
+        if (ordinal % 10 == 1 && ordinal % 100 != 11) {
             ordinal += "st:";
         }
-        else if (numComponents % 10 == 2 && numComponents % 100 != 12) {
+        else if (ordinal % 10 == 2 && ordinal % 100 != 12) {
             ordinal += "nd:";
         }
-        else if (numComponents % 10 == 3 && numComponents % 100 != 13) {
+        else if (ordinal % 10 == 3 && ordinal % 100 != 13) {
             ordinal += "rd:";
         }
         else {
             ordinal += "th:";
         }
         label.innerHTML = ordinal;
-        label.id = "label" + numComponents;
-        label.htmlFor = selectID;
         newDiv.appendChild(label);
 
         // Create the next asset dropdown 
-        var selectID = "component_dropdown" + numComponents;
         var componentsDropdown = document.createElement('select');
         componentsDropdown.classList.add('dropdown');
-        componentsDropdown.id = selectID;
+        componentsDropdown.name = "component_dropdown";
         componentsDropdown.add(new Option("Select an asset...", -1));
         const svg = d3.select(document.getElementById("dfd")).select("svg");
         svg.selectAll(".node_group").each(function (d, i) {
-            componentsDropdown.add(new Option(d3.select(this).select(".asset_label").text(), d.id))
+            componentsDropdown.add(new Option(d3.select(this).select(".asset_label").text(), nodeIndex(d.id)))
         });
         newDiv.appendChild(componentsDropdown);
 
@@ -1052,27 +1414,19 @@
 
     // Defines how the remove button behaves
     function removeComponent() {
-        // Update the workflow's component count
-        var componentsButton = document.getElementById('components_button');
-        var numComponents = componentsButton.value;
-        componentsButton.value--;
-        
         // Remove the last asset dropdown
-        var divID = "div" + numComponents;
-        var toRemove = document.getElementById(divID);
-        toRemove.remove();
+        var divs = document.getElementsByClassName("component_div")
+        divs[divs.length - 1].remove();
 
         // Add back the remove button if there's still more than one dropdown
-        if (numComponents > 2) {
+        if (divs.length > 0) {
             var removeButton = document.createElement('button');
             removeButton.id = "remove_button";
             removeButton.setAttribute("type", "button");
             removeButton.classList.add("remove_button");
             removeButton.innerHTML = "-";
             removeButton.setAttribute('onclick', 'removeComponent();');
-            divID = "div" + (numComponents - 1);
-            div = document.getElementById(divID);
-            div.appendChild(removeButton);
+            divs[divs.length - 1].appendChild(removeButton);
         }
     }
 
@@ -1082,24 +1436,41 @@
             alert("Please add a data flow first!");
             return;
         }
+        
         // Get the currently selected assets
-        var numComponents = document.getElementById("components_button").value;
+        var comp_dropdowns = document.getElementsByName("component_dropdown");
+
+        if (comp_dropdowns.length < 2) {
+            alert("Please select at least two components to create a workflow!");
+            return;
+        }
+
         const components = [];
 
-        for (let i = 1; i <= numComponents; i++) {
-            var component_dropdown = "component_dropdown" + i;
-            var selected = getDropdownValue(component_dropdown);
+        for (let dropdown of comp_dropdowns) {
+            // var component_dropdown = "component_dropdown" + i;
+            // var selected = getDropdownValue(component_dropdown);
+            var selected = dropdown.value;
+
             // Check that user has selected all components 
             if (selected == -1) {
                 alert("Please make a selection for each component or remove components!");
                 return;
             }
             // Check that user has not selected duplicate components 
-            if (components.includes(selected)) {
+            if (components.includes(nodes[selected].id)) {
                 alert("Do not include more than one of the same component!");
                 return; 
             }
-            components.push(selected);
+            components.push(nodes[selected].id);
+        }
+
+        // Check that there's a dataflow between each element in the right order
+        for (let i = 0; i < components.length - 1; i++) {
+            if (!links.find(link => link.source.id === components[i] && link.target.id === components[i + 1])) {
+                alert("There is no data flow from " + nodes[components[i]].asset_name + " to " + nodes[components[i + 1]].asset_name);
+                return;
+            };
         }
 
         // Prevent duplicate workflows
@@ -1119,14 +1490,6 @@
                 return;
             }
         }
-        
-        // Check that there's a dataflow between each element in the right order
-        for (let i = 0; i < numComponents - 1; i++) {
-            if (!links.find(link => link.source.id === components[i] && link.target.id === components[i + 1])) {
-                alert("There is no data flow from " + nodes[components[i]].asset_name + " to " + nodes[components[i + 1]].asset_name);
-                return;
-            };
-        }
 
         // Prompt user for workflow name...
         var workflow_name = window.prompt("(Optional) Name this workflow:", "");
@@ -1142,17 +1505,15 @@
         workflows[workflow_name] = components;
 
         // Update the bottom bar's workflow dropdown
-        if (!document.getElementById("workflow_dropdown")) {
-            document.getElementById("bottom_bar").innerHTML =
-                "<h2 style=\"color: gray\">No asset selected...</h2>" 
-                + "<br>" 
-                + "<h2 style=\"color: gray\">Select a Workflow: </h2>" 
-                + "<select name=\"workflow_dropdown\" class=\"workflow_dropdown\" id=\"workflow_dropdown\" disabled>" 
-                + "<option value=\"invalid\">Add a workflow first!</option>" 
-                + "</select>"
-                + "<button type=\"button\" class=\"view_button\" id=\"view_button\" onclick=\"viewWorkflow()\" disabled>View</button>";
+        if (document.getElementById("workflow_dropdown")) {
+            resetBottomBar();
         }
-        updateWorkflowDropdown();
+
+        // Update options button workflow list
+        if (document.getElementById("view_workflow")) {
+            var curr_asset = document.getElementById("options").children[0].value;
+            document.getElementById("view_workflow").replaceChild(createWorkflowList(curr_asset), document.getElementById("workflow_button"));
+        }
     }
 
     // Highlights the components of a workflow that the user selects to view
@@ -1174,10 +1535,10 @@
         d3.selectAll(".asset")
             .style("stroke", "black")
             .style("stroke-width", "1");
-
+        
         // Selects and highlights the components of the workflow being viewed
         svg.selectAll(".node_group").each(function (d) {
-            if (components.includes(d.id)) {
+            if (components.some(i => i == d.id)) {
                 d3.select(this).selectAll(".asset")
                 .style("stroke", "#3E8EDE")
                 .style("stroke-width", "4");
@@ -1185,14 +1546,47 @@
         });
 
         // Updates bottom bar to display order of components in workflow 
-        let bottom_bar_html = "<h2>"+ selectedWorkflow +"</h2>";
+        let bottom_bar_html = "<h2>"+ selectedWorkflow +"</h2> <h3 style=\"font-weight:normal\">";
         for (let component of components) {
-            bottom_bar_html += nodes[component].asset_name;
+            bottom_bar_html += "<span style=\"cursor: pointer\" id=\"comp " + component + "\">" + nodes[nodeIndex(component)].asset_name + "</span>";
             if (component != components[components.length - 1]) {
-                bottom_bar_html += " >> ";
+                bottom_bar_html += " &#8594 ";
             }
         }
+        bottom_bar_html += "</h3> <br> <button type=\"button\" class=\"unselect_button\" id=\"unselect_button\">Unselect Workflow</button>";
+        bottom_bar_html += "<br> <button type=\"button\" class=\"remove_workflow\" id=\"remove_workflow\">Remove Workflow</button>";
         document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+        var unselect_button = document.getElementById("unselect_button");
+        unselect_button.onclick = function () {
+            // Unselect all nodes
+            for (let node of nodes) {
+                node.selected = false;
+            }
+            d3.selectAll(".asset")
+                .style("stroke", "black")
+                .style("stroke-width", "1");
+            resetBottomBar();
+        }
+        var remove_button = document.getElementById("remove_workflow");
+        remove_button.onclick = function () {
+            // Unselect all nodes
+            for (let node of nodes) {
+                node.selected = false;
+            }
+            d3.selectAll(".asset")
+                .style("stroke", "black")
+                .style("stroke-width", "1");
+            delete workflows[selectedWorkflow];
+            resetBottomBar();
+        }
+
+        // create buttons to select/view each asset in the workflow
+        for (let component of components) {
+            var compID = "comp " + component;
+            document.getElementById(compID).onclick = function() {
+                svg.selectAll(".node_group").filter(d => d.id === component).dispatch('click');
+            };
+        }
     }
 
 
@@ -1226,6 +1620,12 @@
         for (let textbox of textboxes) {
             textbox.value = "";
         }
+
+        // update list in details bar
+        var options = document.getElementById("options");
+        if (options && options.children[0].value == nodes[asset].id) {
+            svg.selectAll(".node_group").filter(d => d.id === nodes[asset].id).dispatch('click').dispatch('click');
+        }
     }
 
     // Add a control to an existing DFD node.
@@ -1255,6 +1655,12 @@
         let textboxes = document.getElementsByClassName("controls_textbox");
         for (let textbox of textboxes) {
             textbox.value = "";
+        }
+        
+        // update list in details bar
+        var options = document.getElementById("options");
+        if (options && options.children[0].value == nodes[asset].id) {
+            svg.selectAll(".node_group").filter(d => d.id === nodes[asset].id).dispatch('click').dispatch('click');
         }
     }
 

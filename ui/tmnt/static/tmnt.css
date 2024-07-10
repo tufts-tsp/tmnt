@@ -141,6 +141,64 @@ h3 {
     overflow-y: auto;
 }
 
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+  }
+  .options li {
+    position: relative;
+    float: right;
+  }
+  .options li > ul {
+    position: absolute;
+    left:-999em;
+    width:100%;
+    top:0;
+    transition:top .5s ease;
+  }
+  .options ul ul {
+    transition:transform .5s ease, opacity .3s ease;
+    transform:translateX(0);
+    opacity:0;
+  }
+  .options a {
+    display: block;
+    background: #f3f3f3;
+    border-radius: 20px;
+    padding: 5px 10px 5px 10px;
+    text-decoration: none;
+    white-space: nowrap;
+    color: #666666;
+    border: 1px solid #fff;
+    line-height:1.2em;
+  }
+  .options a:hover {
+    background: #ccc;
+  }
+  .options li:hover > ul {
+    left:-100%;
+    width:200%;
+    top:100%;
+  }
+  .options li li:hover > ul {
+    left:0;
+    transform:translateX(-100%);
+    width:fit-content;
+    top:0;
+    opacity:1;
+  }
+  .options ul li {
+    float: none;
+  }
+  .options li:hover > a {
+    background: #ccc;
+  }
+  #options ul li {
+    border-top: none;
+  }
+
 .items {
     padding-left: 10px;
     padding-top: 10px;
@@ -184,6 +242,14 @@ h3 {
     border-radius: 5px; 
     border-color: grey;
     font-weight: bold;
+}
+
+.unselect_button {
+    height: 20px;
+    background-color: white;
+    border-radius: 5px; 
+    border-color: grey;
+    display: inline;
 }
 
 .threat_textbox, .controls_textbox, .notes_textbox {
