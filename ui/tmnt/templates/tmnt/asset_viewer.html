@@ -1075,14 +1075,12 @@
                     i--;
                 }
             }
-            console.log("links length: " + links.length);
             var link_update = svg.selectAll(".link_group").data(links, function(d) { return d.source.id + "-" + d.target.id; });
             link_update.exit().remove();
 
             // removing all workflows connected to this asset
             for (let key of Object.keys(workflows)) {
                 if (workflows[key].includes(assetID)) {
-                    console.log("deleting: " + key);
                     delete workflows[key];
                 }
             }
@@ -1795,7 +1793,7 @@
         for (let textbox of textboxes) {
             textbox.value = "";
         }
-        
+
         // update list in details bar
         var options = document.getElementById("options");
         if (options && options.children[0].value == nodes[asset].id) {
