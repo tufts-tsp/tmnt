@@ -1,7 +1,7 @@
 import unittest
-from tmnt.dsl import Asset, Process, Datastore, ExternalEntity, DataFlow
-from tmnt.dsl.element import Element
-from tmnt.engines.assignment import Assignment, Rule, get_findings
+from tmnpy.dsl import Asset, Process, Datastore, ExternalEntity, DataFlow
+from tmnpy.dsl.element import Element
+from tmnpy.engines.assignment import Assignment, Rule, get_findings
 
 
 class TestThreatlib(unittest.TestCase):
@@ -32,8 +32,8 @@ class TestThreatlib(unittest.TestCase):
         for i in range(1, 10, 2):
             for r in self.rules.threatmap:
                 for c in r.controls:
-                    if c.title not in [
-                        x.title for x in self.tm_components[i].controls
+                    if c.name not in [
+                        x.name for x in self.tm_components[i].controls
                     ]:
                         self.tm_components[i].add_control(c)
         return super().setUp()

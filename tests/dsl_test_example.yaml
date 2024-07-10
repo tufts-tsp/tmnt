@@ -1,0 +1,29 @@
+assets:
+  - name: "asset example"
+    type: "Asset"
+  
+  - name: "process example"
+    type: "Process"
+
+  - name: "datastore example"
+    type: "Datastore"
+    ds_type: "UNKNOWN"
+
+
+actors:
+  - name: "actor example"
+    type: "Actor"
+    actor_type: "Individual"
+    internal: true
+    physical_access: true
+
+
+boundaries:
+  - name: "boundary example"
+    type: "Boundary"
+    elements: 
+      - name: "asset example"
+      - name: "process example"
+      - name: "datastore example"
+      - name: "actor example"
+        physical_access: true

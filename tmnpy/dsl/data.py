@@ -38,7 +38,7 @@ class Data(Element):
         is_phi: bool = False,
         format: str = "N/A",
         is_credentials: bool = False,
-        lifetime: Lifetime = Lifetime.NONE,
+        lifetime: Lifetime | str = Lifetime.NONE,
         **kwargs
     ):
         if not isinstance(is_pii, bool):
@@ -56,6 +56,9 @@ class Data(Element):
         if not isinstance(is_credentials, bool):
             raise ValueError("Is Credentials must be a boolean")
         self.is_credentials = is_credentials
+
+        if isinstance(lifetime, str):
+            lifetime = Lifetime[lifetime]
 
         if not isinstance(lifetime, Lifetime):
             raise ValueError("Lifetime bust be a Lifetime object")

@@ -15,16 +15,14 @@ assets:
         desc: "Kept for the duration of the surgery"
         lifetime: "AUTO"
 
-  - name: "Surgeon Workstation"
-    type: "Asset"
-
-  - name: "Surgical Robot"
-    type: "Asset"
+  - name: "Remote Maintenance Provider"
+    type: "ExternalEntity"
     security_property:
       confidentiality: "HIGH"
       integrity: "HIGH"
       availability: "HIGH"
-    machine: "PHYSICAL"
+    physical_access: false
+    machine: "VIRTUAL"
     data:
       - name: "Robot Maintenance Logs"
         is_pii: false
@@ -33,29 +31,12 @@ assets:
         is_credentials: false
         desc: "Retained according to maintenance schedule"
         lifetime: "AUTO"
-      - name: "Surgery Logs"
-        is_pii: true
-        is_phi: true
-        format: "Textual Log Files"
-        is_credentials: true
-        desc: "Retained until surgery is completed and then sent to EHR"
-        lifetime: "AUTO"
-
-  - name: "Hospital Network"
-    type: "Asset"
 
 actors:
   - name: "Surgeon"
     type: "Actor"
     actor_type: "Individual"
-    internal: true
     physical_access: true
-
-  - name: "Remote Maintenance Provider"
-    type: "Actor"
-    actor_type: "External Organization"
-    internal: false
-    physical_access: false
 
 flows:
   - name: "Data Transfer from Life Support to Surgeon Workstation"
@@ -70,10 +51,12 @@ flows:
     multifactor_authentication: false
 
   - name: "Surgical Procedure Execution Flow"
-    type: "WorkFlow"
+    type: "Workflow"
     src:
       name: "Surgeon Workstation"
     dst:
       name: "Surgical Robot"
     path:
       - name: "Hospital Network"
+    authentication: "Certificate-based"
+    multifactor_authentication: true

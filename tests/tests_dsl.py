@@ -1,6 +1,6 @@
 import unittest
 
-from tmnt.dsl import (
+from tmnpy.dsl import (
     TM,
     Asset,
     ExternalEntity,
@@ -10,6 +10,7 @@ from tmnt.dsl import (
     ControlCatalog,
     Actor,
     DataFlow,
+    WorkFlow,
     Issue,
     Threat,
     Weakness,
@@ -18,9 +19,9 @@ from tmnt.dsl import (
     Data,
     Flow,
 )
-from tmnt.dsl.component import Component
-from tmnt.dsl.element import Element
-from tmnt.dsl.asset import DATASTORE_TYPE
+from tmnpy.dsl.component import Component
+from tmnpy.dsl.element import Element
+from tmnpy.dsl.asset import DATASTORE_TYPE
 
 
 class TestTM(unittest.TestCase):
@@ -40,10 +41,10 @@ class TestTM(unittest.TestCase):
 
         component1 = Component("test1")
 
-        self.tm.add_component(component1)
+        self.tm.components.append(component1)
         component_list = self.tm.components
 
-        self.tm.remove_component(component1)
+        self.tm.components.remove(component1)
         component_list = self.tm.components
 
     def tearDown(self):
@@ -60,14 +61,14 @@ class TestElement(unittest.TestCase):
         self.assertEqual(self.element.name, "Test Element")
         self.assertEqual(self.element.desc, "Description")
         self.assertEqual(len(self.element.children), 0)
-        self.assertEqual(len(self.element.parent), 0)
+        self.assertEqual(self.element.parent, None)
 
     def test_parent_child_assignments(self):
         elem1 = Element("test1")
         elem2 = Element("test2")
         elem3 = Element("test3")
 
-        elem1.parent = elem2
+        elem1.add_parent(elem2)
         # no child setter
 
         # a parent node should not assign itself as a parent
@@ -136,7 +137,7 @@ class TestComponent(unittest.TestCase):
         self.assertEqual(len(self.component.data), 0)
 
     def test_control(self):
-        control = Control(id="1", title="Test", desc="Description")
+        control = Control(cid="1", name="Test", desc="Description")
         self.component.add_control(control)
         self.assertEqual(len(self.component.controls), 1)
         self.component.remove_control(control)
@@ -174,7 +175,7 @@ class TestAsset(unittest.TestCase):
 
     def test_external_entity(self):
         external_entity = ExternalEntity(
-            name="External Entity Name", physical_access=True
+            name="External Entity Name",
         )
         self.assertIsInstance(external_entity, ExternalEntity)
 
@@ -192,22 +193,36 @@ class TestAsset(unittest.TestCase):
         return super().tearDown()
 
 
-class TestFlow(unittest.TestCase):
+class TestDataFlow(unittest.TestCase):
     def setUp(self):
         elem1 = Element("test1")
         elem2 = Element("test2")
-        self.flow = Flow(name="Test Flow", src=elem1, dst=elem2)
+        self.flow = DataFlow(name="Test Flow", src=elem1, dst=elem2)
         return super().setUp()
 
     def test_flow_init(self):
         elem1 = Element("test1")
         elem2 = Element("test2")
         self.assertEqual(self.flow.name, "Test Flow")
-        # self.assertEqual(self.flow.src, elem1)
-        # self.assertEqual(self.flow.dst, elem2)
-        self.assertEqual(len(self.flow.path), 2)
-        self.assertEqual(self.flow.authentication, None)
+        self.assertEqual(self.flow.authentication, "Not Specified")
         self.assertTrue(self.flow.multifactor_authentication)
+
+    def tearDown(self):
+        return super().tearDown()
+
+
+class TestWorkFlow(unittest.TestCase):
+    def setUp(self):
+        elem1 = Element("test1")
+        elem2 = Element("test2")
+        self.flow = WorkFlow(name="Test Flow", src=elem1, dst=elem2)
+        return super().setUp()
+
+    def test_flow_init(self):
+        elem1 = Element("test1")
+        elem2 = Element("test2")
+        self.assertEqual(self.flow.name, "Test Flow")
+        self.assertEqual(len(self.flow.path), 2)
 
     def tearDown(self):
         return super().tearDown()

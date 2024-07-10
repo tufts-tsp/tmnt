@@ -1,6 +1,6 @@
 import unittest
 
-from tmnt.dsl import (
+from tmnpy.dsl import (
     TM,
     Boundary,
     Actor,
@@ -10,7 +10,7 @@ from tmnt.dsl import (
     ExternalEntity,
     DataFlow,
 )
-from tmnt.dsl.asset import (
+from tmnpy.dsl.asset import (
     DATASTORE_TYPE,
     Machine,
 )

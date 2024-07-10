@@ -8,7 +8,7 @@ import os
 import warnings
 import json
 
-from tmnt.dsl import Weakness, Threat, Control
+from tmnpy.dsl import Weakness, Threat, Control
 
 
 def load_pytm_threatlib():
@@ -47,7 +47,7 @@ def load_owasp_asvs() -> list:
                 # ID as described in https://owasp.org/www-project-application-security-verification-standard/
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
-                c = Control(id=id, title=title, desc="")
+                c = Control(cid=id, name=title, desc="")
                 results.append(c)
 
             for requirement in requirements:  # Vx.x.x
@@ -58,7 +58,7 @@ def load_owasp_asvs() -> list:
                 related = [{"cweid": id.text} for id in related]
                 id = "v" + version + "-" + sc
                 title = chapter_name + ": " + section_name
-                c = Control(id=id, title=title, desc=desc)
+                c = Control(cid=id, name=title, desc=desc)
                 results.append(c)
 
     return results
