@@ -119,7 +119,6 @@ class TestTMNTParser(unittest.TestCase):
 
 
 class TestTMNTParser1(unittest.TestCase):
-
     def setUp(self):
         self.parser = TMNTParser(
             tm_name = "threatmodel_test", 
@@ -169,22 +168,20 @@ class TestTMNTParser1(unittest.TestCase):
         name = boundary.name
         elements = boundary.elements
         actors = boundary.actors
-        # print(actors)
 
         self.assertEqual(name, "boundary example")
         self.assertEqual(elements[0].name, "asset example")
         self.assertEqual(elements[1].name, "process example")
         self.assertEqual(elements[2].name, "datastore example")
         self.assertEqual(len(actors), 1)
-        self.assertEqual(actors[0].name, "actor example")
-        self.assertEqual(actors[0].physical_access, True)
+        self.assertEqual(actors[0][0].name, "actor example")
+        self.assertEqual(actors[0][1], True)
  
     def tearDown(self) -> None:
         return super().tearDown()
 
 
 class TestMockDeviceDiagram(unittest.TestCase):
-
     def setUp(self):
         self.parser = TMNTParser(
             tm_name = "mock_device_diagram_test", 
@@ -322,16 +319,17 @@ class TestMockDeviceDiagram(unittest.TestCase):
         name = boundary.name
         elements = boundary.elements
         actors = boundary.actors
-        # physical_access = boundary.physical_access
 
         self.assertEqual(name, "Cloud (Datastore)")
         self.assertEqual(len(elements), 1)
         self.assertEqual(elements[0].name, "EHR Datastore")
         self.assertEqual(len(actors), 3)
-        self.assertEqual(actors[0].name, "Cloud Provider")
-        self.assertEqual(actors[0].physical_access, True)
-        self.assertEqual(actors[0].name, "Hospital 1 IT")
-        self.assertEqual(actors[0].name, "upport Consultants")
+        self.assertEqual(actors[0][0].name, "Cloud Provider")
+        self.assertEqual(actors[0][1], True)
+        self.assertEqual(actors[1][0].name, "Hospital 1 IT")
+        self.assertEqual(actors[1][1], False)
+        self.assertEqual(actors[2][0].name, "Support Consultants")
+        self.assertEqual(actors[2][1], False)
 
     def test_parse_workflow(self):
         workflow_data = [

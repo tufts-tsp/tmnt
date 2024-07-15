@@ -35,9 +35,9 @@ class TMNTParser(Parser):
         if "boundaries" in self.yaml.keys():
             for boundary in self.yaml["boundaries"]:
                 elem_type, kwargs = self.parse_boundary(boundary)
-                self.tm.boundaries.append(elem_type(**kwargs))
-
-    def parse_list_value(self, v):
+                self.tm.boundaries.append(elem_type(**kwargs)) 
+        
+    def find_name_in_tm(self, v):
         for item in self.tm.components:
             if v["name"] == item.name:
                 idx = self.tm.components.index(v["name"])
@@ -58,17 +58,16 @@ class TMNTParser(Parser):
             if k == "elements":
                 elements = []
                 for component in v:
-                    elem = self.parse_list_value(component)
-                    elements.append(elem)
-                v = elements
+                    elem = self.find_name_in_tm(component)
+                    elements.append(elem) 
+                v  = elements
             elif k == "actors":
                 actors = []
                 for component in v:
-                    print(component[0])
-                    elem = self.parse_list_value(component)
-                    # print(elem)
-                    actors.append(elem)
-                v = actors
+                    elem = self.find_name_in_tm(component)
+                    phys_access = component["physical_access"]
+                    actors.append((elem,phys_access)) 
+                v  = actors        
             kwargs[k] = v
         return boundary_type, kwargs
 
@@ -90,10 +89,10 @@ class TMNTParser(Parser):
             elif k == "path":
                 path = []
                 for component in v:
-                    path.append(self.parse_list_value(component))
+                    path.append(self.find_name_in_tm(component))
                 v = path
             elif k in ["src", "dst"]:
-                v = self.parse_list_value(v)
+                v = self.find_name_in_tm(v)
             elif k == "ds_type":
                 v = Datastore(**v)
             elif k == "port":
