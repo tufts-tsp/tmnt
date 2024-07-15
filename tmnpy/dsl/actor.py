@@ -1,7 +1,7 @@
-from .element import Element
+from .element import Element, Elements
+from .component import Component, Components
 
-from collections import UserList
-from typing import Optional
+from typing import Optional, Set
 
 
 class Actor(Element):
@@ -22,8 +22,9 @@ class Actor(Element):
         Name of actor
     actor_type : str
         Options: Individual, Organization ... User can specify
-    physical_access: bool
-        Do they have physical access to the components they interact with
+    physical_access: Components
+        What components within the threat model does this actor has physical
+        access to.
     internal : bool
         Are they an internal or external actor?
     **kwargs : dict, optional
@@ -47,13 +48,9 @@ class Actor(Element):
         name,
         actor_type: Optional[str] = None,
         internal: bool = False,
+        physical_access: Components = Components(),
         **kwargs,
     ):
-        # if not isinstance(physical_access, bool):
-        #     raise TypeError("Physical Access must be a boolean")
-        # else:
-        #     self.physical_access = physical_access
-
         if not isinstance(actor_type, str) and actor_type is not None:
             raise TypeError("Actor Type must be a string or None")
         else:
@@ -63,40 +60,22 @@ class Actor(Element):
             raise TypeError("Internal must be a boolean")
         else:
             self.internal = internal
+        if isinstance(physical_access, list):
+            physical_access = Components(physical_access)
+        elif not isinstance(physical_access, Components):
+            raise TypeError
+        self.physical_access = physical_access
 
         super().__init__(name, **kwargs)
 
 
-class Actors(UserList):
-    """
-    Actors represents a list of actors, which must be of type `Actor`.
-    Membership is unique based on the name of the actor.
+class Actors(Elements):
 
-    Parameters
-    ----------
-    initlist : Actor, list of Actor, optional
-    """
-    def __init__(self, initlist: Optional[Actor | list[Actor]] = None) -> None:
-        self.data = []
-        if initlist is not None:
-            if isinstance(initlist, list):
-                for d in initlist:
-                    self.append(d)
-            elif isinstance(initlist, Actors):
-                self.data[:] = initlist.data[:]
-            else:
-                self.append(initlist)
-
-    def append(self, item: Actor) -> None:
+    def append(self, item: Element) -> None:
         if not isinstance(item, Actor):
             raise TypeError(f"{item} is not of type tmnpy.dsl.Actor.")
         for i in range(len(self.data)):
             if self.data[i] == item:
                 raise ValueError(f"{item} is already in this list.")
         super().append(item)
-
-    def index(self, name: str, *args) -> int:
-        for i in range(len(self.data)):
-            if name == self.data[i].name:
-                return i
-        raise ValueError(f"{name} is not in list.")
+        self.data = list(set(self.data))

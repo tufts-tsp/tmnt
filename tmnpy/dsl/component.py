@@ -1,12 +1,10 @@
-from .element import Element
+from .element import Element, Elements
 from .data import Data
 from .threat import Threat
 from .control import Control
 from .requirement import SecurityProperty
 
 from typing import List
-from collections import UserList
-
 
 class Component(Element):
 
@@ -103,29 +101,12 @@ class Component(Element):
         self.__security_property = val
 
 
-class Components(UserList):
-    def append(self, item: Component) -> None:
+class Components(Elements):
+    def append(self, item: Element) -> None:
         if not isinstance(item, Component):
             raise TypeError(f"{item} is not of type tmnpy.dsl.Component.")
         for i in range(len(self.data)):
             if self.data[i] == item:
                 raise ValueError(f"{item} is already in this list.")
         super().append(item)
-
-    def index(self, name: str, *args) -> int:
-        ctype = None
-        if args:
-            ctype = args[0]
-        for i in range(len(self.data)):
-            if name == self.data[i].name and ctype == None:
-                return i
-            elif name == self.data[i].name and ctype == type(self.data[i]):
-                return i
-        raise ValueError(f"{name} is not in list.")
-
-    def subset(self, component_type: type[Component]):
-        values = Components()
-        for i in range(len(self.data)):
-            if component_type == type(self.data[i]):
-                values.append(self.data[i])
-        return values
+        self.data = list(set(self.data))

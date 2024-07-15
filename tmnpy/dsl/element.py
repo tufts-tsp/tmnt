@@ -1,6 +1,6 @@
 import uuid
 from typing import Self, Tuple, List, Optional, Set
-
+from collections import UserList
 
 class Element(object):
     """
@@ -176,3 +176,44 @@ class Element(object):
         self.children = children
         if child.parent != None:
             del child.parent
+
+class Elements(UserList):
+
+    def __init__(self, initlist: Optional[Element | list[Element]] = None) -> None:
+        self.data = []
+        if initlist is not None:
+            if isinstance(initlist, list):
+                for d in initlist:
+                    self.append(d)
+            elif isinstance(initlist, Elements):
+                self.data[:] = initlist.data[:]
+            else:
+                self.append(initlist)
+        self.data = list(set(self.data))
+
+    def append(self, item: Element) -> None:
+        if not isinstance(item, Element):
+            raise TypeError(f"{item} is not type tmnpy.dsl.element.Element.")
+        for i in range(len(self.data)):
+            if self.data[i] == item:
+                raise ValueError(f"{item} is already in this list.")
+        super().append(item)
+        self.data = list(set(self.data))
+
+    def index(self, name: str, *args) -> int:
+        ctype = None
+        if args:
+            ctype = args[0]
+        for i in range(len(self.data)):
+            if name == self.data[i].name and ctype == None:
+                return i
+            elif name == self.data[i].name and ctype == type(self.data[i]):
+                return i
+        raise ValueError(f"{name} is not in list.")
+
+    def subset(self, element_type: type[Element]):
+        values = Elements()
+        for i in range(len(self.data)):
+            if element_type == type(self.data[i]):
+                values.append(self.data[i])
+        return values
