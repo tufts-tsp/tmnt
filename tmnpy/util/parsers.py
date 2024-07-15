@@ -54,18 +54,22 @@ class TMNTParser(Parser):
             for k, v in kwargs.items()
             if type(v) != str and type(v) != bool
         }
-        physical_access = []
         for k, v in objs.items():   
             if k == "elements":
                 elements = []
                 for component in v:
                     elem = self.parse_list_value(component)
                     elements.append(elem) 
-                    if "physical_access" in component.keys():
-                        physical_access.append(elem)
                 v  = elements
+            elif k == "actors":
+                actors = []
+                for component in v:
+                    print(component[0])
+                    elem = self.parse_list_value(component)
+                    # print(elem)
+                    actors.append(elem) 
+                v  = actors        
             kwargs[k] = v
-        kwargs["physical_access"] = physical_access
         return boundary_type, kwargs
 
     def parse_component(self, component):

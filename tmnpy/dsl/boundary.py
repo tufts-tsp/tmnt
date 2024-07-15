@@ -14,11 +14,11 @@ class Boundary(Element):
         self, 
         name, 
         elements: list[Element] = [], 
-        physical_access: list[Actor] = [],  
+        actors: list[set([Actor, bool])] = [],  
         **kwargs
     ):
         self.elements = elements
-        self.physical_access = physical_access
+        self.actors = actors
         super().__init__(name, **kwargs)
 
 

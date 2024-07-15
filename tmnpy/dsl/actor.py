@@ -25,19 +25,23 @@ class Actor(Element):
         self,
         name,
         actor_type: Optional[str] = None,
-        physical_access: bool = False,
         internal: bool = False,
         **kwargs,
     ):
-        if not isinstance(physical_access, bool):
-            raise TypeError("Physical Access must be a boolean")
-        else:
-            self.physical_access = physical_access
+        # if not isinstance(physical_access, bool):
+        #     raise TypeError("Physical Access must be a boolean")
+        # else:
+        #     self.physical_access = physical_access
 
         if not isinstance(actor_type, str) and actor_type is not None:
             raise TypeError("Actor Type must be a string or None")
         else:
             self.actor_type = actor_type
+
+        if not isinstance(internal, bool):
+            raise TypeError("Internal must be a boolean")
+        else:
+            self.internal = internal
 
         super().__init__(name, **kwargs)
 

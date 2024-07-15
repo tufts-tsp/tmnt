@@ -36,7 +36,6 @@ actors:
   - name: "Surgeon"
     type: "Actor"
     actor_type: "Individual"
-    physical_access: true
 
 flows:
   - name: "Data Transfer from Life Support to Surgeon Workstation"

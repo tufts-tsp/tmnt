@@ -49,13 +49,11 @@ actors:
     type: "Actor"
     actor_type: "Individual"
     internal: true
-    physical_access: true
 
   - name: "Remote Maintenance Provider"
     type: "Actor"
     actor_type: "External Organization"
     internal: false
-    physical_access: false
 
 flows:
   - name: "Data Transfer from Life Support to Surgeon Workstation"
