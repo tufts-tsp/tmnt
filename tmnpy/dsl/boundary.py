@@ -14,13 +14,12 @@ class Boundary(Element):
         self, 
         name, 
         elements: list[Element] = [], 
-        actors: list[set([Actor, bool])] = [],  
+        actors: list[(Actor, bool)] = [],  
         **kwargs
     ):
         self.elements = elements
         self.actors = actors
         super().__init__(name, **kwargs)
-
 
 class Boundaries(UserList):
     def append(self, item: Boundary) -> None:
