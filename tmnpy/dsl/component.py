@@ -6,6 +6,7 @@ from .requirement import SecurityProperty
 
 from typing import List
 
+
 class Component(Element):
 
     """

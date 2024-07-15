@@ -2,6 +2,7 @@ import uuid
 from typing import Self, Tuple, List, Optional, Set
 from collections import UserList
 
+
 class Element(object):
     """
     The basic primitive of a threat model, which can be an `Asset`,
@@ -63,7 +64,11 @@ class Element(object):
         return f"{type(self).__name__}({self.name})"
 
     def __eq__(self, value: object) -> bool:
-        if isinstance(value, Element) and self.name == value.name and type(self).__name__ == type(value).__name__:
+        if (
+            isinstance(value, Element)
+            and self.name == value.name
+            and type(self).__name__ == type(value).__name__
+        ):
             return True
         return False
 
@@ -177,9 +182,11 @@ class Element(object):
         if child.parent != None:
             del child.parent
 
-class Elements(UserList):
 
-    def __init__(self, initlist: Optional[Element | list[Element]] = None) -> None:
+class Elements(UserList):
+    def __init__(
+        self, initlist: Optional[Element | list[Element]] = None
+    ) -> None:
         self.data = []
         if initlist is not None:
             if isinstance(initlist, list):

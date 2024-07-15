@@ -2,8 +2,8 @@ from tmnpy.dsl.element import Element
 
 import unittest
 
-class TestElement(unittest.TestCase):
 
+class TestElement(unittest.TestCase):
     def setUp(self) -> None:
         return super().setUp()
 
@@ -37,14 +37,14 @@ class TestElement(unittest.TestCase):
         x = Element("Test")
         with self.assertRaises(ValueError) as err:
             x.parent = x
-        self.assertTrue('cannot be a parent of itself' in str(err.exception))
+        self.assertTrue("cannot be a parent of itself" in str(err.exception))
 
     def test_create_self_obbj_parent(self):
         x = Element("Test")
         y = Element("Test")
         with self.assertRaises(ValueError) as err:
             x.parent = y
-        self.assertTrue('cannot be a parent of itself' in str(err.exception))
+        self.assertTrue("cannot be a parent of itself" in str(err.exception))
 
     def test_create_bad_child_parent(self):
         x = Element("Test")
@@ -52,7 +52,7 @@ class TestElement(unittest.TestCase):
         x.parent = y
         with self.assertRaises(ValueError) as err:
             y.parent = x
-        self.assertTrue('cannot be both' in str(err.exception))
+        self.assertTrue("cannot be both" in str(err.exception))
 
     def test_grandparent(self):
         x = Element("Test")
@@ -104,6 +104,7 @@ class TestElement(unittest.TestCase):
 
     def tearDown(self) -> None:
         return super().tearDown()
+
 
 if __name__ == "__main__":
     unittest.main()

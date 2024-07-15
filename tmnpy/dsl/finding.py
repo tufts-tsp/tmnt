@@ -58,7 +58,7 @@ class Finding(Element):
         risk: str = "Not Evaluated",
         residual_risk: str = "Not Evaluated",
     ) -> None:
-        super().__init__(name = str(uuid.uuid4()))
+        super().__init__(name=str(uuid.uuid4()))
         self.affected_components = affected_components
         self.issues = issues
         self.mitigations = mitigations
@@ -104,7 +104,9 @@ class Finding(Element):
         return self.__impact["safety_impact"]
 
     @safety_impact.setter
-    def safety_impact(self, new: SafetyImpact = SafetyImpact(), **kwargs) -> None:
+    def safety_impact(
+        self, new: SafetyImpact = SafetyImpact(), **kwargs
+    ) -> None:
         if new != None:
             self.__impact["safety_impact"] = new
         else:

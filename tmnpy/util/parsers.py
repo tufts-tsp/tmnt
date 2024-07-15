@@ -35,8 +35,8 @@ class TMNTParser(Parser):
         if "boundaries" in self.yaml.keys():
             for boundary in self.yaml["boundaries"]:
                 elem_type, kwargs = self.parse_boundary(boundary)
-                self.tm.boundaries.append(elem_type(**kwargs)) 
-        
+                self.tm.boundaries.append(elem_type(**kwargs))
+
     def parse_list_value(self, v):
         for item in self.tm.components:
             if v["name"] == item.name:
@@ -54,21 +54,21 @@ class TMNTParser(Parser):
             for k, v in kwargs.items()
             if type(v) != str and type(v) != bool
         }
-        for k, v in objs.items():   
+        for k, v in objs.items():
             if k == "elements":
                 elements = []
                 for component in v:
                     elem = self.parse_list_value(component)
-                    elements.append(elem) 
-                v  = elements
+                    elements.append(elem)
+                v = elements
             elif k == "actors":
                 actors = []
                 for component in v:
                     print(component[0])
                     elem = self.parse_list_value(component)
                     # print(elem)
-                    actors.append(elem) 
-                v  = actors        
+                    actors.append(elem)
+                v = actors
             kwargs[k] = v
         return boundary_type, kwargs
 

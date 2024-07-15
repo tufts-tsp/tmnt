@@ -70,7 +70,6 @@ class Actor(Element):
 
 
 class Actors(Elements):
-
     def append(self, item: Element) -> None:
         if not isinstance(item, Actor):
             raise TypeError(f"{item} is not of type tmnpy.dsl.Actor.")

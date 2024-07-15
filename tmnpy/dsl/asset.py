@@ -6,6 +6,7 @@ from .requirement import SecurityProperty
 from enum import Enum
 from typing import List, Set
 
+
 class Machine(Enum):
 
     """
@@ -83,7 +84,7 @@ class Asset(Component):
         name: str,
         open_ports: Set[int] | List[int] | int = set(),
         machine: Machine | str = Machine.NA,
-        **kwargs
+        **kwargs,
     ):
         self.open_ports = open_ports
         self.machine = machine
@@ -96,9 +97,8 @@ class Asset(Component):
     @open_ports.setter
     def open_ports(self, ports: Set[int] | List[int] | int) -> None:
         if (
-            (not isinstance(ports, list) and not isinstance(ports, set))
-            or not all(isinstance(port, int) for port in ports)
-        ):
+            not isinstance(ports, list) and not isinstance(ports, set)
+        ) or not all(isinstance(port, int) for port in ports):
             if isinstance(ports, int):
                 ports = set([ports])
             else:
@@ -157,7 +157,7 @@ class Datastore(Asset):
         name,
         # machine: Machine | str = Machine.NA,
         ds_type: DATASTORE_TYPE | str = DATASTORE_TYPE.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         if isinstance(ds_type, str):
             ds_type = DATASTORE_TYPE[ds_type]

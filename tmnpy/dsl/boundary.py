@@ -1,18 +1,14 @@
 from .element import Element, Elements
 from .actor import Actor
 
+
 class Boundary(Element):
 
     """
     needs documentation
     """
 
-    def __init__(
-        self,
-        name,
-        elements: Elements | list = Elements(),
-        **kwargs
-    ):
+    def __init__(self, name, elements: Elements | list = Elements(), **kwargs):
         if isinstance(elements, list):
             elements = Elements(elements)
         elif not isinstance(elements, Elements):
