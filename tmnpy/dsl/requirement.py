@@ -78,10 +78,9 @@ class STRIDE(object):
     def spoofing(self) -> bool:
         """
         Spoofing requirement. Maps to
-        :func:`~bang_pytm.util.requirement.SecurityProperty.authenticity`
+        :func:`tmnpy.dsl.requirement.SecurityProperty.authenticity`
 
-        Definition
-        ----------
+
         Breaching the user's authentication information. In this case, the
         hacker has obtained the user's personal information or something that
         enables him to replay the authentication procedure. Spoofing threats are
@@ -102,10 +101,9 @@ class STRIDE(object):
     def tampering(self) -> bool:
         """
         Tampering threat. Maps to
-        :func:`~bang_pytm.util.requirement.SecurityProperty.integrity`
+        :func:`tmnpy.dsl.requirement.SecurityProperty.integrity`
 
-        Definition
-        ----------
+
         Modifying system or user data with or without detection. An unauthorized
         change to stored or in-transit information, formatting of a hard disk, a
         malicious intruder introducing an undetectable network packet in a
@@ -125,10 +123,9 @@ class STRIDE(object):
     def repudiation(self) -> bool:
         """
         Repudiation threat. Maps to
-        :func:`~bang_pytm.util.requirement.SecurityProperty.non_repudiation`
+        :func:`tmnpy.dsl.requirement.SecurityProperty.non_repudiation`
 
-        Definition
-        ----------
+
         An untrusted user performing an illegal operation without the ability to
         be traced. Repudiability threats are associated with users (malicious or
         otherwise) who can deny a wrongdoing without any way to prove otherwise.
@@ -146,21 +143,13 @@ class STRIDE(object):
     def information_disclosure(self) -> bool:
         """
         Information Disclosure threat. Maps to
-        :func:`~bang_pytm.util.requirement.SecurityProperty.confidentiality`
+        :func:`tmnpy.dsl.requirement.SecurityProperty.confidentiality`
 
-        Definition
-        ----------
-        Compromising the user's private or business-critical information.
-        Information disclosure threats expose information to individuals who are
-        not supposed to see it. A user's ability to read a file that she or he
-        was not granted access to, as well as an intruder's ability to read the
-        data while in transit between two computers, are both disclosure
-        threats. Note that this threat differs from a spoofing threat in that
-        here the perpetrator gets access to the information directly rather than
-        by having to spoof a legitimate user.
+        Compromising the user's private or business-critical information. Information disclosure threats expose information to individuals who are not supposed to see it. A user's ability to read a file that she or he was not granted access to, as well as an intruder's ability to read the data while in transit between two computers, are both disclosure threats. Note that this threat differs from a spoofing threat in that here the perpetrator gets access to the information directly rather than by having to spoof a legitimate user.[1]
 
-        SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
-        Microsoft. April 1999.
+        Notes
+        -----
+        [1] Loren Kohnfelder and Praerit Garg. The threats to our products. Microsoft. April 1999.
         """
         return self.__information_disclosure
 
@@ -172,21 +161,13 @@ class STRIDE(object):
     def denial_of_service(self) -> bool:
         """
         Denial of Service threat. Maps to
-        :func:`~bang_pytm.util.requirement.SecurityProperty.availability`
+        :func:`tmnpy.dsl.requirement.SecurityProperty.availability`
 
-        Definition
-        ----------
-        Making the system temporarily unavailable or unusable, such as those
-        attacks that could force a reboot or restart of the user's machine. When
-        an attacker can temporarily make the system resources (processing time,
-        storage, etc.) unavailable or unusable, we have a denial of service
-        threat. We must protect against certain types of D.o.S. threats for
-        improved system availability and reliability. However, some types of
-        D.o.S. threats are very hard to protect against, so at a minimum, we
-        must identify and rationalize such threats.
+        Making the system temporarily unavailable or unusable, such as those attacks that could force a reboot or restart of the user's machine. When an attacker can temporarily make the system resources (processing time, storage, etc.) unavailable or unusable, we have a denial of service threat. We must protect against certain types of D.o.S. threats for improved system availability and reliability. However, some types of D.o.S. threats are very hard to protect against, so at a minimum, we must identify and rationalize such threats.[1]
 
-        SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
-        Microsoft. April 1999.
+        Notes
+        -----
+        [1] Loren Kohnfelder and Praerit Garg. The threats to our products. Microsoft. April 1999.
         """
         return self.__denial_of_service
 
@@ -198,10 +179,8 @@ class STRIDE(object):
     def elevation_of_privilege(self) -> bool:
         """
         Elevation of Privilege threat. Maps to
-        :func:`~bang_pytm.util.requirement.SecurityProperty.authorization`
+        :func:`tmnpy.dsl.requirement.SecurityProperty.authorization`
 
-        Definition
-        ----------
         An unprivileged user gains privileged access and thereby has sufficient
         access to completely compromise or destroy the entire system. The more
         dangerous aspect of such threats is compromising the system in
@@ -211,10 +190,11 @@ class STRIDE(object):
         more privilege than should properly be granted, completely compromising
         the security of the entire system and causing extreme system damage.
         Here the attacker has effectively penetrated all system defenses and
-        become part of the trusted system itself and can do anything.
+        become part of the trusted system itself and can do anything.[1]
 
-        SOURCE: Loren Kohnfelder and Praerit Garg. The threats to our products.
-        Microsoft. April 1999.
+        Notes
+        -----
+        [1] Loren Kohnfelder and Praerit Garg. The threats to our products. Microsoft. April 1999.
         """
         return self.__elevation_of_privilege
 
@@ -245,7 +225,7 @@ class SecurityProperty(object):
     of elements in a threat model as well as provides more granularity on
     evaluating threats.
 
-    SecurityProperty has a 1-1 match with STRIDE. See each property for more
+    SecurityProperty has a 1-1 match with :func:`tmnpy.dsl.requirement.STRIDE`. See each property for more
     information.
 
     Parameters
@@ -299,10 +279,9 @@ class SecurityProperty(object):
     def confidentiality(self) -> Property:
         """
         Confidentiality requirement. Maps to
-        :func:`~bang_pytm.util.requirement.STRIDE.information_disclosure`
+        :func:`tmnpy.dsl.requirement.STRIDE.information_disclosure`
 
-        Definition
-        ----------
+
         A property that information is not disclosed to users, processes, or
         devices unless they have been authorized to access the information.
 
@@ -321,10 +300,8 @@ class SecurityProperty(object):
     def integrity(self) -> Property:
         """
         Integrity requirement. Maps to
-        :func:`~bang_pytm.util.requirement.STRIDE.tampering`
+        :func:`tmnpy.dsl.requirement.STRIDE.tampering`
 
-        Definition
-        ----------
         The property whereby information, an information system, or a component
         of a system has not been modified or destroyed in an unauthorized
         manner.
@@ -344,10 +321,9 @@ class SecurityProperty(object):
     def availability(self) -> Property:
         """
         Availability requirement. Maps to
-        :func:`~bang_pytm.util.requirement.STRIDE.denial_of_service`
+        :func:`tmnpy.dsl.requirement.STRIDE.denial_of_service`
 
-        Definition
-        ----------
+
         The property of being accessible and usable upon demand.
 
         SOURCE: NICCS CISA
@@ -365,10 +341,9 @@ class SecurityProperty(object):
     def authenticity(self) -> Property:
         """
         Authenticity requirement. Maps to
-        :func:`~bang_pytm.util.requirement.STRIDE.spoofing`
+        :func:`tmnpy.dsl.requirement.STRIDE.spoofing`
 
-        Definition
-        ----------
+
         A property achieved through cryptographic methods of being genuine and
         being able to be verified and trusted, resulting in confidence in the
         validity of a transmission, information or a message, or sender of
@@ -389,10 +364,9 @@ class SecurityProperty(object):
     def non_repudiation(self) -> Property:
         """
         Non-Repudiation requirement. Maps to
-        :func:`~bang_pytm.util.requirement.STRIDE.repudiation`
+        :func:`tmnpy.dsl.requirement.STRIDE.repudiation`
 
-        Definition
-        ----------
+
         A property achieved through cryptographic methods to protect against an
         individual or entity falsely denying having performed a particular
         action related to data.
@@ -412,10 +386,9 @@ class SecurityProperty(object):
     def authorization(self) -> Property:
         """
         Authorization requirement. Maps to
-        :func:`~bang_pytm.util.requirement.STRIDE.elevation_of_privilege`
+        :func:`tmnpy.dsl.requirement.STRIDE.elevation_of_privilege`
 
-        Definition
-        ----------
+
         A process of determining, by evaluating applicable access control
         information, whether a subject is allowed to have the specified types of
         access to a particular resource.
@@ -553,8 +526,7 @@ class SafetyImpact(object):
     @property
     def controlled_risk(self) -> bool:
         """
-        Definition
-        ----------
+
         A key purpose of conducting the cyber-vulnerability risk assessment is
         to evaluate whether the risk of patient harm is controlled (acceptable)
         or uncontrolled (unacceptable). One method of assessing the

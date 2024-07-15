@@ -7,7 +7,14 @@ from typing import Optional
 class Actor(Element):
 
     """
-    a person or organization that is represented in the threat model
+    An actor is a person, organization, or other entity that is not governed by
+    machine logic. Actors can have physical access to components, such as if
+    they are on on-site administrator, or no access if they are remote.
+    Additionally, actors should be specified if they are internal to the
+    organization that is building the threat model, e.g. a software developer,
+    or if they are external, such as a contractor or a third-party that
+    provides some service. An external actor is not an external service, such
+    as externally managed source control, which instead is an external entity.
 
     Parameters
     ----------
@@ -19,6 +26,20 @@ class Actor(Element):
         Do they have physical access to the components they interact with
     internal : bool
         Are they an internal or external actor?
+    **kwargs : dict, optional
+        Extra arguments to `Element`: refer to each metric documentation for a
+        list of all possible arguments.
+
+    See Also
+    --------
+    ExternalEntity :
+        An external entity that is not directly addressed in the threat model.
+
+    Notes
+    -----
+    Because the line between an `ExternalEntity` and `Actor(internal=False)`
+    is not clear in many cases these will be treated similarly in the threat
+    and control assignment process.
     """
 
     def __init__(
@@ -43,6 +64,25 @@ class Actor(Element):
 
 
 class Actors(UserList):
+    """
+    Actors represents a list of actors, which must be of type `Actor`.
+    Membership is unique based on the name of the actor.
+
+    Parameters
+    ----------
+    initlist : Actor, list of Actor, optional
+    """
+    def __init__(self, initlist: Optional[Actor | list[Actor]] = None) -> None:
+        self.data = []
+        if initlist is not None:
+            if isinstance(initlist, list):
+                for d in initlist:
+                    self.append(d)
+            elif isinstance(initlist, Actors):
+                self.data[:] = initlist.data[:]
+            else:
+                self.append(initlist)
+
     def append(self, item: Actor) -> None:
         if not isinstance(item, Actor):
             raise TypeError(f"{item} is not of type tmnpy.dsl.Actor.")
@@ -52,12 +92,7 @@ class Actors(UserList):
         super().append(item)
 
     def index(self, name: str, *args) -> int:
-        ctype = None
-        if args:
-            ctype = args[0]
         for i in range(len(self.data)):
-            if name == self.data[i].name and ctype == None:
-                return i
-            elif name == self.data[i].name and ctype == type(self.data[i]):
+            if name == self.data[i].name:
                 return i
         raise ValueError(f"{name} is not in list.")
