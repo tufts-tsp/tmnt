@@ -16,7 +16,7 @@ sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 project = "Threat Modeling Naturally Tool"
 copyright = "2023, Tufts Security & Privacy Lab"
 author = "Tufts Security & Privacy Lab"
-release = "0.0.0"
+release = "0.0.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -26,14 +26,17 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "numpydoc",
+    "myst_parser"
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = []
 
+pygments_style = 'sphinx'
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "alabaster"
+html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]

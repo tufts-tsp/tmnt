@@ -2,13 +2,13 @@
 
 The threat modeling tool is a continuation of our work investigating threat modeling by security experts for medical devices ([Thompson et al. USENIX 2024](https://www.usenix.org/conference/usenixsecurity24/presentation/thompson)). Specifically, we wanted to build a tool that leverages UI best practices (see [Ben Shneiderman's Designing the User Interface](http://seu1.org/files/level5/IT201/Book%20-%20Ben%20Shneiderman-Designing%20the%20User%20Interface-4th%20Edition.pdf)) and follows the natural threat modeling process we identified in our prior work.
 
-Please review the full whitepaper that we presented at WSIW 2024 ([wsiw_tm_dsl](wsiw_tm_dsl.pdf)) for a more detailed dive into the tool's design and motivation.
-
 ## Background on Threat Modeling
 
 Please refer to [Intro to Threat Modeling](IntroThreatModeling.md).
 
-There have been several tools and domain-specific languages that have been previously developed to aid system designers with threat modeling, we provide a review of these tools [here](ThreatModelingTools.md). We recommend trying out a few of these tools. If you do not have Windows and want to try [Microsoft Threat Modeling Tool](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool) or [Threats Manager Studio](https://threatsmanager.com/), please use `vm-winresearch.eecs.tufts.edu`.
+There have been several tools and domain-specific languages that have been previously developed to aid system designers with threat modeling, we provide a review of these tools [here](ThreatModelingTools.md). We recommend trying out a few of these tools.
+
+**NOTE (Tufts Students)**: If you do not have Windows and want to try [Microsoft Threat Modeling Tool](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool) or [Threats Manager Studio](https://threatsmanager.com/), please use `vm-winresearch.eecs.tufts.edu` (Ron is able to give you access).
 
 ## Design Goals for TMNT
 
@@ -30,8 +30,9 @@ To allow practitioners in different domains to tailor the system to their partic
 
 
 ## Modules
+TMNT is split into three larger pieces. The first is `tmnpy`, which is our Python package that contains the DSL (`tmnpy.dsl`), the Engines specification/default engines, the Knowledge Base (`tmnpy.kb`), and some utility functions (`tmnpy.util`). The other two parts are for the web-based application: `controller` and `ui`.
 
-### DSL (tmnt.dsl)
+### DSL (`tmnpy.dsl`)
 
 As part of building TMNT, we needed a robust, flexible DSL to allow a complete representation of all objects in the threat model. This DSL should support the ability to analyze and verify a threat model and allow threat modeling components to be reused in later models ([Mernik, Heering, & Sloane](https://doi.org/10.1145/1118890.1118892)). While there has been prior work establishing DSLs for threat modeling ([Threat Modeling DSLs](ThreatModelingTools.md), none fully met our design requirements. Many of these DSLs only support a specific set of rules to apply threats and controls, violating D1. Others only support a limited set of threat annotations, which does not lend itself to modularity (**D5**). Some require significant additional software development before they can be used, making it difficult for novices (**D4**). Rather than trying to modify one of these tools to fit our needs, we created our own DSL guided by our design goals and inspired by ideas from these existing DSLs.
 
@@ -41,25 +42,29 @@ The TMNT DSL provides an overarching framework to describe a system on a macro l
 
 An example of YAML cofiguration:
 ```yaml
-name: Surgical Robot
-    type   : Asset
-    trust_boundaries : OR
-    security_properties :
-        confidentiality  : LOW
-        integrity : HIGH
-        availability : HIGH
-
-    name: Surgical Procedure Execution Flow
-    type   : Workflow
-    src :
-        name : Surgeon Workstation
-    dst :
-        name : Surgical Robot
-    path :
-        name : Hospital Infrastructure
-    controls :
-        authentication : Certificated-based
-        multifactor : true
+assets:
+  - name: "Surgical Robot"
+    type: "Asset"
+    security_property:
+      confidentiality: "HIGH"
+      integrity: "HIGH"
+      availability: "HIGH"
+    machine: "PHYSICAL"
+    data:
+      - name: "Robot Maintenance Logs"
+        is_pii: false
+        is_phi: false
+        format: "Textual Log Files"
+        is_credentials: false
+        desc: "Retained according to maintenance schedule"
+        lifetime: "AUTO"
+      - name: "Surgery Logs"
+        is_pii: true
+        is_phi: true
+        format: "Textual Log Files"
+        is_credentials: true
+        desc: "Retained until surgery is completed and then sent to EHR"
+        lifetime: "AUTO"
 ```
 
 ### Knowledge Base (tmnt.kb)

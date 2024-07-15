@@ -1,7 +1,7 @@
-﻿tmnt.dsl.threat.Weakness
-========================
+﻿tmnpy.dsl.threat.Weakness
+=========================
 
-.. currentmodule:: tmnt.dsl.threat
+.. currentmodule:: tmnpy.dsl.threat
 
 .. autoclass:: Weakness
 
@@ -18,6 +18,7 @@
       ~Weakness.add_consequence
       ~Weakness.add_detection_method
       ~Weakness.add_introduction
+      ~Weakness.add_parent
       ~Weakness.remove_child
       ~Weakness.remove_consequence
       ~Weakness.remove_parent
@@ -34,11 +35,9 @@
       ~Weakness.consequences
       ~Weakness.desc
       ~Weakness.detection_methods
-      ~Weakness.eid
       ~Weakness.meta
       ~Weakness.modes_of_introduction
       ~Weakness.name
       ~Weakness.parent
-      ~Weakness.security_property
    
    
