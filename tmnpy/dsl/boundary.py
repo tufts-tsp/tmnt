@@ -8,17 +8,18 @@ class Boundary(Element):
     needs documentation
     """
 
-    def __init__(self, name, elements: Elements | list = Elements(), **kwargs):
-        if isinstance(elements, list):
-            elements = Elements(elements)
-        elif not isinstance(elements, Elements):
-            raise TypeError
+    def __init__(
+        self, 
+        name, 
+        elements: list[Element] = [], 
+        actors: list[(Actor, bool)] = [],  
+        **kwargs
+    ):
         self.elements = elements
         super().__init__(name, **kwargs)
 
-
-class Boundaries(Elements):
-    def append(self, item: Element) -> None:
+class Boundaries(UserList):
+    def append(self, item: Boundary) -> None:
         if not isinstance(item, Boundary):
             raise TypeError(f"{item} is not of type tmnpy.dsl.Boundary.")
         for i in range(len(self.data)):
