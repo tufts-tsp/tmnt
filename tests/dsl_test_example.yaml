@@ -15,7 +15,6 @@ actors:
     type: "Actor"
     actor_type: "Individual"
     internal: true
-    physical_access: true
 
 
 boundaries:
@@ -25,5 +24,6 @@ boundaries:
       - name: "asset example"
       - name: "process example"
       - name: "datastore example"
+    actors:
       - name: "actor example"
         physical_access: true

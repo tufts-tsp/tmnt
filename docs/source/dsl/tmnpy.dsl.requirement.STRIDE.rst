@@ -1,7 +1,7 @@
-﻿tmnt.dsl.requirement.STRIDE
-===========================
+﻿tmnpy.dsl.requirement.STRIDE
+============================
 
-.. currentmodule:: tmnt.dsl.requirement
+.. currentmodule:: tmnpy.dsl.requirement
 
 .. autoclass:: STRIDE
 

@@ -1,3 +1,4 @@
+from .element import Element, Elements
 from .component import Component
 from .control import Mitigation
 from .threat import Issue
@@ -5,9 +6,10 @@ from .requirement import SecurityProperty, SafetyImpact
 
 from collections import UserList
 from typing import List
+import uuid
 
 
-class Finding:
+class Finding(Element):
     """
     A finding consists of a Component(s), the associated Issue(s) and the
     identified Control(s). An Issue may be resolved by one or more Controls, or
@@ -56,6 +58,7 @@ class Finding:
         risk: str = "Not Evaluated",
         residual_risk: str = "Not Evaluated",
     ) -> None:
+        super().__init__(name=str(uuid.uuid4()))
         self.affected_components = affected_components
         self.issues = issues
         self.mitigations = mitigations
@@ -76,7 +79,6 @@ class Finding:
             "adverse_event": likelihood_adverse_event,
             "overall": likelihood,
         }
-        pass
 
     @property
     def impact(self) -> dict:
@@ -102,7 +104,9 @@ class Finding:
         return self.__impact["safety_impact"]
 
     @safety_impact.setter
-    def safety_impact(self, new: SafetyImpact = None, **kwargs) -> None:
+    def safety_impact(
+        self, new: SafetyImpact = SafetyImpact(), **kwargs
+    ) -> None:
         if new != None:
             self.__impact["safety_impact"] = new
         else:
@@ -123,22 +127,12 @@ class Finding:
             self.__likelihood[kwarg] = val
 
 
-class Findings(UserList):
-    def append(self, item: Finding) -> None:
+class Findings(Elements):
+    def append(self, item: Element) -> None:
         if not isinstance(item, Finding):
             raise TypeError(f"{item} is not of type tmnpy.dsl.Finding.")
         for i in range(len(self.data)):
             if self.data[i] == item:
                 raise ValueError(f"{item} is already in this list.")
         super().append(item)
-
-    def index(self, name: str, *args) -> int:
-        ctype = None
-        if args:
-            ctype = args[0]
-        for i in range(len(self.data)):
-            if name == self.data[i].name and ctype == None:
-                return i
-            elif name == self.data[i].name and ctype == type(self.data[i]):
-                return i
-        raise ValueError(f"{name} is not in list.")
+        self.data = list(set(self.data))

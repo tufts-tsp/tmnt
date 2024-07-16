@@ -1,0 +1,354 @@
+assets:
+  - name: "Life Support/Monitoring Equipment"
+    type: "Process"
+    machine: "PHYSICAL"
+    open_ports: [9999]
+    data:
+      - name: "Patient Vitals"
+        is_pii: true
+        is_phi: true
+        format: "log"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Encryption Keys"
+        is_pii: false
+        is_phi: false
+        format: "RSA"
+        is_credentials: true
+        lifetime: "MANUAL" #, "HARDCODED" #check back
+
+  - name: "Surgical Robot"
+    type: "Process"
+    machine: "PHYSICAL"
+    open_ports: [9998]
+    data: 
+      - name: "Surgical Record"
+        is_pii: true
+        is_phi: true
+        format: "log"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Encryption Keys"
+        is_pii: false
+        is_phi: false
+        format: "RSA"
+        is_credentials: true
+        lifetime: "MANUAL" #, "HARDCODED" #check back
+
+  - name: "Surgeon Workstation (internal)"
+    type: "Process"
+    machine: "PHYSICAL"
+    open_ports: []
+    data: 
+      - name: "Patient Vitals"
+        is_pii: true
+        is_phi: true
+        format: "log"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Surgical Record"
+        is_pii: true
+        is_phi: true
+        format: "log"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Patient History "
+        is_pii: true
+        is_phi: true
+        format: "EHR"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Encryption Keys"
+        is_pii: false
+        is_phi: false
+        format: "RSA"
+        is_credentials: true
+        lifetime: "MANUAL" #, "HARDCODED" #check back
+      - name: "Password"
+        is_pii: false
+        is_phi: false
+        format: "String"
+        is_credentials: true
+        lifetime: "LONG"
+
+  - name: "Hospital Infrastructure"
+    type: "Asset"
+    machine: "PHYSICAL"
+    open_ports: [22]
+
+  - name: "Internet"
+    type: "ExternalEntity"
+    machine: "PHYSICAL"
+    open_ports: [22]
+
+  - name: "EHR Datastore"
+    type: "Datastore"
+    machine: "VIRTUAL"
+    open_ports: [443]
+    ds_type: "OTHER"
+    desc: "include later" #desc needed for OTHER
+    data: 
+      - name: "Patient Vitals"
+        is_pii: true
+        is_phi: true
+        format: "log"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Surgical Record"
+        is_pii: true
+        is_phi: true
+        format: "log"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Patient History"
+        is_pii: true
+        is_phi: true
+        format: "EHR"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Encryption Keys"
+        is_pii: false
+        is_phi: false
+        format: "RSA"
+        is_credentials: true
+        lifetime: "MANUAL" #, #"HARDCODED" #check back
+      - name: "Password"
+        is_pii: false
+        is_phi: false
+        format: "String"
+        is_credentials: true
+        lifetime: "LONG"
+
+  - name: "Observer(s) Computer"
+    type: "ExternalEntity"
+    machine: "PHYSICAL"
+    open_ports: []
+
+  - name: "Surgeon Workstation (external)"
+    type: "ExternalEntity"
+    machine: "PHYSICAL"
+    open_ports: []
+
+  - name: "Technician Workstation"
+    type: "ExternalEntity"
+    machine: "PHYSICAL"
+    open_ports: []
+    data:
+      - name: "Surgical Record"
+        is_pii: true
+        is_phi: true
+        format: "log"
+        is_credentials: false
+        lifetime: "LONG"
+      - name: "Encryption Keys"
+        is_pii: false
+        is_phi: false
+        format: "RSA"
+        is_credentials: true
+        lifetime: "MANUAL" #, "HARDCODED" #check back      
+      - name: "Password"
+        is_pii: false
+        is_phi: false
+        format: "String"
+        is_credentials: true
+        lifetime: "LONG"
+
+
+
+actors:
+  - name: "Observer"
+    type: "Actor"
+    actor_type: "Individual"
+    internal: false
+
+  - name: "Consulting Surgeon"
+    type: "Actor"
+    actor_type: "Individual"
+    internal: false
+
+  - name: "Hospital IT"
+    type: "Actor"
+    actor_type: "Organization"
+    internal: true
+
+  - name: "Surgeon"
+    type: "Actor"
+    actor_type: "Individual"
+    internal: true
+
+  - name: "OR Staff"
+    type: "Actor"
+    actor_type: "Individual"
+    internal: true
+
+  - name: "Cloud Provider"
+    type: "Actor"
+    actor_type: "System Administrators"
+    internal: false
+
+  - name: "Hospital 1 IT"
+    type: "Actor"
+    actor_type: "System Administrators"
+    internal: true #check back
+
+  - name: "Support Consultants"
+    type: "Actor"
+    actor_type: "Consultant"
+    internal: false
+
+  - name: "Other Hospital"
+    type: "Actor"
+    actor_type: "System Administrators"
+    internal: false
+
+  - name: "Manufacturer Techs"
+    type: "Actor"
+    actor_type: "Consultants"
+    internal: true #check back
+
+
+boundaries: 
+  - name: "Cloud (Datastore)"
+    type: "Boundary"
+    elements:
+      - name: "EHR Datastore"
+    actors:
+      - name: "Cloud Provider"
+        physical_access: true
+      - name: "Hospital 1 IT"
+        physical_access: false
+      - name: "Support Consultants"
+        physical_access: false
+
+  - name: "Observers"
+    type: "Boundary"
+    elements:
+      - name: "Observer(s) Computer"
+    actors:
+      - name: "Observer"
+        physical_access: false
+      # - name: "Observer"    #include?
+      #   physical_access: true
+      - name: "Hospital 1 IT"
+        physical_access: false
+
+  - name: "Other Hospital"
+    type: "Boundary"
+    elements:
+      - name: "Surgeon Workstation (external)"
+    actors:
+      - name: "Consulting Surgeon"
+        physical_access: false
+      - name: "Other Hospital IT"
+        physical_access: true
+
+  - name: "Cloud (Technician)"
+    type: "Boundary"
+    elements:
+      - name: "Technician Workstation"
+    actors:
+      - name: "Manufacturer Techs"
+        physical_access: true
+
+  - name: "Internet"
+    type: "Boundary"
+    elements:
+      - name: "Internet"
+    actors:
+      - name: "Network Administrators"
+        physical_access: true
+
+  - name: "Hospital (internal)"
+    type: "Boundary"
+    elements:
+      - name: "Life Support/Monitoring Equipment"
+      - name: "Surgeon Workstation (internal)"
+      - name: "Hospital Infrastructure"
+    actors:
+      - name: "Hospital IT"
+        physical_access: true
+      - name: "Surgeon"
+        physical_access: true
+      - name: "OR Staff"
+        physical_access: true
+      - name: "Hospital 1 IT"
+        physical_access: false
+
+  - name: "Surgical Robot"
+    type: "Boundary"
+    elements:
+      - name: "Surgical Robot"
+    actors:
+      - name: "Manufacturer Techs"
+        physical_access: false
+
+
+
+flows:
+  - name: "Surgeon - Surgical Robot (internal)"
+    type: "WorkFlow"
+    src:
+      name: "Surgeon Workstation (internal)"
+    dst:
+      name: "Hospital Infrastructure"
+    path:
+      - name: "Surgical Robot"
+
+  - name: "Surgeon - Surgical Robot (external)"
+    type: "WorkFlow"
+    src:
+      name: "Surgeon Workstation (external)"
+    dst:
+      name: "Surgical Robot"
+    path:
+      - name: "Internet"
+      - name: "Hospital Infrastructure"
+
+  - name: "Observer Flow"
+    type: "WorkFlow"
+    src:
+      name: "Observer(s) Computer"
+    dst:
+      name: "Surgical Robot"
+    path:
+      - name: "Internet"
+      - name: "Hospital Infrastructure"
+
+  - name: "Patient Status Tracking (external)"
+    type: "WorkFlow"
+    src:
+      name: "Surgeon Workstation (external)"
+    dst:
+      name: "Life Support/Monitoring Equipment"
+    path:
+      - name: "Internet"
+      - name: "EHR Datastore"
+      - name: "Internet"
+      - name: "Hospital Infrastructure"
+
+  - name: "Patient Status Tracking (internal)"
+    type: "WorkFlow"
+    src:
+      name: "Surgeon Workstation (internal)"
+    dst:
+      name: "Life Support/Monitoring Equipment"
+    path:
+      - name: "Hospital Infrastructure"
+      - name: "Internet"
+      - name: "EHR Datastore"
+      - name: "Internet"
+      - name: "Hospital Infrastructure"
+    
+  - name: "WorkFlow: Manufacturer Technician"
+    type: "WorkFlow"
+    src:
+      name: "Technician Workstation"
+    dst:
+      name: "Surgical Robot"
+    path:
+      - name: "Internet"
+      - name: "Hospital Infrastructure"
+
+
+
+#NOTE: actors and workflows cannot have the same name

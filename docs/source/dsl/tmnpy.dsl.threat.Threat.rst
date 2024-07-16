@@ -1,7 +1,7 @@
-﻿tmnt.dsl.threat.Threat
-======================
+﻿tmnpy.dsl.threat.Threat
+=======================
 
-.. currentmodule:: tmnt.dsl.threat
+.. currentmodule:: tmnpy.dsl.threat
 
 .. autoclass:: Threat
 
@@ -16,6 +16,7 @@
       ~Threat.__init__
       ~Threat.add_child
       ~Threat.add_consequence
+      ~Threat.add_parent
       ~Threat.add_step
       ~Threat.remove_child
       ~Threat.remove_consequence
@@ -34,11 +35,9 @@
       ~Threat.children
       ~Threat.consequences
       ~Threat.desc
-      ~Threat.eid
       ~Threat.meta
       ~Threat.name
       ~Threat.parent
-      ~Threat.security_property
       ~Threat.threat_source
    
    

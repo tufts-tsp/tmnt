@@ -1,11 +1,12 @@
 import uuid
-from typing import Self, Tuple, List, Optional
+from typing import Self, Tuple, List, Optional, Set
+from collections import UserList
 
 
 class Element(object):
     """
-    The basic primitive of a threat model, which can be an asset, control,
-    flow, or threat.
+    The basic primitive of a threat model, which can be an `Asset`,
+    `Mitigation`, `Flow`, `Issue`, `Actor` or `Boundary`.
 
     Each element should be unique within the system, identified by it's name.
     Additionally, elements can have a description to help identify what the
@@ -15,19 +16,35 @@ class Element(object):
     Parameters
     ----------
     name : str
-        The name of the element
-    desc : str or None, default None
-        A short description about the element that helps to identify it's
-        purpose and role within the threat model.
+    desc : str, optional
 
     Attributes
     ----------
     name : str
-        The name of the element
-    desc : str or None, default None
-        A short description about the element that helps to identify it's
+        The name of the `Element`
+    desc : str
+        A short description about the `Element` that helps to identify it's
         purpose and role within the threat model.
-    children : List[Element], default []
+    children : Set[Element]
+        An unique set of elements that are children of the `Element`. These
+        will be elements that exist within the parent `Element`, such as a
+        server that has a datastore and a process.
+    parent : Element
+        The parent `Element` for this `Element`. The parent will be the `Element` that this `Element` exists within.
+
+    Methods
+    -------
+    add_child : Add a new child to the `Element`'s children
+    remove_child : Remove a child from the `Element`'s children
+
+    See Also
+    --------
+    :func:`tmnpy.dsl.Actor`
+    :func:`tmnpy.dsl.Asset`
+    :func:`tmnpy.dsl.Boundary`
+    :func:`tmnpy.dsl.Flow`
+    :func:`tmnpy.dsl.Issue`
+    :func:`tmnpy.dsl.Mitigation`
     """
 
     def __init__(
@@ -37,7 +54,7 @@ class Element(object):
     ):
         self.name = name
         self.desc = desc
-        self.__children = []
+        self.__children = set()
         self.__parent = None
 
     def __repr__(self):
@@ -47,14 +64,16 @@ class Element(object):
         return f"{type(self).__name__}({self.name})"
 
     def __eq__(self, value: object) -> bool:
-        if not isinstance(value, Element):
-            raise TypeError("Can only compare to tmnpy.dsl.Element")
         if (
-            self.name == value.name
+            isinstance(value, Element)
+            and self.name == value.name
             and type(self).__name__ == type(value).__name__
         ):
             return True
         return False
+
+    def __hash__(self):
+        return hash((type(self).__name__, self.name))
 
     @property
     def name(self) -> str:
@@ -64,99 +83,144 @@ class Element(object):
     @name.setter
     def name(self, val: str) -> None:
         if not isinstance(val, str):
-            raise ValueError("Element Name must be a string")
+            raise TypeError("Element Name must be a string")
         self.__name = val
 
     @property
-    def desc(self) -> str:
+    def desc(self) -> Optional[str]:
         """Description of the Element"""
         return self.__desc
 
     @desc.setter
     def desc(self, val: str | None) -> None:
-        if val == None:
-            val = "N/A"
-        if not isinstance(val, str):
-            raise ValueError("Element Description must be a string")
+        if not isinstance(val, str) and val != None:
+            raise TypeError("Element Description must be a string")
         self.__desc = val
 
     @property
     def parent(self) -> Self | None:
         """
-        Parent Elements for the Element
-
-        The parent(s) must be a different element (of any type) or it could be
-        None
+        Parent Element. The parent(s) must be a different element (or any child
+        type) or it could be None. When you set the parent it will also set
+        this element as a child of the parent. When you delete the parent,
+        this element will be removed as a child.
         """
         return self.__parent
 
-    def add_parent(self, parent: Self, assign_child: bool = True) -> None:
-        # If this assignment is from `add_child` it will be a tuple, and
-        # we shouldn't assign a child as this will cause issues - user could
-        # also specify using a tuple
+    @parent.setter
+    def parent(self, parent: Self) -> None:
         if not isinstance(parent, Element):
-            raise ValueError("Must be of type tmnpy.dsl.Element")
-        if assign_child:
-            parent.add_child(self, assign_parent=False)
-
-        if parent is self:
+            raise TypeError("A parent must be type tmnpy.dsl.element.Element")
+        if parent == self:
             err = f"{parent} is self, an element cannot be a parent of itself."
             raise ValueError(err)
-        if parent in self.__children:
+        if parent in self.children:
             err = f"{parent} cannot be both a child and parent of {self}."
             raise ValueError(err)
+        # if parent.parent != None:
+        #     raise ValueError("No grandparents allowed.")
         if self.__parent != None:
-            err = f"{self} already has a parent, {self.__parent}. Please remove if you want to replace it."
-            raise ValueError(err)
-        if parent.parent != None:
-            raise ValueError("No grandparents allowed.")
+            self.__parent.remove_child(self)
         self.__parent = parent
+        if self not in parent.children:
+            parent.add_child(self)
 
-    def remove_parent(self, remove_child=True) -> None:
-        if remove_child:
-            self.parent.remove_child(self, remove_parent=False)
+    @parent.deleter
+    def parent(self) -> None:
+        parent = self.__parent
         self.__parent = None
+        if isinstance(parent, Element) and self in parent.children:
+            parent.remove_child(self)
 
     @property
-    def children(self) -> List[Self]:
+    def children(self) -> Set[Self]:
         """
-        Children for the Element
+        Children Elements. Children can be of type Element (or any child type).
+        When you assigned children, this will be treated as an unique set of
+        Elements, i.e., a set.
 
-        Children can be any type of element, but they must be unique and an
-        element cannot be its own child.
+        See Also
+        --------
+        add_child : Add a new child to the Element's children
+        remove_child : Remove a child from the Element's children
         """
         return self.__children
 
-    def add_child(self, child: Self, assign_parent: bool = True) -> None:
-        if not isinstance(child, Element):
-            raise ValueError("Must be of type tmnpy.dsl.Element")
-        if assign_parent and child.parent != None:
-            raise AttributeError(
-                "A different parent has already been assigned"
-            )
-        elif assign_parent:
-            child.add_parent(self, False)
+    @children.setter
+    def children(self, children: List[Self] | Set[Self]) -> None:
+        if not isinstance(children, list) and not isinstance(children, set):
+            raise TypeError("Children must be a list or set of Elements")
+        for child in children:
+            if not isinstance(child, Element):
+                e = f"{child} must be type tmnpy.dsl.element.Element"
+                raise TypeError(e)
+            if child == self:
+                raise ValueError(f"{self} cannot be a child of itself")
+            if child == self.parent:
+                raise ValueError(f"{child} is parent of {self}")
+            if child.parent != self:
+                child.parent = self
+        self.__children = set(children)
 
-        if child is self:
-            err = f"{child} cannot be a child of itself"
-            raise AttributeError("An element cannot be a child of itself")
-        elif child is self.__parent:
-            err = f"{child} is already assigned as the parent of {self}"
-            raise AttributeError(err)
-        elif child.children != []:
-            err = (
-                f"{child} has children, meaning {self} would be a grandparent"
-            )
-            raise AttributeError(err)
-        elif child in self.__children:
-            err = f"{child} has already been assigned to {self}."
-            raise AttributeError(err)
-        self.__children.append(child)
+    @children.deleter
+    def children(self) -> None:
+        for child in self.__children:
+            del child.parent
+        self.__children = set()
 
-    def remove_child(self, child: Self, remove_parent: bool = True) -> None:
-        if child not in self.__children:
-            err = f"{child} has not been assigned to {self}."
-            raise AttributeError(err)
-        if remove_parent:
-            child.remove_parent(remove_child=False)
-        self.__children.remove(child)
+    def add_child(self, child: Self) -> None:
+        """add_child allows you to add a single child to an Element."""
+        children = self.children
+        children.add(child)
+        self.children = children
+
+    def remove_child(self, child: Self) -> None:
+        """remove_child allows you to remove a single child to an Element."""
+        children = self.children
+        children.remove(child)
+        self.children = children
+        if child.parent != None:
+            del child.parent
+
+
+class Elements(UserList):
+    def __init__(
+        self, initlist: Optional[Element | list[Element]] = None
+    ) -> None:
+        self.data = []
+        if initlist is not None:
+            if isinstance(initlist, list):
+                for d in initlist:
+                    self.append(d)
+            elif isinstance(initlist, Elements):
+                self.data[:] = initlist.data[:]
+            else:
+                self.append(initlist)
+        self.data = list(set(self.data))
+
+    def append(self, item: Element) -> None:
+        if not isinstance(item, Element):
+            raise TypeError(f"{item} is not type tmnpy.dsl.element.Element.")
+        for i in range(len(self.data)):
+            if self.data[i] == item:
+                raise ValueError(f"{item} is already in this list.")
+        super().append(item)
+        self.data = list(set(self.data))
+
+    def index(self, name: str, *args) -> int:
+        ctype = None
+        if args:
+            ctype = args[0]
+        for i in range(len(self.data)):
+            if name == self.data[i].name and ctype == None:
+                return i
+            elif name == self.data[i].name and ctype == type(self.data[i]):
+                return i
+        raise ValueError(f"{name} is not in list.")
+
+    def subset(self, element_type: type[Element]):
+        values = Elements()
+        for i in range(len(self.data)):
+            if element_type == type(self.data[i]):
+                values.append(self.data[i])
+        return values
