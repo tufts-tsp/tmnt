@@ -1,12 +1,20 @@
+from typing import Optional
 from .element import Element
 
 
-class Part:
+class Mitigation(Element):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+class Part(object):
     """
     needs documentation
     """
 
-    def __init__(self, id: str = None, prose: str = None) -> None:
+    def __init__(
+        self, id: Optional[str] = None, prose: Optional[str] = None
+    ) -> None:
         if not isinstance(id, str):
             raise ValueError("Part ID must be a string")
         self.__part_id = id
@@ -38,7 +46,7 @@ class Part:
         self.__part_name = name
 
 
-class Control(Element):
+class Control(Mitigation):
 
     """
     A control is a safegaurd or countermeasure prescribed for an information
@@ -52,25 +60,21 @@ class Control(Element):
     """
 
     def __init__(
-        self, id: str, title: str, desc: str = None, related: list = []
+        self,
+        cid: str,
+        name: str,
+        desc: Optional[str] = None,
+        related: list = [],
     ):
-        if not isinstance(id, str):
+        if not isinstance(cid, str):
             raise ValueError("Control ID must be a string")
-        self.__id = id
-
-        if not isinstance(title, str):
-            raise ValueError("Control title must be a string")
-        self.__title = title
-        self.__desc = desc
+        self.__cid = cid
         self.__related = related
+        super().__init__(name=name, desc=desc)
 
     @property
-    def id(self) -> str:
-        return self.__id
-
-    @property
-    def title(self) -> str:
-        return self.__title
+    def cid(self) -> str:
+        return self.__cid
 
     @property
     def parts(self) -> list[Part]:
@@ -155,6 +159,10 @@ class Control(Element):
             err = f"Phase must be from following: {','.join(phases)}."
             raise ValueError(err)
         self.__development_phase = phase
+
+    @property
+    def related(self):
+        return self.__related
 
 
 class Metadata:

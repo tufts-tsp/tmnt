@@ -1,3 +1,5 @@
+# Contributing
+
 - Please ensure that all code conforms to the [PEP 8 Standards](https://peps.python.org/pep-0008/). You should feel free to leverage tools such as [`black`](https://github.com/psf/black).
 - All objects must include detailed docstrings that conform to [PEP 257](https://peps.python.org/pep-0257/).
 - All commits should be signed, see this [Github article](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).

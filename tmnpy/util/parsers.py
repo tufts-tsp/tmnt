@@ -1,5 +1,111 @@
+import tmnpy.dsl as dsl
+from tmnpy.dsl import TM, Control, ControlCatalog, Data
+from tmnpy.dsl.control import Part, Metadata
+from tmnpy.dsl.threat import SecurityProperty
+from tmnpy.dsl.asset import Datastore
+
 import yaml
-from tmnpy.dsl.control import Control, ControlCatalog, Part, Metadata
+
+
+class Parser(object):
+    def load_yaml(self, file_path):
+        with open(file_path, "r") as file:
+            data = yaml.safe_load(file)
+        return data
+
+
+class TMNTParser(Parser):
+    def __init__(self, tm_name: str, yaml: str):
+        self.yaml = self.load_yaml(yaml)
+        self.tm = TM(tm_name)
+        self.results = []
+
+        if "actors" in self.yaml.keys():
+            for actor in self.yaml["actors"]:
+                elem_type, kwargs = self.parse_element(actor)
+                self.tm.actors.append(elem_type(**kwargs))
+        if "assets" in self.yaml.keys():
+            for asset in self.yaml["assets"]:
+                elem_type, kwargs = self.parse_component(asset)
+                self.tm.components.append(elem_type(**kwargs))
+        if "flows" in self.yaml.keys():
+            for flow in self.yaml["flows"]:
+                elem_type, kwargs = self.parse_component(flow)
+                self.tm.components.append(elem_type(**kwargs))
+        if "boundaries" in self.yaml.keys():
+            for boundary in self.yaml["boundaries"]:
+                elem_type, kwargs = self.parse_boundary(boundary)
+                self.tm.boundaries.append(elem_type(**kwargs)) 
+        
+    def find_name_in_tm(self, v):
+        for item in self.tm.components:
+            if v["name"] == item.name:
+                idx = self.tm.components.index(v["name"])
+                return self.tm.components[idx]
+        for item in self.tm.actors:
+            if v["name"] == item.name:
+                idx = self.tm.actors.index(v["name"])
+                return self.tm.actors[idx]
+
+    def parse_boundary(self, boundary):
+        boundary_type, kwargs = self.parse_element(boundary)
+        objs = {
+            k: v
+            for k, v in kwargs.items()
+            if type(v) != str and type(v) != bool
+        }
+        for k, v in objs.items():
+            if k == "elements":
+                elements = []
+                for component in v:
+                    elem = self.find_name_in_tm(component)
+                    elements.append(elem) 
+                v  = elements
+            elif k == "actors":
+                actors = []
+                for component in v:
+                    elem = self.find_name_in_tm(component)
+                    phys_access = component["physical_access"]
+                    actors.append((elem,phys_access)) 
+                v  = actors        
+            kwargs[k] = v
+        return boundary_type, kwargs
+
+    def parse_component(self, component):
+        component_type, kwargs = self.parse_element(component)
+        objs = {
+            k: v
+            for k, v in kwargs.items()
+            if type(v) != str and type(v) != bool
+        }
+        for k, v in objs.items():
+            if k == "security_property":
+                v = SecurityProperty(**v)
+            elif k == "data":
+                data_elems = []
+                for d in v:
+                    data_elems.append(Data(**d))
+                v = data_elems
+            elif k == "path":
+                path = []
+                for component in v:
+                    path.append(self.find_name_in_tm(component))
+                v = path
+            elif k in ["src", "dst"]:
+                v = self.find_name_in_tm(v)
+            elif k == "ds_type":
+                v = Datastore(**v)
+            elif k == "port":
+                pass
+            kwargs[k] = v
+        return component_type, kwargs
+
+    def parse_element(self, element):
+        if not isinstance(element, dict):
+            raise TypeError(f"Issue parsing {element}")
+        element_type = dsl.__dict__[element["type"]]
+        kwargs = {k: v for k, v in element.items() if k != "type"}
+        return element_type, kwargs
 
 
 class OSCALParser:
@@ -29,8 +135,8 @@ class OSCALParser:
             part_list.append(part)
 
         control = Control(
-            id=control_data["id"],
-            title=control_data["title"],
+            cid=control_data["id"],
+            name=control_data["title"],
             parts=part_list,
         )
 

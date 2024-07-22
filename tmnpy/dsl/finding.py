@@ -1,12 +1,15 @@
-from typing import Union
-
+from .element import Element, Elements
 from .component import Component
-from .control import Control
+from .control import Mitigation
 from .threat import Issue
 from .requirement import SecurityProperty, SafetyImpact
 
+from collections import UserList
+from typing import List
+import uuid
 
-class Finding:
+
+class Finding(Element):
     """
     A finding consists of a Component(s), the associated Issue(s) and the
     identified Control(s). An Issue may be resolved by one or more Controls, or
@@ -20,44 +23,45 @@ class Finding:
     ----------
     affected_components : Component or list (required)
     issues : Issue | list (required)
-    controls : Control | list, default None
-    relevance : str, default None
-    likelihood : str, default None
-    likelihood_event_occurence : str, default None
-    likelihood_adverse_event : str, default None
-    impact : str, default None
+    mitigations : Mitigation | list, default None
+    relevance : str, default "Not Evaluated"
+    likelihood : str, default "Not Evaluated"
+    likelihood_event_occurence : str, default "Not Evaluated"
+    likelihood_adverse_event : str, default "Not Evaluated"
+    impact : str, default "Not Evaluated"
     technical_impact : SecurityProperty, default SecurityProperty()
-    business_impact : str, default None
+    business_impact : str, default "Not Evaluated"
     safety_impact : SafetyImpact, default SafetyImpact()
     predispositions : list, default []
-    severity : str, default None
-    pervasiveness : str, default None
-    risk : str, default None
-    residual_risk : str, default None
+    severity : str, default "Not Evaluated"
+    pervasiveness : str, default "Not Evaluated"
+    risk : str, default "Not Evaluated"
+    residual_risk : str, default "Not Evaluated"
     """
 
     def __init__(
         self,
-        affected_components: Union[Component, list],
-        issues: Union[Issue, list],
-        controls: Union[Control, list] = None,
-        relevance: str = None,
-        likelihood: str = None,
-        likelihood_event_occurence: str = None,
-        likelihood_adverse_event: str = None,
-        impact: str = None,
+        affected_components: List[Component] | Component,
+        issues: List[Issue] | Issue,
+        mitigations: List[Mitigation] | Mitigation | None = None,
+        relevance: str = "Not Evaluated",
+        likelihood: str = "Not Evaluated",
+        likelihood_event_occurence: str = "Not Evaluated",
+        likelihood_adverse_event: str = "Not Evaluated",
+        impact: str = "Not Evaluated",
         technical_impact: SecurityProperty = SecurityProperty(),
-        business_impact: str = None,
+        business_impact: str = "Not Evaluated",
         safety_impact: SafetyImpact = SafetyImpact(),
         predispositions: list = [],
-        severity: str = None,
-        pervasiveness: str = None,
-        risk: str = None,
-        residual_risk: str = None,
+        severity: str = "Not Evaluated",
+        pervasiveness: str = "Not Evaluated",
+        risk: str = "Not Evaluated",
+        residual_risk: str = "Not Evaluated",
     ) -> None:
+        super().__init__(name=str(uuid.uuid4()))
         self.affected_components = affected_components
         self.issues = issues
-        self.controls = controls
+        self.mitigations = mitigations
         self.relevance = relevance
         self.predispositions = predispositions
         self.severity = severity
@@ -75,7 +79,6 @@ class Finding:
             "adverse_event": likelihood_adverse_event,
             "overall": likelihood,
         }
-        pass
 
     @property
     def impact(self) -> dict:
@@ -101,7 +104,9 @@ class Finding:
         return self.__impact["safety_impact"]
 
     @safety_impact.setter
-    def safety_impact(self, new: SafetyImpact = None, **kwargs) -> None:
+    def safety_impact(
+        self, new: SafetyImpact = SafetyImpact(), **kwargs
+    ) -> None:
         if new != None:
             self.__impact["safety_impact"] = new
         else:
@@ -120,3 +125,14 @@ class Finding:
                 err = f"{kwarg} not a valid likelihood key. Must be {[keys]}"
                 raise ValueError(err)
             self.__likelihood[kwarg] = val
+
+
+class Findings(Elements):
+    def append(self, item: Element) -> None:
+        if not isinstance(item, Finding):
+            raise TypeError(f"{item} is not of type tmnpy.dsl.Finding.")
+        for i in range(len(self.data)):
+            if self.data[i] == item:
+                raise ValueError(f"{item} is already in this list.")
+        super().append(item)
+        self.data = list(set(self.data))

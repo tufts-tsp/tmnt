@@ -1,7 +1,10 @@
-from .element import Element
+from .element import Element, Elements
 from .data import Data
 from .threat import Threat
 from .control import Control
+from .requirement import SecurityProperty
+
+from typing import List
 
 
 class Component(Element):
@@ -12,16 +15,24 @@ class Component(Element):
     threat model), i.e. assets and flows.
     """
 
+    __controls: list[Control]
+    __threats: list[Threat]
+    __data: list[Data]
+    __security_property: SecurityProperty
+
     def __init__(
-        self, name: str, desc: str = None, data_list: list[Data] | Data = []
+        self,
+        name: str,
+        desc: str = "N/A",
+        data: list[Data] | Data = [],
+        security_property: SecurityProperty = SecurityProperty(),
     ) -> None:
-        self.__controls: list[Control] = []
-        self.__threats: list[Threat] = []
-        self.__data: list[Data] = []
-        if type(data_list) == Data:
-            self.data = [data_list]
-        elif type(data_list) == list[Data]:
-            self.data = data_list
+        if isinstance(data, Data):
+            data = [data]
+        self.data = data
+        self.__threats = []
+        self.__controls = []
+        self.security_property = security_property
         super().__init__(name, desc)
 
     @property
@@ -39,20 +50,12 @@ class Component(Element):
     def add_data(self, val: Data) -> None:
         if not isinstance(val, Data):
             raise ValueError("Value must be a Data object")
-
         self.__data.append(val)
 
     def remove_data(self, val: Data) -> None:
-        if val is None:
-            raise ValueError("No data value specified to remove")
-
         if not isinstance(val, Data):
             raise ValueError("Value must be a Data object")
-
         self.__data.remove(val)
-
-    def add_data(self, val: Data) -> None:
-        self.__data.append(val)
 
     @property
     def threats(self) -> list[Threat]:
@@ -85,3 +88,26 @@ class Component(Element):
 
     def remove_control(self, control: Control) -> None:
         self.__controls.remove(control)
+
+    @property
+    def security_property(self) -> SecurityProperty:
+        return self.__security_property
+
+    @security_property.setter
+    def security_property(self, val: SecurityProperty) -> None:
+        if not isinstance(val, SecurityProperty):
+            raise ValueError(
+                "Security Property must be a SecurityProperty object"
+            )
+        self.__security_property = val
+
+
+class Components(Elements):
+    def append(self, item: Element) -> None:
+        if not isinstance(item, Component):
+            raise TypeError(f"{item} is not of type tmnpy.dsl.Component.")
+        for i in range(len(self.data)):
+            if self.data[i] == item:
+                raise ValueError(f"{item} is already in this list.")
+        super().append(item)
+        self.data = list(set(self.data))
