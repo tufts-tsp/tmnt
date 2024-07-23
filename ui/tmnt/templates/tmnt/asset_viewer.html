@@ -86,6 +86,15 @@
 
             <br>
             <button type="button" class="add_button" onclick="addWorkFlow()" disabled>Add Work Flow</button>
+
+            <br>
+
+            <h3>Trust Boundaries</h3>
+            <div id="adding_boundary"> 
+                <div style="display:none">Select assets on the right to add to a new trust boundary</div>
+                <button type="button" class="add_button" onclick="addingTrustBoundary()" disabled>Start Adding Assets</button>
+            </div>
+
         </div>
 
         <!-- Panel for adding threats -->
@@ -251,7 +260,12 @@
             <select name="workflow_dropdown" class="workflow_dropdown" id="workflow_dropdown" disabled>
                 <option value="invalid">Add a workflow first!</option>
             </select>
-            <button type="button" class="view_button" id="view_button" onclick="viewWorkflow()" disabled>View</button>
+            <button type="button" class="view_button" id="workflow_view" onclick="viewWorkflow()" disabled>View</button>
+            <h2 style="color: gray">Select a Trust Boundary: </h2>
+            <select name="boundary_dropdown" class="boundary_dropdown" id="boundary_dropdown" disabled>
+                <option value="invalid">Add a trust boundary first!</option>
+            </select>
+            <button type="button" class="view_button" id="boundary_view" onclick="viewBoundary()" disabled>View</button>
         </div>
     </div>
 </div>
@@ -265,6 +279,7 @@
     var total_nodes = 0;
     var links = [];
     var workflows = {};
+    var boundaries = {};
     var svg;
     var simulation;
     var dfd_svg_fraction = 0.75;
@@ -442,6 +457,24 @@
             .call(d3.drag().on("drag", dragged));
             // TODO maybe add a dragend that selects the node if the drag is tiny?
             // that way small drags are still registered as clicks for selection
+
+        // Change onclick if currently adding a trust boundary
+        if (document.getElementById("cancel_button")) {
+            node_group.on("click", function(d) {
+                let selected_node = d3.select(this).data()[0];
+                if (selected_node.selected) {
+                    d3.select(this).selectAll(".asset")
+                    .style("stroke", "black")
+                    .style("stroke-width", "1");
+                }
+                else {
+                    d3.select(this).selectAll(".asset")
+                    .style("stroke", "#3E8EDE")
+                    .style("stroke-width", "4");
+                }
+                selected_node.selected = !selected_node.selected;
+            });
+        }
 
         // ...attach a shape to that group...
         // (big switch statement to decide the proper shape for asset_type)
@@ -710,6 +743,15 @@
         // Transform dataflows
         svg.selectAll(".link_group").selectAll("text")
             .attr("transform", function(d) { return "translate("+ (d.source.x + d.target.x)/2 + "," + (d.source.y + d.target.y)/2 + ")"; });
+
+        // Transform trust boundaries
+        svg.selectAll(".boundary")
+            .attr("d", function(d) {
+                let boundaryName = d3.select(this).attr("boundaryName");
+                let assets = boundaries[boundaryName];
+                let jitter = d3.select(this).attr("jitter");
+                return calcBoundary(d, assets, jitter);
+            });
     }
 
     // Function that defines how node groups should behave when dragged.
@@ -796,14 +838,21 @@
         + "<select name=\"workflow_dropdown\" class=\"workflow_dropdown\" id=\"workflow_dropdown\" disabled>" 
         + "<option value=\"invalid\">Add a workflow first!</option>" 
         + "</select>"
-        + "<button type=\"button\" class=\"view_button\" id=\"view_button\" onclick=\"viewWorkflow()\" disabled>View</button>";
+        + "<button type=\"button\" class=\"view_button\" id=\"workflow_view\" onclick=\"viewWorkflow()\" disabled>View</button>"
+        + "<h2 style=\"color: gray\">Select a Trust Boundary: </h2>" 
+        + "<select name=\"boundary_dropdown\" class=\"boundary_dropdown\" id=\"boundary_dropdown\" disabled>" 
+        + "<option value=\"invalid\">Add a trust boundary first!</option>" 
+        + "</select>"
+        + "<button type=\"button\" class=\"view_button\" id=\"boundary_view\" onclick=\"viewBoundary()\" disabled>View</button>";
         updateWorkflowDropdown();
+        updateBoundaryDropdown();
     }
 
     // Create the options dropdown button when viewing an asset
     function createAssetOptions() {
         var assetID = document.getElementById("options").children[0].value;
         var options = document.getElementById("options").children[0].children[1];
+        var currNode = nodes[nodeIndex(assetID)];
 
         // creating the button to add new dataflows to the current asset
         var listItem = document.createElement('li');
@@ -829,7 +878,7 @@
         view_workflow.onclick = function() {
             var has_workflows = false;
             for (let components of Object.values(workflows)) {
-                if (components.includes(assetID)) {
+                if (components.includes(currNode)) {
                     has_workflows = true;
                 }
             }
@@ -838,7 +887,28 @@
             }
         }
         listItem.appendChild(view_workflow);
-        listItem.appendChild(createWorkflowList(assetID));
+        listItem.appendChild(createWorkflowList(currNode));
+        options.appendChild(listItem);
+
+        // creating the button to view trust boundaries with current asset
+        listItem = document.createElement('li');
+        listItem.id = "view_boundary";
+        var view_boundary = document.createElement('a');
+        view_boundary.href = "#";
+        view_boundary.innerHTML = "View trust boundary...";
+        view_boundary.onclick = function() {
+            var has_boundaries = false;
+            for (let assets of Object.values(boundaries)) {
+                if (assets.includes(currNode)) {
+                    has_boundaries = true;
+                }
+            }
+            if (!has_boundaries) {
+                alert("There are no trust boundaries with this asset!");
+            }
+        }
+        listItem.appendChild(view_boundary);
+        listItem.appendChild(createBoundaryList(currNode));
         options.appendChild(listItem);
 
         // creating nested delete dropdown menu
@@ -855,7 +925,7 @@
         remove_threat.href = "#";
         remove_threat.innerHTML = "Threat...";
         remove_threat.onclick = function() {
-            var threats = nodes[nodeIndex(assetID)].threats;
+            var threats = currNode.threats;
             if (threats.length == 0) {
                 alert("There are no threats added to this asset!");
                 return;
@@ -894,7 +964,7 @@
                         threats.splice(i, 1);
                     }
                 }
-                nodes[nodeIndex(assetID)].threats = threats;
+                currNode.threats = threats;
                 let options = document.getElementById("options")
                 options.style.display = "block"; 
                 svg.selectAll(".node_group").filter(d => d.id === assetID).dispatch('click').dispatch('click');
@@ -913,7 +983,7 @@
         remove_control.href = "#";
         remove_control.innerHTML = "Control...";
         remove_control.onclick = function() {
-            var controls = nodes[nodeIndex(assetID)].controls;
+            var controls = currNode.controls;
             if (controls.length == 0) {
                 alert("There are no controls added to this asset!");
                 return;
@@ -952,7 +1022,7 @@
                         controls.splice(i, 1);
                     }
                 }
-                nodes[nodeIndex(assetID)].controls = controls;
+                currNode.controls = controls;
                 let options = document.getElementById("options")
                 options.style.display = "block"; 
                 svg.selectAll(".node_group").filter(d => d.id === assetID).dispatch('click').dispatch('click');
@@ -1016,8 +1086,8 @@
                 var removed_workflows = false;
                 for (let i = 0; i < flows.length; i++) {
                     if (flow_checks[i].checked) {
-                        var source = links[flows[i]].source.id;
-                        var target = links[flows[i]].target.id;
+                        var source = links[flows[i]].source;
+                        var target = links[flows[i]].target;
                         for (let key of Object.keys(workflows)) {
                             var components = workflows[key];
                             if (components.includes(source) && components.indexOf(source) == components.indexOf(target) - 1) {
@@ -1028,7 +1098,7 @@
                     }
                 }
                 if (removed_workflows) {
-                    document.getElementById("view_workflow").replaceChild(createWorkflowList(assetID), document.getElementById("workflow_button"));
+                    document.getElementById("view_workflow").replaceChild(createWorkflowList(currNode), document.getElementById("workflow_button"));
                 }
 
                 // Remove selected dataflows
@@ -1058,7 +1128,7 @@
         del.href = "#";
         del.innerHTML = "Asset";
         del.onclick = function() {
-            if (!confirm("This will delete all dataflows and workflows connected to this asset. Continue?")) {
+            if (!confirm("This will delete all dataflows, workflows, and trust boundaries connected to this asset. Continue?")) {
                 return;
             }
             nodes.splice(nodeIndex(assetID), 1);
@@ -1081,10 +1151,23 @@
 
             // removing all workflows connected to this asset
             for (let key of Object.keys(workflows)) {
-                if (workflows[key].includes(assetID)) {
+                if (workflows[key].includes(currNode)) {
                     delete workflows[key];
                 }
             }
+
+            // removing all trust boundaries that include this asset
+            for (let boundary of Object.keys(boundaries)) {
+                if (boundaries[boundary].includes(currNode)) {
+                    svg.selectAll(".boundary").each(function(d) {
+                        if (boundary == d3.select(this).attr("boundaryName")) {
+                            d3.select(this).remove();
+                        }
+                    });
+                    delete boundaries[boundary];
+                }
+            }
+
             resetBottomBar();
         }
         asset_li.appendChild(del);
@@ -1120,10 +1203,10 @@
 
     // Helper function to create/update list of workflows to view in options 
     // dropdown menu
-    function createWorkflowList(assetID) {
+    function createWorkflowList(currNode) {
         var workflow_keys = [];
         for (let name of Object.keys(workflows)) {
-            if (workflows[name].includes(assetID)) {
+            if (workflows[name].includes(currNode)) {
                 workflow_keys.push(name);
             }
         }
@@ -1145,11 +1228,38 @@
         return workflow_list;
     }
 
+    // Helper function to create/update list of trust boundaries to view in 
+    // options dropdown menu
+    function createBoundaryList(currNode) {
+        var boundary_keys = [];
+        for (let name of Object.keys(boundaries)) {
+            if (boundaries[name].includes(currNode)) {
+                boundary_keys.push(name);
+            }
+        }
+        var boundary_list = document.createElement('ul');
+        boundary_list.id = "boundary_button";
+        for (let key of boundary_keys) {
+            var node_li = document.createElement('li');
+            var node_a = document.createElement('a');
+            node_a.href = "#";
+            node_a.innerHTML = key;
+            node_a.onclick = function() {
+                resetBottomBar();
+                document.getElementById("boundary_dropdown").selectedIndex = Object.keys(boundaries).indexOf(key) + 1;
+                viewBoundary();
+            }
+            node_li.appendChild(node_a);
+            boundary_list.appendChild(node_li);
+        }
+        return boundary_list;
+    }
+
     // Clears the workflow dropdown list, then regenerates them
-    // with the names of every existing element
+    // with the names of every existing workflow
     function updateWorkflowDropdown() {
         let workflow_dropdown = document.getElementById("workflow_dropdown");
-        let view_button = document.getElementById("view_button");
+        let view_button = document.getElementById("workflow_view");
 
         while (workflow_dropdown.options.length > 0) {
             workflow_dropdown.remove(0);
@@ -1167,6 +1277,32 @@
             var workflow_names = Object.keys(workflows);
             for (let workflow_name of workflow_names) {
                 workflow_dropdown.add(new Option(workflow_name));
+            }
+        }
+    }
+
+    // Clears the trust boundary dropdown list, then regenerates them
+    // with the names of every existing trust boundary
+    function updateBoundaryDropdown() {
+        let boundary_dropdown = document.getElementById("boundary_dropdown");
+        let view_button = document.getElementById("boundary_view");
+
+        while (boundary_dropdown.options.length > 0) {
+            boundary_dropdown.remove(0);
+        }
+
+        if (Object.keys(boundaries).length == 0) {
+            boundary_dropdown.add(new Option("Add a trust boundary first!", -1));
+            boundary_dropdown.disabled = true;
+            view_button.disabled = true;
+        }
+        else {
+            boundary_dropdown.add(new Option("Select a trust boundary...", -1));
+            boundary_dropdown.disabled = false;
+            view_button.disabled = false;
+            var boundary_names = Object.keys(boundaries);
+            for (let boundary_name of boundary_names) {
+                boundary_dropdown.add(new Option(boundary_name));
             }
         }
     }
@@ -1472,6 +1608,7 @@
         if (dataflow_name != null) {
             link_group
                 .append("text")
+                .attr("class", "dataflow_name")
                 .attr("x", 35)
                 .attr("y", (double_headed) ? 35 : 15) // In case of double-headed dataflow, push second label down
                                // TODO: probably can make this look much cleaner
@@ -1480,6 +1617,23 @@
                 .attr("fill", "black")
                 .style("font-size", "16pt")
                 .text(dataflow_name);
+        }
+
+        // Check if this new dataflow is an inter-trust boundary flow
+        for (let boundary of Object.keys(boundaries)) {
+            var assets = boundaries[boundary];
+            if ((assets.includes(nodes[source]) && !assets.includes(nodes[target])) || (assets.includes(nodes[target]) && !assets.includes(nodes[source]))) {
+                var jitter; 
+                if (d3.selectAll(".boundary").filter(function() {return d3.select(this).attr("boundaryName") === boundary;}).empty()) {
+                    jitter = (Math.random() * 0.3) + 0.1;
+                }
+                else {
+                    jitter = d3.selectAll(".boundary").filter(function() {
+                        return d3.select(this).attr("boundaryName") === boundary;
+                    }).attr("jitter");
+                }
+                appendTrustPath(link_group, boundary, jitter);
+            }
         }
 
         // Remove any links that need to be removed
@@ -1540,7 +1694,7 @@
         var removeButton = document.createElement('button');
         removeButton.id = "remove_button";
         removeButton.setAttribute("type", "button");
-        removeButton.classList.add("remove_button");
+        removeButton.classList.add("small_button");
         removeButton.innerHTML = "-";
         removeButton.setAttribute('onclick', 'removeComponent();');
         newDiv.appendChild(removeButton);
@@ -1561,7 +1715,7 @@
             var removeButton = document.createElement('button');
             removeButton.id = "remove_button";
             removeButton.setAttribute("type", "button");
-            removeButton.classList.add("remove_button");
+            removeButton.classList.add("small_button");
             removeButton.innerHTML = "-";
             removeButton.setAttribute('onclick', 'removeComponent();');
             divs[divs.length - 1].appendChild(removeButton);
@@ -1586,8 +1740,6 @@
         const components = [];
 
         for (let dropdown of comp_dropdowns) {
-            // var component_dropdown = "component_dropdown" + i;
-            // var selected = getDropdownValue(component_dropdown);
             var selected = dropdown.value;
 
             // Check that user has selected all components 
@@ -1596,16 +1748,16 @@
                 return;
             }
             // Check that user has not selected duplicate components 
-            if (components.includes(nodes[selected].id)) {
+            if (components.includes(nodes[selected])) {
                 alert("Do not include more than one of the same component!");
                 return; 
             }
-            components.push(nodes[selected].id);
+            components.push(nodes[selected]);
         }
 
         // Check that there's a dataflow between each element in the right order
         for (let i = 0; i < components.length - 1; i++) {
-            if (!links.find(link => link.source.id === components[i] && link.target.id === components[i + 1])) {
+            if (!links.find(link => link.source === components[i] && link.target === components[i + 1])) {
                 alert("There is no data flow from " + nodes[components[i]].asset_name + " to " + nodes[components[i + 1]].asset_name);
                 return;
             };
@@ -1631,14 +1783,24 @@
 
         // Prompt user for workflow name...
         var workflow_name = window.prompt("(Optional) Name this workflow:", "");
+        // Prevent duplicate names
+        while (Object.keys(workflows).includes(workflow_name)) {
+            workflow_name = window.prompt(workflow_name + " already exists. Choose a different name:", "");
+        }
 
         // Return from function if user cancels
         if (workflow_name === null || workflow_name === false)
             return;
-
+            
         // Set default workflow name if user does not name it 
+        var length = Object.keys(workflows).length + 1;
         if (workflow_name == "") {
-            workflow_name = "Workflow " + (Object.keys(workflows).length + 1);
+            workflow_name = "Workflow " + length;
+        }
+        // Prevent duplicate names
+        while (Object.keys(workflows).includes(workflow_name)) {
+            length++;
+            workflow_name = "Workflow " + length;
         }
         workflows[workflow_name] = components;
 
@@ -1649,8 +1811,10 @@
 
         // Update options button workflow list
         if (document.getElementById("view_workflow")) {
-            var curr_asset = document.getElementById("options").children[0].value;
-            document.getElementById("view_workflow").replaceChild(createWorkflowList(curr_asset), document.getElementById("workflow_button"));
+            var currNode = nodes[nodeIndex(document.getElementById("options").children[0].value)];
+            if (components.includes(currNode)) {
+                document.getElementById("view_workflow").replaceChild(createWorkflowList(currNode), document.getElementById("workflow_button"));
+            }
         }
     }
 
@@ -1676,7 +1840,7 @@
         
         // Selects and highlights the components of the workflow being viewed
         svg.selectAll(".node_group").each(function (d) {
-            if (components.some(i => i == d.id)) {
+            if (components.includes(d)) {
                 d3.select(this).selectAll(".asset")
                 .style("stroke", "#3E8EDE")
                 .style("stroke-width", "4");
@@ -1686,14 +1850,16 @@
         // Updates bottom bar to display order of components in workflow 
         let bottom_bar_html = "<h2>"+ selectedWorkflow +"</h2> <h3 style=\"font-weight:normal\">";
         for (let component of components) {
-            bottom_bar_html += "<span style=\"cursor: pointer\" id=\"comp " + component + "\">" + nodes[nodeIndex(component)].asset_name + "</span>";
+            bottom_bar_html += "<span style=\"cursor: pointer\" class=\"component\">" + component.asset_name + "</span>";
             if (component != components[components.length - 1]) {
                 bottom_bar_html += " &#8594 ";
             }
         }
-        bottom_bar_html += "</h3> <br> <button type=\"button\" class=\"unselect_button\" id=\"unselect_button\">Unselect Workflow</button>";
-        bottom_bar_html += "<br> <button type=\"button\" class=\"remove_workflow\" id=\"remove_workflow\">Remove Workflow</button>";
+        bottom_bar_html += "</h3> <br> <button type=\"button\" class=\"view_button\" id=\"edit_button\">Edit Components</button>";
+        bottom_bar_html += "<br> <button type=\"button\" class=\"view_button\" id=\"unselect_button\">Unselect Workflow</button>";
+        bottom_bar_html += "<br> <button type=\"button\" class=\"view_button\" id=\"remove_workflow\">Remove Workflow</button>";
         document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+        document.getElementById("edit_button").onclick = function () {editWorkflow(selectedWorkflow)};
         var unselect_button = document.getElementById("unselect_button");
         unselect_button.onclick = function () {
             // Unselect all nodes
@@ -1719,12 +1885,571 @@
         }
 
         // create buttons to select/view each asset in the workflow
-        for (let component of components) {
-            var compID = "comp " + component;
-            document.getElementById(compID).onclick = function() {
-                svg.selectAll(".node_group").filter(d => d.id === component).dispatch('click');
+        var spans = document.getElementsByClassName("component");
+        for (let i = 0; i < components.length; i++) {
+            spans[i].onclick = function() {
+                svg.selectAll(".node_group").filter(d => d === components[i]).dispatch('click');
             };
         }
+    }
+
+    // Allow users to add and remove assets from a workflow being viewed in the 
+    // details bar
+    function editWorkflow(selectedWorkflow) {
+        // Unselects all nodes
+        d3.selectAll(".asset")
+            .style("stroke", "black")
+            .style("stroke-width", "1");
+            
+        // Selects and highlights the components of the workflow being viewed
+        var components = workflows[selectedWorkflow];
+        svg.selectAll(".node_group").each(function (d) {
+            if (components.includes(d)) {
+                d3.select(this).selectAll(".asset")
+                    .style("stroke", "#3E8EDE")
+                    .style("stroke-width", "4");
+            }
+        });
+
+        let bottom_bar_html = "<h2>"+ selectedWorkflow +"</h2> <h3 style=\"font-weight:normal\"><select class=\"add_dropdown\" id=\"front_dropdown\" disabled><option value=\"invalid\">Add more assets first!</option></select><button class=\"small_button\" id=\"front_button\" disabled>+</button> &#8594 ";
+        for (let component of components) {
+            bottom_bar_html += "<span style=\"cursor: pointer\" class=\"component\">&#10006" + component.asset_name + "</span> &#8594 ";
+        }
+        bottom_bar_html += "<select class=\"add_dropdown\" id=\"back_dropdown\" disabled><option value=\"invalid\">Add more assets!</option></select><button class=\"small_button\" id=\"back_button\" disabled>+</button></h3> <br> <button type=\"button\" class=\"view_button\" id=\"done_button\">Done</button>";
+        document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+        
+        // Check if there are assets that can be added to workflow
+        if (nodes.length > workflows[selectedWorkflow].length) { 
+            document.getElementById("front_button").disabled = false;
+            document.getElementById("back_button").disabled = false;
+            var dropdowns = document.getElementsByClassName("add_dropdown");
+            for (let dropdown of dropdowns) {
+                dropdown.remove(0);
+                dropdown.disabled = false;
+                dropdown.selectedIndex = 0;
+                dropdown.add(new Option("Select an asset...", -1));
+            }
+            svg.selectAll(".node_group").filter(d => !components.includes(d)).each(function (d, i) {
+                for (let dropdown of dropdowns) {
+                    dropdown.add(new Option(
+                        d3.select(this).select(".asset_label").text(),
+                        nodeIndex(d.id)
+                    ))
+                }
+            });
+        }        
+        
+        // Creating button to add to front of a workflow
+        var front_dropdown = document.getElementById("front_dropdown");
+        document.getElementById("front_button").onclick = function() {
+            var selected = getDropdownValue("front_dropdown");
+            if (selected == -1) {
+                alert("Please select an asset to add to the front of the workflow.");
+                return;
+            }
+            var valid = false;
+            for (let link of links) {
+                if (link.source == nodes[selected] && link.target == components[0]) {
+                    valid = true;
+                }
+            }
+            if (!valid) {
+                alert("There is no dataflow from " + nodes[selected].asset_name + " to " + components[0].asset_name);
+                return;
+            }
+            components.unshift(nodes[selected]);
+            workflows[selectedWorkflow] = components;
+            editWorkflow(selectedWorkflow);
+        }
+
+        // Creating button to add to back of a workflow
+        var back_dropdown = document.getElementById("back_dropdown");
+        document.getElementById("back_button").onclick = function() {
+            var selected = getDropdownValue("back_dropdown");
+            var back = components[components.length - 1];
+            if (selected == -1) {
+                alert("Please select an asset to add to the back of the workflow.");
+                return;
+            }
+            var valid = false;
+            for (let link of links) {
+                if (link.source == back && link.target == nodes[selected]) {
+                    valid = true;
+                }
+            }
+            if (!valid) {
+                alert("There is no dataflow from " + back.asset_name + " to " + nodes[selected].asset_name);
+                return;
+            }
+            components.push(nodes[selected]);
+            workflows[selectedWorkflow] = components;
+            editWorkflow(selectedWorkflow);
+        }
+
+        // Making each existing component into a button to remove that 
+        // component from the workflow
+        var spans = document.getElementsByClassName("component");
+        for (let i = 1; i < components.length - 1; i++) {
+            spans[i].onclick = function() {
+                if (!confirm("This will delete " + selectedWorkflow + " because workflows cannot have breaks. Continue?")) {
+                    return;
+                }
+                delete workflows[selectedWorkflow];
+                // Unselect all nodes
+                for (let node of nodes) {
+                    node.selected = false;
+                }
+                d3.selectAll(".asset")
+                    .style("stroke", "black")
+                    .style("stroke-width", "1");
+                resetBottomBar();
+            };
+        }
+        spans[0].onclick = function() {
+            if (!confirm("Remove " + components[0].asset_name + " from this workflow?")) {
+                return;
+            }
+            components.shift();
+            workflows[selectedWorkflow] = components;
+            editWorkflow(selectedWorkflow);
+        }
+        spans[spans.length - 1].onclick = function() {
+            if (!confirm("Remove " + components[spans.length - 1].asset_name + " from this workflow?")) {
+                return;
+            }
+            components.pop();
+            workflows[selectedWorkflow] = components;
+            editWorkflow(selectedWorkflow);
+        }
+
+        // Allow user to stop editing the workflow
+        document.getElementById("done_button").onclick = function () {
+            resetBottomBar();
+            document.getElementById("workflow_dropdown").selectedIndex = Object.keys(workflows).indexOf(selectedWorkflow) + 1;
+            viewWorkflow();
+        }
+    }
+
+    function viewBoundary() {
+        // Check that user actually selects a trust boundary
+        if (getDropdownValue("boundary_dropdown") == -1) {
+            alert("Please select a trust boundary to view!");
+            return;
+        }
+
+        let dropdown = document.getElementById("boundary_dropdown");
+        var selectedBoundary = dropdown.options[dropdown.selectedIndex].text;
+        var assets = boundaries[selectedBoundary];
+
+        // Unselect any currently selected nodes
+        for (let node of nodes) {
+            node.selected = false;
+        }
+        d3.selectAll(".asset")
+            .style("stroke", "black")
+            .style("stroke-width", "1");
+        
+        // Selects and highlights the assets of the trust boundary being viewed
+        svg.selectAll(".node_group").each(function (d) {
+            if (assets.some(i => i.id == d.id)) {
+                d3.select(this).selectAll(".asset")
+                .style("stroke", "#3E8EDE")
+                .style("stroke-width", "4");
+            }
+        });
+
+        // Highlights all trust boundaries on inter-trust boundary flows
+        svg.selectAll(".node_group").each(function (d) {
+            if (assets.some(i => i.id == d.id)) {
+                d3.select(this).selectAll(".asset")
+                .style("stroke", "#3E8EDE")
+                .style("stroke-width", "4");
+            }
+        });
+
+        // Updates bottom bar to display order of components in workflow 
+        let bottom_bar_html = "<h2>"+ selectedBoundary +"</h2> <h3 style=\"font-weight:normal\">";
+        for (let asset of assets) {
+            bottom_bar_html += "<span style=\"cursor: pointer\" class=\"bound_asset\">" + asset.asset_name + "</span>";
+            if (asset != assets[assets.length - 1]) {
+                bottom_bar_html += ",  ";
+            }
+        }
+        bottom_bar_html += "</h3> <br> <button type=\"button\" class=\"view_button\" id=\"edit_button\">Edit assets</button>";
+        bottom_bar_html += "<br> <button type=\"button\" class=\"view_button\" id=\"unselect_button\">Unselect Trust Boundary</button>";
+        bottom_bar_html += "<br> <button type=\"button\" class=\"view_button\" id=\"remove_boundary\">Remove Trust Boundary</button>";
+        document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+        document.getElementById("edit_button").onclick = function () {editBoundary(selectedBoundary)};
+        var unselect_button = document.getElementById("unselect_button");
+        unselect_button.onclick = function () {
+            // Unselect all nodes
+            for (let node of nodes) {
+                node.selected = false;
+            }
+            d3.selectAll(".asset")
+                .style("stroke", "black")
+                .style("stroke-width", "1");
+            resetBottomBar();
+        }
+        var remove_button = document.getElementById("remove_boundary");
+        remove_button.onclick = function () {
+            // Unselect all nodes
+            for (let node of nodes) {
+                node.selected = false;
+            }
+            d3.selectAll(".asset")
+                .style("stroke", "black")
+                .style("stroke-width", "1");
+            svg.selectAll(".boundary").each(function(d) {
+                if (selectedBoundary == d3.select(this).attr("boundaryName")) {
+                    d3.select(this).remove();
+                }
+            });
+            delete boundaries[selectedBoundary];
+            resetBottomBar();
+        }
+
+        // create buttons to select/view each asset in the workflow
+        var spans = document.getElementsByClassName("bound_asset");
+        for (let i = 0; i < assets.length; i++) {
+            spans[i].onclick = function() {
+                svg.selectAll(".node_group").filter(d => d === assets[i]).dispatch('click');
+            };
+        }
+    }
+
+    // Allow users to add and remove assets from a trust boundary being viewed 
+    // in the details bar
+    function editBoundary(selectedBoundary) {
+        // Unselects all nodes
+        d3.selectAll(".asset")
+            .style("stroke", "black")
+            .style("stroke-width", "1");
+        // Selects and highlights the assets of the boundary being viewed
+        var assets = boundaries[selectedBoundary];
+        svg.selectAll(".node_group").each(function (d) {
+            if (assets.includes(d)) {
+                d3.select(this).selectAll(".asset")
+                    .style("stroke", "#3E8EDE")
+                    .style("stroke-width", "4");
+            }
+        });
+        
+        let bottom_bar_html = "<h2>"+ selectedBoundary +"</h2> <h3 style=\"font-weight:normal\">";
+        for (let asset of assets) {
+            bottom_bar_html += "<span style=\"cursor: pointer\" class=\"bound_asset\">&#10006" + asset.asset_name + ",  </span>";
+        }
+        bottom_bar_html += "<select class=\"add_dropdown\" id=\"add_dropdown\" disabled><option value=\"invalid\">Add more assets!</option></select><button class=\"small_button\" id=\"add_button\" disabled>+</button></h3> <br> <button type=\"button\" class=\"view_button\" id=\"done_button\">Done</button>";
+        document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+        
+        // Check if there are assets that can be added to trust boundary
+        var dropdown = document.getElementById("add_dropdown");
+        if (nodes.length > boundaries[selectedBoundary].length) { 
+            document.getElementById("add_button").disabled = false;
+            dropdown.remove(0);
+            dropdown.disabled = false;
+            dropdown.selectedIndex = 0;
+            dropdown.add(new Option("Select an asset...", -1));
+            svg.selectAll(".node_group").filter(d => !assets.includes(d)).each(function (d, i) {
+                dropdown.add(new Option(
+                    d3.select(this).select(".asset_label").text(),
+                    nodeIndex(d.id)
+                ))
+            });
+        }
+
+        // If there are inter-trust boundaries, retrieve jitter value, else 
+        // generate a new one
+        var jitter; 
+        if (d3.selectAll(".boundary").filter(function() {return d3.select(this).attr("boundaryName") === selectedBoundary;}).empty()) {
+            jitter = (Math.random() * 0.3) + 0.1;
+        }
+        else {
+            jitter = d3.selectAll(".boundary").filter(function() {
+                return d3.select(this).attr("boundaryName") === selectedBoundary;
+            }).attr("jitter");
+        }
+        
+        // Creating button to add assets to the trust boundary
+        document.getElementById("add_button").onclick = function() {
+            var selected = getDropdownValue("add_dropdown");
+            if (selected == -1) {
+                alert("Please select an asset to add to the trust boundary.");
+                return;
+            }
+            var valid = false;
+            for (let link of links) {
+                if ((link.source == nodes[selected] && assets.includes(link.target)) || (assets.includes(link.source) && link.target == nodes[selected])) {
+                    valid = true;
+                }
+            }
+            if (!valid) {
+                alert("There are no dataflows connecting " + nodes[selected].asset_name + " to a node in " + selectedBoundary);
+                return;
+            }
+            svg.selectAll(".link_group").filter(d => (d.source == nodes[selected] && assets.includes(d.target)) || (d.target == nodes[selected] && assets.includes(d.source))).selectAll(".boundary").filter(function() { return d3.select(this).attr("boundaryName") == selectedBoundary; }).remove();
+            var flow = d3.selectAll(".link_group").filter(d => (d.source == nodes[selected] && !assets.includes(d.target)) || (d.target == nodes[selected] && !assets.includes(d.source)));
+            assets.push(nodes[selected]);
+            boundaries[selectedBoundary] = assets;
+            appendTrustPath(flow, selectedBoundary, jitter);
+            editBoundary(selectedBoundary);
+        }
+
+        // Making each existing component into a button to remove that 
+        // component from the trust boundary
+        var spans = document.getElementsByClassName("bound_asset");
+        for (let i = 0; i < assets.length; i++) {
+            spans[i].onclick = function() {
+                var removed = assets[i];
+                assets.splice(i, 1);
+
+                if (!confirm("Remove " + removed.asset_name + " from this trust boundary?")) {
+                    return;
+                }
+                
+                if (!checkConnected(assets)) {
+                    if (!confirm("This will delete " + selectedBoundary + " because all assets must be connected. Continue?")) {
+                        return;
+                    }
+                    svg.selectAll(".boundary").each(function(d) {
+                        if (selectedBoundary == d3.select(this).attr("boundaryName")) {
+                            d3.select(this).remove();
+                        }
+                    });
+                    delete boundaries[selectedBoundary];
+                    // Unselect all nodes
+                    for (let node of nodes) {
+                        node.selected = false;
+                    }
+                    d3.selectAll(".asset")
+                        .style("stroke", "black")
+                        .style("stroke-width", "1");
+                    resetBottomBar();
+                    return;
+                }
+
+                svg.selectAll(".link_group").filter(d => (d.source == removed && !assets.includes(d.target)) || (d.target == removed && !assets.includes(d.source))).selectAll(".boundary").filter(function() { return d3.select(this).attr("boundaryName") == selectedBoundary; }).remove();
+
+                var flow = d3.selectAll(".link_group").filter(d => (d.source == removed && assets.includes(d.target)) || (d.target == removed && assets.includes(d.source)));
+                boundaries[selectedBoundary] = assets;
+                appendTrustPath(flow, selectedBoundary, jitter);
+                editBoundary(selectedBoundary);
+            };
+        }
+
+        // Allow user to stop editing the workflow
+        document.getElementById("done_button").onclick = function () {
+            resetBottomBar();
+            document.getElementById("boundary_dropdown").selectedIndex = Object.keys(boundaries).indexOf(selectedBoundary) + 1;
+            viewBoundary();
+        }
+    }
+
+    // Allow users to select assets to create a new trust boundary
+    function addingTrustBoundary() {
+        var div = document.getElementById("adding_boundary");
+        div.children[0].style.display = "block";
+        div.children[1].style.display = "none";
+        
+        // Unselect all nodes
+        for (let node of nodes) {
+            node.selected = false;
+        }
+        d3.selectAll(".asset")
+            .style("stroke", "black")
+            .style("stroke-width", "1");
+        resetBottomBar();
+        
+        // Allow selection of multiple nodes at a time
+        svg.selectAll(".node_group").on("click", function(d) {
+            let selected_node = d3.select(this).data()[0];
+            if (selected_node.selected) {
+                d3.select(this).selectAll(".asset")
+                .style("stroke", "black")
+                .style("stroke-width", "1");
+            }
+            else {
+                d3.select(this).selectAll(".asset")
+                .style("stroke", "#3E8EDE")
+                .style("stroke-width", "4");
+            }
+            selected_node.selected = !selected_node.selected;
+        });
+
+        var done_button = document.createElement("button");
+        done_button.innerHTML = "Done";
+        done_button.classList.add("add_button");
+        done_button.setAttribute("onclick", "createTrustBoundary();");
+        div.appendChild(done_button);
+
+        var cancel_button = document.createElement("button");
+        cancel_button.innerHTML = "Cancel";
+        cancel_button.id = "cancel_button";
+        cancel_button.classList.add("add_button");
+        cancel_button.setAttribute("onclick", "cancelAddingBoundary();");
+        div.appendChild(cancel_button);
+    }
+
+    // Adds a trust boundary containing the chosen elements
+    function createTrustBoundary() {
+        // Retrieve selected nodes
+        var assets = [];
+        for (let node of nodes) {
+            if (node.selected) {
+                assets.push(node);
+            }
+        }
+
+        if (assets.length < 1) {
+            alert("Please select at least one asset to create a trust boundary!");
+            return;
+        }
+        
+        if (!checkConnected(assets)) {
+            alert("All assets in a trust boundary must be connected by dataflows!");
+            return;
+        }
+
+        // Prevent duplicate trust boundaries
+        for (let boundary of Object.values(boundaries)) {
+            if (assets.length != boundary.length) {
+                continue;
+            }
+            let check_duplicate = true;
+            for (let i = 0; i < boundary.length; i++) {
+                if (boundary[i] != assets[i]) {
+                    check_duplicate = false;
+                    break;
+                }
+            }
+            if (check_duplicate) {
+                alert("Cannot add a duplicate trust boundary!");
+                cancelAddingBoundary();
+                return;
+            }
+        }
+
+        // Prompt user for trust boundary name...
+        var boundary_name = window.prompt("(Optional) Name this trust boundary:", "");
+        // Prevent duplicate names
+        while (Object.keys(boundaries).includes(boundary_name)) {
+            boundary_name = window.prompt(boundary_name + " already exists. Choose a different name:", "");
+        }
+
+        // Return from function if user cancels
+        if (boundary_name === null || boundary_name === false) {
+            cancelAddingBoundary();
+            return;
+        }
+        
+        // Set default boundary name if user does not name it 
+        var length = Object.keys(boundaries).length + 1;
+        if (boundary_name == "") {
+            boundary_name = "Trust Boundary " + length;
+        }
+        // Prevent duplicate names
+        while (Object.keys(boundaries).includes(boundary_name)) {
+            length++;
+            boundary_name = "Trust Boundary " + length;
+        }
+        boundaries[boundary_name] = assets;
+        cancelAddingBoundary();
+        var flow = d3.selectAll(".link_group").filter(d => (assets.includes(d.source) && !assets.includes(d.target)) || (assets.includes(d.target) && !assets.includes(d.source)));
+
+        var jitter = (Math.random() * 0.3) + 0.1;
+
+        appendTrustPath(flow, boundary_name, jitter);
+        if (document.getElementById("boundary_dropdown")) {
+            resetBottomBar();
+        }
+    }
+
+    // Helper function to append trust boundary to flows
+    function appendTrustPath(flow, boundary, jitter) {
+        var assets = boundaries[boundary];
+        flow.append("path")
+            .attr("class", "boundary")
+            .attr("stroke", "red")
+            .attr("stroke-dasharray", "5,5")
+            .attr("stroke-width", 4)
+            .attr("fill", "none")
+            .attr("boundaryName", boundary)
+            .attr("jitter", jitter)
+            .attr("d", function(d) { return calcBoundary(d, assets, jitter)})
+            .on("click", function() {
+                resetBottomBar();
+                document.getElementById("boundary_dropdown").selectedIndex = Object.keys(boundaries).indexOf(boundary) + 1;
+                viewBoundary();
+            });
+    }
+
+    // Helper function to check if an undirected path exists between each given 
+    // asset
+    function checkConnected(assets) {
+        let queue = [assets[0]];
+        let visited = [];
+        while (queue.length > 0) {
+            let curr = queue.pop();
+            visited.push(curr);
+            for (let link of links) {
+                if (curr == link.source && assets.includes(link.target) && !queue.includes(link.target) && !visited.includes(link.target)) {
+                    queue.push(link.target);
+                }
+                if (curr == link.target && assets.includes(link.source) && !queue.includes(link.source) && !visited.includes(link.source)) {
+                    queue.push(link.source);
+                }
+            }
+        }
+        return visited.length == assets.length;
+    }
+
+    // Helper function to find the coordinates of the trust boundary in 
+    // relation to the dataflow it's being appended to
+    function calcBoundary(d, assets, jitter) {
+        if (assets.includes(d.target)) {
+            inside = d.target;
+            outside = d.source;
+        }
+        else {
+            inside = d.source;
+            outside = d.target;
+        }   
+        
+        let length = 80; 
+        let x1 = inside.x;
+        let y1 = inside.y;
+        let x2 = outside.x;
+        let y2 = outside.y;
+
+        let midpointx = x1 + jitter * (x2 - x1);
+        let midpointy = y1 + jitter * (y2 - y1);
+        
+        let angle = Math.atan2(y2 - y1, x2 - x1);
+        let perpendicularAngle = angle + Math.PI / 2;
+        
+        // Compute the start and end points of the perpendicular line
+        let startX = midpointx - length * Math.cos(perpendicularAngle) / 2;
+        let startY = midpointy - length * Math.sin(perpendicularAngle) / 2;
+        let endX = midpointx + length * Math.cos(perpendicularAngle) / 2;
+        let endY = midpointy + length * Math.sin(perpendicularAngle) / 2;
+
+        return `M${startX},${startY}L${endX},${endY}`;
+    }
+
+    // Cancels the process of creating a new trust boundary
+    function cancelAddingBoundary() {
+        for (let node of nodes) {
+            node.selected = false;
+        }
+        d3.selectAll(".asset")
+        .style("stroke", "black")
+        .style("stroke-width", "1");
+        var div = document.getElementById("adding_boundary");
+        div.removeChild(div.children[3]);
+        div.removeChild(div.children[2]);
+        div.children[0].style.display = "none";
+        div.children[1].style.display = "block";
+        svg.selectAll(".node_group").on("click", clicked);
     }
 
 

@@ -226,9 +226,9 @@ ul {
     border-radius: 5px; 
 }
 
-.remove_button {
+.small_button {
     height: 20px;
-    width: 7%;
+    width: fit-content;
     background-color: white;
     border-radius: 5px; 
     border-color: grey;
@@ -237,19 +237,12 @@ ul {
 
 .view_button {
     height: 20px;
-    width: 10%;
+    width: fit-content;
+    display: inline-block;
     background-color: white;
     border-radius: 5px; 
     border-color: grey;
     font-weight: bold;
-}
-
-.unselect_button {
-    height: 20px;
-    background-color: white;
-    border-radius: 5px; 
-    border-color: grey;
-    display: inline;
 }
 
 .threat_textbox, .controls_textbox, .notes_textbox {
