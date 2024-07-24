@@ -792,8 +792,8 @@
                 bottom_bar_html += "No threats added...<br>"
             } else {
                 for (let threat of selected_node.threats) {
-                    bottom_bar_html += "&emsp;&emsp;" +
-                    threat.threat_title + " ("+ threat.threat_num + ")" + "<br>";
+                    bottom_bar_html += "<span style=\"cursor: pointer\" class=\"asset_threat\">&emsp;&emsp;" +
+                    threat.threat_title + " ("+ threat.threat_num + ")</span>" + "<br>";
                 }
             }
 
@@ -802,14 +802,40 @@
                 bottom_bar_html += "No controls added...<br>"
             } else {
                 for (let control of selected_node.controls) {
-                    bottom_bar_html +=
-                        control.control_title + "<br>";
+                    bottom_bar_html += "<span style=\"cursor: pointer\" class=\"asset_control\">&emsp;&emsp;" + 
+                        control.control_title + "</span><br>";
                 }
             }
         }
 
         // places information about the selected node in the bottom bar
         document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
+
+        var threats = document.getElementsByClassName("asset_threat");
+        for (let i = 0; i < threats.length; i++) {
+            threats[i].onclick = function () {
+                let bottom_bar = "<h2>" + selected_node.threats[i].threat_title + " ("+ selected_node.threats[i].threat_num + ")</h2>" + selected_node.asset_name + " | Threat";
+                bottom_bar += "<br><br><h3>Description</h3>&emsp;&emsp;" + selected_node.threats[i].threat_description + "<br><br>";
+                bottom_bar += "<button class=\"view_button\" id=\"threat_view_asset\">View " + selected_node.asset_name + "</button>"
+                document.getElementById("bottom_bar").innerHTML = bottom_bar;
+                document.getElementById("threat_view_asset").onclick = function () {
+                    svg.selectAll(".node_group").filter(d => d === selected_node).dispatch('click');
+                }
+            }
+        }
+
+        var controls = document.getElementsByClassName("asset_control");
+        for (let i = 0; i < controls.length; i++) {
+            controls[i].onclick = function () {
+                let bottom_bar = "<h2>" + selected_node.controls[i].control_title + "</h2>" + selected_node.asset_name + " | Control";
+                bottom_bar += "<br><br><h3>Description</h3>&emsp;&emsp;" + selected_node.controls[i].control_description + "<br><br>";
+                bottom_bar += "<button class=\"view_button\" id=\"control_view_asset\">View " + selected_node.asset_name + "</button>"
+                document.getElementById("bottom_bar").innerHTML = bottom_bar;
+                document.getElementById("control_view_asset").onclick = function () {
+                    svg.selectAll(".node_group").filter(d => d === selected_node).dispatch('click');
+                }
+            }
+        }
 
         // create the options button for the asset
         createAssetOptions();
