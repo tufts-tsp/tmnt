@@ -105,7 +105,7 @@
             <h3>Threats</h3>
             <div>
             <label for="threat_dropdown">Add to asset:</label>
-            <select name="threat_dropdown" id = "threat_dropdown" class="dropdown" disabled>
+            <select name="threat_dropdown" id="threat_dropdown" class="dropdown" onchange="showSuggestedThreats()" disabled>
                 <option value="invalid">Add an asset first!</option>
             </select>
 
@@ -122,7 +122,10 @@
             <br>
             <div id = "added_threats">
                 <h3>Potential Threats</h3>
-                [[ placeholder text ]]
+                <select id="threat_suggest_dropdown" disabled>
+                    <option value="invalid">Select an asset first!</option>
+                </select>
+                <div id="display_suggest"></div>
             </div>
         </div>
 
@@ -252,7 +255,7 @@
         <!-- svg is generated into here -->
         <svg id="dfd_svg"></svg>
         <!-- bottom bar is generated into here -->
-
+        <button type="button" class="collapse_button" id="collapse_button" onclick="collapse_bottom_bar()" style="cursor: s-resize">&#8595 Collapse</button>
         <div class="dfd_detailsbar" id="bottom_bar">        
             <h2 style="color: gray">No asset selected...</h2>
             <br>
@@ -282,7 +285,40 @@
     var boundaries = {};
     var svg;
     var simulation;
-    var dfd_svg_fraction = 0.75;
+    var dfd_svg_fraction = 0.72;
+    
+    // Hard coded suggested threats and controls
+    var threat_suggest = [{
+        "threat_num": 1,
+        "threat_title": "Spoofing",
+        "threat_description": "Pretending to be someone you're not.",
+        "findings": null
+    },
+    {
+        "threat_num": 2,
+        "threat_title": "Tampering",
+        "threat_description": "Modifying something on disk, network, memory, etc.",
+        "findings": null
+    },
+    {
+        "threat_num": 3,
+        "threat_title": "Repudiation",
+        "threat_description": "Claiming you didn't do something.",
+        "findings": null
+    }];
+    var control_suggest = [{
+        "control_title": "Authentication",
+        "control_description": "Authenticate user identities."
+    },
+    {
+        "control_title": "Digital Signatures",
+        "control_description": "Data validation and tamper detection."
+    },
+    {
+        "control_title": "Accountability",
+        "control_description": "Track all system activities."
+    }];
+        
 
     // Create an SVG on page load
     window.onload = function() {
@@ -338,15 +374,15 @@
         let area = d3.select('.dfd_assetview').node().getBoundingClientRect();
 
         // uncollapses if bottom bar is already collapsed
-        if (dfd_svg_fraction == 1) {
-            dfd_svg_fraction = 0.75;
-            document.getElementById("collapse_button").innerHTML = "&#8595";
+        if (dfd_svg_fraction == 0.98) {
+            dfd_svg_fraction = 0.72;
+            document.getElementById("collapse_button").innerHTML = "&#8595 Collapse";
             document.getElementById("collapse_button").style.cursor = "s-resize";
         }
         // collapses if bottom bar is uncollapsed
         else {
-            dfd_svg_fraction = 1;
-            document.getElementById("collapse_button").innerHTML = "&#8593";
+            dfd_svg_fraction = 0.98;
+            document.getElementById("collapse_button").innerHTML = "&#8593 Details...";
             document.getElementById("collapse_button").style.cursor = "n-resize";
         }
         svg = d3.select('#dfd_svg')
@@ -420,6 +456,54 @@
         }
     }
 
+    function showSuggestedThreats() {
+        var dropdown = document.getElementById("threat_suggest_dropdown");
+        var node_id = getDropdownValue("threat_dropdown");
+        if (node_id == -1) {
+            dropdown.disabled = true;
+            return;
+        }
+        while (dropdown.options.length > 0) {
+            dropdown.remove(0);
+        }
+        if (nodes.length == 0) {
+            dropdown.add(new Option("Add an asset first!", -1));
+        }
+        // else if (node_id == -1) {
+        //     dropdown.add(new Option("Select an asset first!", -1));
+        // }
+        else if (nodes[node_id].threats[0].length == 0) {
+            dropdown.add(new Option("No suggested threats for this asset", -1));
+        }
+        else {
+            dropdown.add(new Option("Select a threat...", -1));
+            dropdown.disabled = false;
+        }
+        
+        let i = 0;
+        for (let threat of nodes[node_id].threats[0]) {
+            dropdown.add(new Option(threat.threat_title, i));
+            i++;
+        }
+
+        dropdown.onchange = function () {
+            var threat_id = getDropdownValue("threat_suggest_dropdown");
+            var div = document.getElementById("display_suggest");
+            if (threat_id == -1) { 
+                div.style.display = "none";
+                return; 
+            }
+            var threat = nodes[node_id].threats[0][threat_id];
+            div.innerHTML = "<h4 style=\"margin:0; padding:0\">" + threat.threat_title + " ("+ threat.threat_num + ")</h4><h5 style=\"margin:0; padding:0\">Description</h5>&emsp;&emsp;" + threat.threat_description + "<br><button id=\"add_suggest\" style=\"background-color:white\">Add Threat</button>";
+            document.getElementById("add_suggest").onclick = function () {
+                nodes[node_id].threats[1].push(threat);
+                nodes[node_id].threats[0].splice(threat_id, 1);
+                alert("New threat (" + threat.threat_title + ") added to " + nodes[node_id].asset_name + " successsfully!");
+                showSuggestedThreats();
+            }
+        }
+    }
+
     // When an Asset button is clicked, this function creates a corresponding
     // node, then pushes it to the list of nodes for d3 to draw at a later step.
     function addElement(asset_type) {
@@ -433,14 +517,20 @@
         // Add new node to nodes array
         let rand_x = area.width/2 + Math.random()*5 - 10;
         let rand_y = area.height/2 + Math.random()*5 - 10;
+
+        // hard coded suggested threats and controls
+        var threats = [];
+        threats.push(threat_suggest);
+        var controls = [];
+        controls.push(control_suggest);
         nodes.push({
             "id": total_nodes,
             "asset_type": asset_type,
             "asset_name": asset_name,
             'x': rand_x,
             'y': rand_y,
-            "threats": [],
-            "controls": [],
+            "threats": threats,
+            "controls": controls,
             "selected": false
         })
         total_nodes++;
@@ -694,7 +784,7 @@
                 console.debug("ERROR: addElement() got name " + name + ", which isn't recognized as a shape");
                 break;
         }
-
+        
         // ...and attach name of asset, provided by user to that group
         node_group
             .append("text")
@@ -788,10 +878,17 @@
                 "<br><br>" +
                 "<h3>Threats</h3>";
 
-            if (selected_node.threats.length == 0) {
-                bottom_bar_html += "No threats added...<br>"
+            if (selected_node.threats[0].length > 0) {
+                bottom_bar_html += "<div class=\"dropdown\"><button class=\"dropbtn\">Suggested</button><div class=\"dropdown-content\">";
+                for (let threat of selected_node.threats[0]) {
+                    bottom_bar_html += "<a href=\"#\" class=\"asset_threat\">" +
+                    threat.threat_title + " ("+ threat.threat_num + ")</a>";
+                }
+                bottom_bar_html += "</div></div>";
+
+                // bottom_bar_html += "No threats added...<br>"
             } else {
-                for (let threat of selected_node.threats) {
+                for (let threat of selected_node.threats[1]) {
                     bottom_bar_html += "<span style=\"cursor: pointer\" class=\"asset_threat\">&emsp;&emsp;" +
                     threat.threat_title + " ("+ threat.threat_num + ")</span>" + "<br>";
                 }
@@ -812,16 +909,18 @@
         document.getElementById("bottom_bar").innerHTML = bottom_bar_html;
 
         var threats = document.getElementsByClassName("asset_threat");
+        // keep track of threat status
+        var status = 0;
+        var index = 0;
         for (let i = 0; i < threats.length; i++) {
             threats[i].onclick = function () {
-                let bottom_bar = "<h2>" + selected_node.threats[i].threat_title + " ("+ selected_node.threats[i].threat_num + ")</h2>" + selected_node.asset_name + " | Threat";
-                bottom_bar += "<br><br><h3>Description</h3>&emsp;&emsp;" + selected_node.threats[i].threat_description + "<br><br>";
-                bottom_bar += "<button class=\"view_button\" id=\"threat_view_asset\">View " + selected_node.asset_name + "</button>"
-                document.getElementById("bottom_bar").innerHTML = bottom_bar;
-                document.getElementById("threat_view_asset").onclick = function () {
-                    svg.selectAll(".node_group").filter(d => d === selected_node).dispatch('click');
-                }
+                displayThreat(selected_node, status, selected_node.threats[status][index]);
             }
+            if (selected_node.threats[status].length == i + 1) {
+                status++;
+                index = 0;
+            }
+            index++;
         }
 
         var controls = document.getElementsByClassName("asset_control");
@@ -839,6 +938,47 @@
 
         // create the options button for the asset
         createAssetOptions();
+    }
+
+    function displayThreat(node, status, threat) {
+        var bottom_bar = document.getElementById("bottom_bar");
+        bottom_bar.innerHTML = "<h2>" + threat.threat_title + " ("+ threat.threat_num + ")</h2>" + node.asset_name + " | ";
+        var button = document.createElement("button");
+        switch (status) {
+            case 0:
+            bottom_bar.innerHTML += "Suggested Threat";
+            button.classList.add("view_button");
+            button.id = "threat_button";
+            button.innerHTML = "Add to " + node.asset_name;
+            button.onclick = function () {
+                node.threats[0].splice(node.threats[0].indexOf(threat), 1);
+                node.threats[1].push(threat);
+                displayThreat(node, 1, threat);
+            }
+            case 1: 
+            bottom_bar.innerHTML += "Known Threat";
+            button.classList.add("view_button");
+            button.id = "threat_button";
+            button.innerHTML = "Assign a control";
+            button.onclick = function () {
+                if (node.controls[1].length == 0 && node.controls[2].length == 0) {
+                    alert("Create and add controls to " + node.asset_name + " first!");
+                    return;
+                }
+                
+                node.threats[1].splice(node.threats[0].indexOf(threat), 1);
+                node.threats[2].push(threat);
+                displayThreat(node, 1, threat);
+            }
+        }
+        if (threat.threat_description != "") {
+            bottom_bar_html += "<br><br><h3>Description</h3>&emsp;&emsp;" + threat.threat_description;
+        }
+        bottom_bar_html += "<br><br><button class=\"view_button\" id=\"threat_view_asset\">View " + node.asset_name + "</button>";
+        bottom_bar.innerHTML = bottom_bar_html;
+        document.getElementById("threat_view_asset").onclick = function () {
+            svg.selectAll(".node_group").filter(d => d === node).dispatch('click');
+        }
     }
 
     // Helper function that gets the value of an HTML dropdown given
@@ -993,6 +1133,7 @@
                 currNode.threats = threats;
                 let options = document.getElementById("options")
                 options.style.display = "block"; 
+
                 svg.selectAll(".node_group").filter(d => d.id === assetID).dispatch('click').dispatch('click');
             }
             new_ul.appendChild(document.createElement("br"));
@@ -2503,18 +2644,49 @@
             "findings": null
         })
 
-        alert("New threat (" + title + ") added to " + nodes[asset].asset_name + " succesfully!");
+        alert("New threat (" + title + ") added to " + nodes[asset].asset_name + " successfully!");
 
         let textboxes = document.getElementsByClassName("threat_textbox");
         for (let textbox of textboxes) {
             textbox.value = "";
         }
 
+        let node = svg.selectAll(".node_group").filter(d => d.id === nodes[asset].id);
         // update list in details bar
         var options = document.getElementById("options");
         if (options && options.children[0].value == nodes[asset].id) {
-            svg.selectAll(".node_group").filter(d => d.id === nodes[asset].id).dispatch('click').dispatch('click');
+            node.dispatch('click').dispatch('click');
         }
+
+        if (node.select('ellipse').empty()) {
+            console.log("null ellipse");
+            node.append('ellipse')
+            .attr('class', 'threat_badge')
+            .attr('cx', 25)  // Center x-coordinate
+            .attr('cy', -25) // Center y-coordinate
+            .attr('rx', function(d) {
+            // Calculate half-width based on the number of digits
+                return Math.max(10 + (Math.log10(nodes[asset].threats.length) - 1) * 5, 10);
+            })
+            .attr('ry', 10) //] Fixed half-height
+            .style('fill', 'red');
+
+            node.append('text')
+                .attr('class', 'num_threats')
+                .attr('x', 25)   // Same position as the circle's center
+                .attr('y', -25)  // Same position as the circle's center
+                .attr('text-anchor', 'middle')
+                .attr('alignment-baseline', 'central')
+                .attr('fill', 'white')
+                .style('font-size', '10pt')  // Adjust size as needed
+                .text(nodes[asset].threats.length);
+            
+        }
+        node.select(".num_threats").text(nodes[asset].threats.length);
+        node.select(".threat_badge").attr('rx', function(d) {
+            // Calculate half-width based on the number of digits
+            return Math.max(10 + (Math.log10(nodes[asset].threats.length) - 1) * 5, 10);
+        });
     }
 
     // Add a control to an existing DFD node.
