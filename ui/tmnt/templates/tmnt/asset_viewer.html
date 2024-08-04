@@ -481,6 +481,8 @@
             dropdown.add(new Option("Select an asset first!", -1));
             return;
         }
+
+        // Update bottom bar
         svg.selectAll(".node_group").filter(d => d === nodes[node_id]).dispatch('click').dispatch('click');
         updateThreatBadges(nodes[node_id]);
 
@@ -502,6 +504,7 @@
             i++;
         }
 
+        // Display selected suggested threat
         dropdown.onchange = function () {
             var threat_id = getDropdownValue("threat_suggest_dropdown");
             var div = document.getElementById("display_suggested_threat");
@@ -512,8 +515,9 @@
             var threat = nodes[node_id].threats[0][threat_id];
             div.innerHTML = "<h4 style=\"margin:0; padding:0\">" + threat.threat_title + " ("+ threat.threat_num + ")</h4><h5 style=\"margin:0; padding:0\">Description</h5>&emsp;&emsp;" + threat.threat_description + "<br><button id=\"add_suggested_threat\" style=\"background-color:white\">Add Threat</button><br><button id=\"ignore_suggested_threat\" style=\"background-color:white\">Ignore Threat</button>";
             document.getElementById("add_suggested_threat").onclick = function () {
-                nodes[node_id].threats[1].push(threat);
+                threat.threat_status = "Known";
                 nodes[node_id].threats[0].splice(threat_id, 1);
+                nodes[node_id].threats[1].push(threat);
                 alert("New threat (" + threat.threat_title + ") added to " + nodes[node_id].asset_name + " successfully!");
                 div.innerHTML = "";
                 showSuggestedThreats();
@@ -539,6 +543,8 @@
             dropdown.add(new Option("Select an asset first!", -1));
             return;
         }
+
+        // Update bottom bar
         svg.selectAll(".node_group").filter(d => d === nodes[node_id]).dispatch('click').dispatch('click');
 
         while (dropdown.options.length > 0) {
@@ -559,6 +565,7 @@
             i++;
         }
 
+        // Display selected suggested control
         dropdown.onchange = function () {
             var control_id = getDropdownValue("control_suggest_dropdown");
             var div = document.getElementById("display_suggested_control");
@@ -569,6 +576,7 @@
             var control = nodes[node_id].controls[0][control_id];
             div.innerHTML = "<h4 style=\"margin:0; padding:0\">" + control.control_title + "</h4><h5 style=\"margin:0; padding:0\">Description</h5>&emsp;&emsp;" + control.control_description + "<br><button id=\"add_suggested_control\" style=\"background-color:white\">Add Control</button><br><button id=\"ignore_suggested_control\" style=\"background-color:white\">Ignore Control</button>";
             document.getElementById("add_suggested_control").onclick = function () {
+                control.control_status = "Known";
                 nodes[node_id].controls[1].push(control);
                 nodes[node_id].controls[0].splice(control_id, 1);
                 alert("New control (" + control.control_title + ") added to " + nodes[node_id].asset_name + " successfully!");
@@ -600,11 +608,9 @@
         let rand_x = area.width/2 + Math.random()*5 - 10;
         let rand_y = area.height/2 + Math.random()*5 - 10;
 
-        // hard coded suggested threats and controls
-        var threats = [[], [], []];
-        threats[0] = threats[0].concat(threat_suggest);
-        var controls = [[], [], []];
-        controls[0] = controls[0].concat(control_suggest);
+        // deep cloning hard coded suggested threats and controls
+        var threats = [[JSON.parse(JSON.stringify(threat_suggest[0])), JSON.parse(JSON.stringify(threat_suggest[1])), JSON.parse(JSON.stringify(threat_suggest[2]))], [], []];
+        var controls = [[JSON.parse(JSON.stringify(control_suggest[0])), JSON.parse(JSON.stringify(control_suggest[1])), JSON.parse(JSON.stringify(control_suggest[2]))], [], []];
         nodes.push({
             "id": total_nodes,
             "asset_type": asset_type,
@@ -1078,6 +1084,7 @@
             bottom_bar.innerHTML += "<br><h3>Description</h3>&emsp;&emsp;" + threat.threat_description + "<br>";
         }
         switch (status) {
+            // if displaying a suggested threat
             case 0:
                 bottom_bar.innerHTML += "<br><button class=\"view_button\" id=\"add_threat\">Add to " + node.asset_name + "</button><br><button class=\"view_button\" id=\"ignore_threat\">Ignore Suggestion</button><br>";
                 setTimeout(function() {
@@ -1100,6 +1107,7 @@
                     }
                 }, 0);
                 break;
+            // if displaying a mitigated threat
             case 2: 
                 bottom_bar.innerHTML += "<br><h3>Controls</h3>";
                 var display = document.createElement("div");
@@ -1117,7 +1125,7 @@
                         editAssignedControls(node, threat);
                     }
                 }, 0);
-                
+            // if displaying a known threat
             case 1: 
                 bottom_bar.innerHTML += "<br><span>Assign a control: </span><select id=\"assign_control\" disabled><option value=\"invalid\">Add more controls first!</option></select><button id=\"mitigate_threat\" disabled>+</button><br>";
                 var dropdown = document.getElementById("assign_control");
@@ -1143,15 +1151,15 @@
                         }
                         threat.controls.push(controls[selected]);
                         if (threat.threat_status == "Known") {
-                            threat.threat_status = "Mitigated";
                             node.threats[1].splice(node.threats[1].indexOf(threat), 1);
+                            threat.threat_status = "Mitigated";
                             node.threats[2].push(threat);
                             updateThreatBadges(node);
                         }
                         controls[selected].threats.push(threat);
                         if (controls[selected].control_status == "Known") {
-                            controls[selected].control_status = "Mitigated";
                             node.controls[1].splice(node.controls[1].indexOf(controls[selected]), 1);
+                            controls[selected].control_status = "Mitigated";
                             node.controls[2].push(controls[selected]);
                         }
                         displayThreat(node, 2, threat);
@@ -1159,6 +1167,7 @@
                 }, 0);
                 break;
         }
+        // Button to return to viewing current node
         bottom_bar.innerHTML += "<button class=\"view_button\" id=\"threat_view_asset\">View " + node.asset_name + "</button>";
         document.getElementById("threat_view_asset").onclick = function () {
             svg.dispatch('click');
@@ -1178,23 +1187,23 @@
         }
         document.getElementById("edit_controls").style.display = "none";
         var status = 2;
-        for (let i = 0; i < threat.controls.length; i++) {
+        for (let i = threat.controls.length - 1; i >= 0; i--) {
             setTimeout(function() { 
                 document.getElementsByClassName("del_control")[i].onclick = function () {
                     var control = threat.controls[i];
                     if (!confirm("Remove " + control.control_title + " from " + threat.threat_title + "?")) {
                         return;
                     }
-                    threat.controls.splice(threat.controls.indexOf(control), 1);
+                    threat.controls.splice(i, 1);
                     control.threats.splice(control.threats.indexOf(threat), 1);
                     if (control.threats.length == 0) {
-                        control.control_status = "Known";
                         node.controls[2].splice(node.controls[2].indexOf(control), 1);
+                        control.control_status = "Known";
                         node.controls[1].push(control);
                     }
                     if (threat.controls.length == 0) {
-                        threat.threat_status = "Known";
                         node.threats[2].splice(node.threats[2].indexOf(threat), 1);
+                        threat.threat_status = "Known";
                         node.threats[1].push(threat);
                         updateThreatBadges(node);
                         status = 1;
@@ -1227,6 +1236,7 @@
             bottom_bar.innerHTML += "<br><h3>Description</h3>&emsp;&emsp;" + control.control_description + "<br>";
         }
         switch (status) {
+            // if displaying a suggested control
             case 0:
                 bottom_bar.innerHTML += "<br><button class=\"view_button\" id=\"add_control\">Add to " + node.asset_name + "</button><br><button class=\"view_button\" id=\"ignore_control\">Ignore Suggestion</button><br>";
                 setTimeout(function() {
@@ -1247,6 +1257,7 @@
                     }
                 }, 0);
                 break;
+            // if displaying a mitigated control
             case 2: 
                 bottom_bar.innerHTML += "<br><h3>Threats</h3>";
                 var display = document.createElement("div");
@@ -1264,6 +1275,7 @@
                         editAssignedThreats(node, control);
                     }
                 }, 0);
+            // if displaying a known control
             case 1: 
                 bottom_bar.innerHTML += "<br><span>Assign a threat: </span><select id=\"assign_control\" disabled><option value=\"invalid\">Add more threats first!</option></select><button id=\"mitigate_threat\" disabled>+</button><br>";
                 var dropdown = document.getElementById("assign_control");
@@ -1289,14 +1301,14 @@
                         }
                         control.threats.push(threats[selected]);
                         if (control.control_status == "Known") {
-                            control.control_status = "Mitigated";
                             node.controls[1].splice(node.controls[1].indexOf(control), 1);
+                            control.control_status = "Mitigated";
                             node.controls[2].push(control);
                         }
                         threats[selected].controls.push(control);
                         if (threats[selected].threat_status == "Known") {
-                            threats[selected].threat_status = "Mitigated";
                             node.threats[1].splice(node.threats[1].indexOf(threats[selected]), 1);
+                            threats[selected].threat_status = "Mitigated";
                             node.threats[2].push(threats[selected]);
                             updateThreatBadges(node);
                         }
@@ -1305,6 +1317,7 @@
                 }, 0);
                 break;
         }
+        // Button to return to viewing current node
         bottom_bar.innerHTML += "<button class=\"view_button\" id=\"control_view_asset\">View " + node.asset_name + "</button>";
         document.getElementById("control_view_asset").onclick = function () {
             svg.dispatch('click');
@@ -1324,24 +1337,24 @@
         }
         document.getElementById("edit_threats").style.display = "none";
         var status = 2;
-        for (let i = 0; i < control.threats.length; i++) {
+        for (let i = control.threats.length - 1; i >= 0; i--) {
             setTimeout(function() { 
                 document.getElementsByClassName("del_threat")[i].onclick = function () {
                     var threat = control.threats[i];
                     if (!confirm("Remove " + threat.threat_title + " from " + control.control_title + "?")) {
                         return;
                     }
-                    control.threats.splice(control.threats.indexOf(threat), 1);
+                    control.threats.splice(i, 1);
                     threat.controls.splice(threat.controls.indexOf(control), 1);
                     if (threat.controls.length == 0) {
+                        node.threats[2].splice(node.threats[2].indexOf(threat), 1);
                         threat.threat_status = "Known";
-                        node.threats[2].splice(node.controls[2].indexOf(threat), 1);
                         node.threats[1].push(threat);
                         updateThreatBadges(node);
                     }
                     if (control.threats.length == 0) {
-                        control.control_status = "Known";
                         node.controls[2].splice(node.controls[2].indexOf(control), 1);
+                        control.control_status = "Known";
                         node.controls[1].push(control);
                         status = 1;
                     }
@@ -1517,13 +1530,15 @@
                         }
                         else if (threats[i].threat_status == "Mitigated") {
                             mitigated.splice(mitigated.indexOf(threats[i]), 1);
-                            for (let control of currNode.controls[2]) {
-                                if (control.threats.includes(threats[i])) {
-                                    control.threats.splice(control.threats.indexOf(threats[i]), 1);
-                                    if (control.threats.length == 0) {
-                                        control.control_status == "Known";
-                                        currNode.controls[2].splice(currNode.controls[2].indexOf(control), 1);
-                                        currNode.controls[1].push(control);
+                            // checking mitigated controls with deleted threat
+                            var controls = currNode.controls[2];
+                            for (let j = controls.length - 1; j >= 0; j--) {
+                                if (controls[j].threats.includes(threats[i])) {
+                                    controls[j].threats.splice(controls[j].threats.indexOf(threats[i]), 1);
+                                    if (controls[j].threats.length == 0) {
+                                        controls[j].control_status == "Known";
+                                        currNode.controls[1].push(controls[j]);
+                                        controls.splice(j, 1);
                                     }
                                 }
                             }
@@ -1594,13 +1609,15 @@
                         }
                         else if (controls[i].control_status == "Mitigated") {
                             mitigated.splice(mitigated.indexOf(controls[i]), 1);
-                            for (let threat of currNode.threats[2]) {
-                                if (threat.controls.includes(controls[i])) {
-                                    threat.controls.splice(threat.controls.indexOf(controls[i]), 1);
-                                    if (threat.controls.length == 0) {
-                                        threat.threat_status == "Known";
-                                        currNode.threats[2].splice(currNode.threats[2].indexOf(threat), 1);
-                                        currNode.threats[1].push(threat);
+                            // checking mitigated threats with deleted control
+                            var threats = currNode.threats[2];
+                            for (let j = threats.length - 1; j >= 0; j--) {
+                                if (threats[j].controls.includes(controls[i])) {
+                                    threats[j].controls.splice(threats[j].controls.indexOf(controls[i]), 1);
+                                    if (threats[j].controls.length == 0) {
+                                        threats[j].threat_status == "Known";
+                                        currNode.threats[1].push(threats[j]);
+                                        threats.splice(j, 1);
                                     }
                                 }
                             }
