@@ -155,7 +155,6 @@ class Datastore(Asset):
     def __init__(
         self,
         name,
-        # machine: Machine | str = Machine.NA,
         ds_type: DATASTORE_TYPE | str = DATASTORE_TYPE.UNKNOWN,
         **kwargs,
     ):
