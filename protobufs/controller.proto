@@ -41,8 +41,21 @@ message Empty {
 
 }
 
+message SuggestedAsset{
+
+    ACTOR = 0
+    SERVER = 1
+    DATASTORE = 2
+    LAMBDA = 3
+    PROCESS = 4
+    EXTERNAL_ENTITY = 5
+
+}
+
 message Event {
-    Event_Type event_type = 1;
+    //Event_Type event_type = 1;
+    SuggestedAsset event_element = 1
+    bool changed = 2
 }
 
 message Threat {
@@ -211,7 +224,7 @@ service Controller {
     rpc RemoveActor (RemoveActorRequest) returns (Status);
     rpc GetActors (Empty) returns (GetActorsResponses);
 
-    rpc NewEvent (Event) returns (Status);
+    //rpc NewEvent (Event) returns (Status);
 
-    rpc GetSuggestions (Empty) returns (GetSuggestionsResponse);
+    rpc GetSuggestions (Event) returns (GetSuggestionsResponse);
 }

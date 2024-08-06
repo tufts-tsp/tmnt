@@ -204,13 +204,26 @@ class ControllerService(controller_pb2_grpc.ControllerServicer):
         status = Status(Status_Code.SUCCESS)
         return status
 
+    """
     def NewEvent(self, request, context):
         self.controller.natural_engine.event(request.event_type)
         status = Status(Status_Code.SUCCESS)
         return status
 
+    """
+
     def GetSuggestions(self, request, context):
         # Get self.natural_engine.currentFocus and use that to filter threats and mitigations and put them into a list to return as a GetSuggestionsResponse message
+        if request.changed == True or self.the_engine.transtion_matrix == []:
+
+            the_assets_length = len(self.controller.tm.enumerate_assets()); the_list = self.controller.tm.enumerate_assets()
+
+            self.the_engine.transition_matrix = self.the_engine.newTransitionMatrix(self.controller.tm.enumerate_assets(), self.controller.tm.enumerate_flows())
+
+        self.controller.natural_engine.event(request.event_element)
+
+        self.the_engine.event(request.event_element)
+
         suggestions = GetSuggestionsResponse([])
         return suggestions
 
@@ -221,6 +234,7 @@ def serve():
     controller_pb2_grpc.add_ControllerServicer_to_server(
         ControllerService(controller), server
     )
+    the_engine = NaturalEngine("Natural Engine")
     server.add_insecure_port("[::]:50051")
     server.start()
     server.wait_for_termination()

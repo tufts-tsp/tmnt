@@ -3,10 +3,11 @@ import time
 import numpy as np
 import random
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.linear_model import PoissonRegressor
 from sklearn.model_selection import train_test_split
-from math import e
+from math import e 
+from tmnpy.dsl.flow import DataFlow, WorkFlow
+
 
 
 
@@ -62,9 +63,12 @@ class NaturalEngine(Engine):
         name: str,
         currentFocus: str = "None",
         desc: str = "N/A",
+        transition_matrix: list = [],
     ):
         self.currentFocus = currentFocus
         self.previous_events = []
+        self.asset_dict = {}
+        self.transition_matrix = transition_matrix
         self.lastevent = time.time()
         super().__init__(name, desc)
 
@@ -73,67 +77,122 @@ class NaturalEngine(Engine):
     def event(self, event_type: str):
         # Get the event and check what type it is, then plug into markov model to predict new focus.  Update list of previous events to include this.
         
-        transition_matrix = self.MLModel()
+        #transition_matrix = self.MLModel()
+
+        new_matrix = self.transition_matrix
+
+        largest = new_matrix[self.asset_dict[event_type]][0]; loclist = []
+
+        for i in new_matrix[self.asset_dict[event_type]]:
+            if largest < i:
+                largest = i
+                
+        index = 0
+        for i in new_matrix[self.asset_dict[event_type]]:
+            if i == largest:
+                loclist.append(index)
+            
+            index += 1
+
+        isTrue = False
+
+        for i in range(loclist):
+            if i == self.asset_dict[event_type]:
+                isTrue = True
+
+        if isTrue == True:
+
+            second_largest = new_matrix[self.asset_dict[event_type]][0]
+
+            for i in new_matrix[self.asset_dict[event_type]]:
+                if second_largest < i and i != largest:
+                    second_largest = i
+        
+            theindextwo = 0
+            for i in new_matrix[self.asset_dict[event_type]]:
+                if i == second_largest:
+                    loclist.append(theindextwo)
+
+                theindextwo += 1
+
+        
+        asset_suggestions = []
+
+        asset_dict_two = {}
+
+        for i, j in self.asset_dict.items():
+            asset_dict_two[j] = i
+
+        for i in loclist:
+            asset_suggestions.append(asset_dict_two[i])
+
+
+        self.currentFocus = asset_suggestions
+    
+
 
         self.previous_events.append(event_type)
         
         self.lastevent = time.time()
 
 
-        return
+        return 
 
 
-    def MLModel(self) -> list:
+        #fit is the coeficcents, predict is the outcomes
 
-        nodes_count = random.randint(2, 10)
+    #This function will have the random transition matrix that can be utilized to obtain the coefficients
+    
+    
+    def getCoefficients(self, current_graph: list, current_flows: list):
 
-        transitionmatrix = []
+        this_transition_matrix = []
 
-        for i in range(6):
-            transitionmatrix.append([])
+        asset_dict = {}; asset_dict_two = {}; the_size = len(current_graph)
 
-        for i in transitionmatrix:
-            for j in range(6):
-                i.append(0.0)
+        for i in range(the_size):
+            asset_dict[i] = current_graph[i]
 
-        #generates random graphs for now 
- 
-        anotherlist = ["Asset1", "Server", "Data Store", "Lambda", "Process", "External Entity"]
+        for i in range(the_size):
+            asset_dict_two[current_graph[i]] = i
 
-        randnum = random.randint(0, 5)
+        self.asset_dict = asset_dict_two
 
-        the_graph = self.dataCollection(anotherlist[randnum])
 
-        the_workflows = []
+        for i in range(the_size):
+            this_transition_matrix.append([])
 
-        add_indicator = 0; randworkflows = random.randint(1, (nodes_count - 1))
+        for i in range(the_size):
+            for j in range(the_size):
+                this_transition_matrix.append(0.0)
+
         
-        for index in range(randworkflows):
-            the_workflows.append([])
-
-        for i in the_workflows:
-            while(len(i) == 0 or len(i) == 1):
-                for j in the_graph:
-                    add_indicator = random.randint(0, 1)
-                    if add_indicator == 1:
-                        i.append(j)
-            
-        #removed the random sequences and the associated transition matrix
-
-        asset_dict = {0: "Asset1", 1: "Server", 2: "Data Store", 3: "Lambda", 4: "Process", 5: "External Entity"}
+        #uses previous events to build initial transition matrix
+        for i in range(the_size):
+            for j in range(the_size):
+                for k in range(len(self.previous_events) - 1):
+                    if asset_dict[i] == self.previous_events[k] and asset_dict[j] == self.previous_events[(k + 1)]:
+                        this_transition_matrix[i][j] += 1
+    
 
         data = []
         
         index_col = []
 
-        for num in range(36):
+        for num in range(the_size**2):
             index_col.append(num)
             data.append([])
     
+        #outcomes
+        for i in range(the_size):
+            for j in range(the_size):
+                data[index].append(this_transition_matrix[i][j]) 
+
+        #type check
         index = 0
-        for i in range(6):
-            for j in range(6):
-                data[index].append(transitionmatrix[i][j]) 
+        for i in range(the_size):
+            for j in range(the_size):
+                data[index].append(this_transition_matrix[i][j]) 
                 if i == j:
                     data[index].append(1)
                 else:
@@ -141,43 +200,43 @@ class NaturalEngine(Engine):
 
                 index += 1
 
-        for j in the_workflows:
-            for i in range(6):
-                for k in j:
-                    if asset_dict[i] == k:
-                        for m in j:
-                            for l in range(6):
-                                if asset_dict[l] == m and len(data[(i * 6) + l]) < 3:
-                                    data[(i * 6) + l].append(1)
+         #checks if they are apart of the same workflow 
+        for i in current_flows:
+            if isinstance(i, WorkFlow):
+                for j in i.path:
+                    for k in i.path:
+                        data[(asset_dict_two[j] * the_size) + asset_dict_two[k]].append(1)
+                                    
 
         for i in data:
             if (len(i) < 3):
                 i.append(0)
 
-        theindex = 0
+        #checks if the assets are neighbors
+        for i in current_flows:
+            if isinstance(i, DataFlow):
+                data[(asset_dict_two[i[0]] * the_size) + asset_dict_two[i[1]]].append(1)
 
-        #changing the intercept will enhance accuracy
 
-        for i in range(6):
-             for j in range(6):
-                transitionmatrix[i][j] = e**(4.5) * e**(0.04433293 * (data[theindex][1])) * e**(0.08243643 * (data[theindex][2]))
-                theindex += 1
+        for i in data:
+            if (len(i) < 4):
+                i.append(0)
 
-        index = 0
-        for i in range(6):
-            for j in range(6):
-                data[index][0] = (transitionmatrix[i][j]) 
-                index += 1
-                
         
+
         thislist = []
 
-        for num in range(36):
+        for num in range(the_size**2):
             thislist.append(num)
 
-        relation_df = pd.DataFrame(data, index = thislist, columns = ["O", "Type_Check", "Workflow_Check"])
+        relation_df = pd.DataFrame(data, index = thislist, columns = ["O", "Type_Check", "Workflow_Check", "Neighbor_Check"])
+        
+        print("\n")
 
-        check_columns = ["Type_Check", "Workflow_Check"]
+        print(relation_df)
+
+
+        check_columns = ["Type_Check", "Workflow_Check", "Neighbor_Check"]
 
         target_columns = "O"
 
@@ -195,141 +254,37 @@ class NaturalEngine(Engine):
 
         accuracy_test = poisson_regression.score(check_test, target_test)
 
-        print(f"Accuracy train: {accuracy_train}")
+        print(f"accuracy train: {accuracy_train}")
 
-        print(f"Accuracy test: {accuracy_test}")
+        print(f"accuracy test: {accuracy_test}")
 
-        predicted_outcomes_one = poisson_regression.predict(check_train)
+        the_coefficients = poisson_regression.coef_
 
-        predicted_outcomes_two = poisson_regression.predict(check_test)
 
-        print(predicted_outcomes_one)
 
-        print(predicted_outcomes_two)
+        return data, the_coefficients
+    
 
-        print(predicted_outcomes_all)
+    def newTransitionMatrix(self, the_graph: list, the_flows: list):
 
-        predicted_outcomes_all = poisson_regression.predict(these_checks)
+        data, these_coefficients = self.getCoefficients(current_graph= the_graph, current_flows= the_flows)
 
-        new_transition_matrix = []
+        new_transition_matrix = []; the_size = len(the_graph)
 
-        these_indexes = 0
-        
-        for i in range(6):
+        for i in range(the_size):
             new_transition_matrix.append([])
-            for j in range(6):
-                new_transition_matrix[i].append(predicted_outcomes_all[these_indexes])
-                these_indexes += 1
+
+        for i in range(the_size):
+            for j in range(the_size):
+                new_transition_matrix[i].append(0.0)
+
+        theindex = 0
+        for i in range(the_size):
+            for j in range(the_size):
+                new_transition_matrix[i][j] = e**(these_coefficients[0] * data[theindex][1]) * e**(these_coefficients[1] * data[theindex][2]) * e**(these_coefficients[2] * data[theindex][3])
+                theindex += 1
 
         return new_transition_matrix
-
-        #fit is the coeficcents, predict is the outcomes
-
-
-
-    def dataCollection(self, event_type: str) -> list:
-
-        focus_transitionmatrix = [[], [], [], [], [], []]
-        
-        for i in focus_transitionmatrix:
-            for j in range(6):
-                i.append(0.0)   
-
-        for i in range(6):
-            self.getRandomNumber(i, focus_transitionmatrix)
-            smallest = focus_transitionmatrix[i][0]
-            index = 0; theloc = 0
-            for j in focus_transitionmatrix[i]:
-                if smallest > j:
-                    smallest = j
-                    theloc = index
-                index += 1
-            if sum(focus_transitionmatrix[i]) < 1.0:
-                focus_transitionmatrix[i][theloc] += (1 - sum(focus_transitionmatrix[i]))
-            
-        
-        focus_transitionnames = [["11", "12", "13", "14", "15", "16"],
-                                 ["21", "22", "23", "24", "25", "26"],
-                                 ["31", "32", "33", "34", "35", "36"],
-                                 ["41", "42", "43", "44", "45", "46"],
-                                 ["51", "52", "53", "54", "55", "56"],
-                                 ["61", "62", "63", "64", "65", "66"]]
-        
-        list_of_assets = []
-
-        for i in range(6):
-
-            if event_type == "Asset1":
-                value = 0
-            elif event_type == "Server":
-                value = 1
-            elif event_type == "Data Store":
-                value = 2
-            elif event_type == "Lambda":
-                value = 3
-            elif event_type == "Process":
-                value = 4
-            elif event_type == "External Entity":
-                value = 5
-
-
-            largest = focus_transitionmatrix[value][0]; secondlargest = 0.0; secindex = 0; secloc = 0; largeindex = 0; largeloc = 0
-
-            for i in focus_transitionmatrix[value]:
-                if i > largest:
-                    largest = i
-                    largeloc = largeindex
-                largeindex += 1
-
-            for i in focus_transitionmatrix[value]:
-                if i > secondlargest and i != largest:
-                    secondlargest = i
-                    secloc = secindex
-                secindex += 1 
-
-            if (largest - secondlargest) <= 0.4:
-                next_event = np.random.choice(focus_transitionnames[value], replace = True, p = focus_transitionmatrix[value])
-            else:
-                next_event = focus_transitionnames[value][largeloc]
-
-            if next_event[1:2] == "1":
-                list_of_assets.append("Asset1")
-                event_type = "Asset1"
-            elif next_event[1:2] == "2":
-                list_of_assets.append("Server")
-                event_type = "Server"
-            elif next_event[1:2] == "3":
-                list_of_assets.append("Data Store")
-                event_type = "Data Store"
-            elif next_event[1:2] == "4":
-                list_of_assets.append("Lambda")
-                event_type = "Lambda"
-            elif next_event[1:2] == "5":
-                list_of_assets.append("Process")
-                event_type = "Process"
-            elif next_event[1:2] == "6":
-                list_of_assets.append("External Entity")
-                event_type = "External Entity"
-
-        
-        return list_of_assets
-
-
-    def getRandomNumber(self, index: int, thislist: list):
-            
-            for i in range(6):
-                rand_num = random.random() % 0.5
-                if thislist[index][i] == 0.0:
-                    while((sum(thislist[index]) + rand_num) > 1.0):
-                        rand_num = random.random() % 0.5
-                    thislist[index][i] = rand_num
-
-            return
-
-
-thisengine = NaturalEngine("ThisName", "Asset1", "ThisDesc")
-
-thisengine.event("Asset1")
 
 
 
