@@ -20,7 +20,6 @@ class Flow(Component):
         **kwargs,
     ):
         self.__path = []
-
         self.src = src
         self.dst = dst
         super().__init__(name, **kwargs)
