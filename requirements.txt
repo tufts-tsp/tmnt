@@ -1,4 +1,0 @@
-beautifulsoup4==4.12.3
-setuptools==70.0.0
-lxml==5.1.0
-PYAML
