@@ -1,0 +1,3 @@
+[submodule "tmnpy"]
+	path = tmnpy
+	url = git@github.com:tufts-tsp/tmnpy.git
