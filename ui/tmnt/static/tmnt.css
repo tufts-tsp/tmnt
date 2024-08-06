@@ -146,24 +146,24 @@ ul {
     padding: 0;
     margin: 0;
     display: block;
-  }
-  .options li {
+}
+.options li {
     position: relative;
     float: right;
-  }
-  .options li > ul {
+}
+.options li > ul {
     position: absolute;
     left:-999em;
     width:100%;
     top:0;
     transition:top .5s ease;
-  }
-  .options ul ul {
+}
+.options ul ul {
     transition:transform .5s ease, opacity .3s ease;
     transform:translateX(0);
     opacity:0;
-  }
-  .options a {
+}
+.options a {
     display: block;
     background: #f3f3f3;
     border-radius: 20px;
@@ -173,31 +173,64 @@ ul {
     color: #666666;
     border: 1px solid #fff;
     line-height:1.2em;
-  }
-  .options a:hover {
+}
+.options a:hover {
     background: #ccc;
-  }
-  .options li:hover > ul {
+}
+.options li:hover > ul {
     left:-100%;
     width:200%;
     top:100%;
-  }
-  .options li li:hover > ul {
+}
+.options li li:hover > ul {
     left:0;
     transform:translateX(-100%);
     width:fit-content;
     top:0;
     opacity:1;
-  }
-  .options ul li {
+}
+.options ul li {
     float: none;
-  }
-  .options li:hover > a {
+}
+.options li:hover > a {
     background: #ccc;
-  }
-  #options ul li {
+}
+#options ul li {
     border-top: none;
-  }
+}
+
+.displaybtn {
+    font-weight: bold;
+    color: white;
+    padding:5px;
+    border: none;
+}
+  
+.display {
+    position: relative;
+    display: inline-block;
+    width:fit-content;
+    white-space: nowrap;
+    margin-left:40px;
+}
+  
+.display-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+}
+  
+.display-content a {
+    color: black;
+    padding: 5px;
+    text-decoration: none;
+    display: block;
+}
+  
+.display-content a:hover {background-color: #ddd;}
+
+.display:hover .display-content {display: block;}
+
 
 .items {
     padding-left: 10px;
