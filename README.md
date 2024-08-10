@@ -61,4 +61,4 @@ We hope that you'll use TMNT in your research! If you plan on using it, can you 
 ```
 
 ## Funding
-The TMNT project has been generously funded by Cisco and MedCrypt.
+The TMNT project has been generously funded by Cisco, MedCrypt, and NSF (Grant #2149871).

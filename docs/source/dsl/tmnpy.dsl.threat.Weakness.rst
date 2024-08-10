@@ -18,10 +18,8 @@
       ~Weakness.add_consequence
       ~Weakness.add_detection_method
       ~Weakness.add_introduction
-      ~Weakness.add_parent
       ~Weakness.remove_child
       ~Weakness.remove_consequence
-      ~Weakness.remove_parent
    
    
 

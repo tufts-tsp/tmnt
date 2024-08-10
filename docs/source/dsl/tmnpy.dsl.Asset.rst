@@ -17,12 +17,12 @@
       ~Asset.add_child
       ~Asset.add_control
       ~Asset.add_data
-      ~Asset.add_parent
+      ~Asset.add_open_port
       ~Asset.add_threat
       ~Asset.remove_child
       ~Asset.remove_control
       ~Asset.remove_data
-      ~Asset.remove_parent
+      ~Asset.remove_open_port
       ~Asset.remove_threat
    
    
@@ -37,12 +37,11 @@
       ~Asset.controls
       ~Asset.data
       ~Asset.desc
+      ~Asset.machine
       ~Asset.name
+      ~Asset.open_ports
       ~Asset.parent
       ~Asset.security_property
       ~Asset.threats
-      ~Asset.open_ports
-      ~Asset.trust_boundaries
-      ~Asset.machine
    
    

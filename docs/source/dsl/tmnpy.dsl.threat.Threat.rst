@@ -16,11 +16,9 @@
       ~Threat.__init__
       ~Threat.add_child
       ~Threat.add_consequence
-      ~Threat.add_parent
       ~Threat.add_step
       ~Threat.remove_child
       ~Threat.remove_consequence
-      ~Threat.remove_parent
       ~Threat.remove_step
    
    

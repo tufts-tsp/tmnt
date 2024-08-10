@@ -17,12 +17,10 @@
       ~Component.add_child
       ~Component.add_control
       ~Component.add_data
-      ~Component.add_parent
       ~Component.add_threat
       ~Component.remove_child
       ~Component.remove_control
       ~Component.remove_data
-      ~Component.remove_parent
       ~Component.remove_threat
    
    

@@ -2,13 +2,6 @@
 
 The threat modeling tool is a continuation of our work investigating threat modeling by security experts for medical devices ([Thompson et al. USENIX 2024](https://www.usenix.org/conference/usenixsecurity24/presentation/thompson)). Specifically, we wanted to build a tool that leverages UI best practices (see [Ben Shneiderman's Designing the User Interface](http://seu1.org/files/level5/IT201/Book%20-%20Ben%20Shneiderman-Designing%20the%20User%20Interface-4th%20Edition.pdf)) and follows the natural threat modeling process we identified in our prior work.
 
-## Background on Threat Modeling
-
-Please refer to [Intro to Threat Modeling](IntroThreatModeling.md).
-
-There have been several tools and domain-specific languages that have been previously developed to aid system designers with threat modeling, we provide a review of these tools [here](ThreatModelingTools.md). We recommend trying out a few of these tools.
-
-**NOTE (Tufts Students)**: If you do not have Windows and want to try [Microsoft Threat Modeling Tool](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool) or [Threats Manager Studio](https://threatsmanager.com/), please use `vm-winresearch.eecs.tufts.edu` (Ron is able to give you access).
 
 ## Design Goals for TMNT
 
@@ -67,17 +60,17 @@ assets:
         lifetime: "AUTO"
 ```
 
-### Knowledge Base (tmnt.kb)
+### Knowledge Base (`tmnpy.kb`)
 
 This is where all of the threats, controls, etc. are found. You can load specific data sources with a simple call, ex. `tmnt.kb.load_capec()`. This will allow you to inspect and use various threats and controls as TMNT DSL objects. These are called upon and assigned in the various Engines that are available.
 
 Many other tools hard-code the threats and controls into the application itself, relying on the creator's knowledge and potentially leveraging databases such as MITRE's Common Attack Pattern Enumerations and Classifications (CAPEC). In our initial prototype of TMNT, we used CAPEC in addition to custom threats and controls, which we found for our examples. However, users can add their own threats and controls references specifying relationships and requirements based on the DSL.
 
-### Engines (tmnt.engines)
+### Engines (`tmnpy.engines`)
 
 This is where threats and controls are assigned to specific components, set of components, and/or flows based from the KB. Engines can leverage other engines, the KB, or other sources of information (such as logs from the UI in the case of the Natural Suggestion Engine)
 
-#### Threat & Control Assignment Engine
+#### Threat & Control Assignment Engine (`tmnpy.engines.Assignment`)
 Using the knowledge base(s) selected by the user, TMNT assigns these threats and controls based on the system specified by the user and as the system's representation is updated, keeping with our goal to allow for incomplete information (**D3**). For our prototype, we are using deterministic rules from CAPEC and our own custom threats and controls. Still, TMNT can leverage probabilistic rules based on historical examples of threat models and/or additional rules from alternative sources. Again, this allows TMNT to be customized based on the user's needs (**D4**) and ensures modularity (**D5**).
 
 #### Natural Suggestion Engine
@@ -108,23 +101,3 @@ In this last menu option, the user can map controls to threats. The user will ev
 ![menu](img/tmnt_ui_mockup_menu.jpg)
 
 As the user makes threat model edits, the system representation will be updated, and the user will be able to save and export the threat model as YAML files linking system components to identified threats and controls. Additionally, user interactions are logged by the UI and given to the Natural Suggestion Engine so it can provide recommendations based on user focus, as well as what they historically have focused on (and not focused on) to provide suggestions that allow the user to create a robust threat model.
-
-
-#### Notes from End of Spring 2024
-
-other
-
-- type annotation for different python versions (generic list type works currently with python 3.11, but would be better to have lists of specific types)
-- property getters/setters missing in various places
-- enforce unique controls, implement control catalog
-- remove_introduction, remove_detection_method in Weakness
-
-update yaml/documentation
-
-- required_skills, required_resources in Threat should be lists of dicts, not strings
-- conditions in Weakness should be something else
-- mitigations is list of dict for weakness and list of str for threat
-- change description to desc
-- add_elem/remove_elem removed in component
-- required attributes for Control
-- added related attr for Control
