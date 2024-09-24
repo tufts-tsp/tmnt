@@ -2,12 +2,9 @@
 
 Welcome to the Tufts Security & Privacy Lab's (TSP) Threat Modeling Naturally Tool! This tool is part of ongoing work by TSP into threat modeling and leverages findings from our work.
 
-You can use TMNT in one of two ways: via a Python package (see [Python Package README](tmnt/README.md)) or via our UI (see [UI README](ui/README.md)).
+You can use TMNT in one of two ways: via a Python package (see [Python Package](https://github.com/tufts-tsp/tmnpy)) or via our UI (see [UI](https://github.com/tufts-tsp/tmnt-app)).
 
-The TMNT Python package consists of the code for the DSL (`tmnt.dsl`), the various engines (`tmnt.engines`), and the knowledge base of threats and controls (`tmnt.kb`). The UI can be self-hosted (see [UI README](ui/README.md) for details) or can be accessed at [tsp.cs.tufts.edu/tmnt](https://tsp.cs.tufts.edu/tmnt), where you can test out the tool and create a user profile and save your threat models.
-
-The rough system design looks like this:
-![system design](project/img/TMNT.drawio.png)
+The TMNT Python package consists of the code for the DSL (`tmnpy.dsl`), the various engines (`tmnpy.engines`), and the knowledge base of threats and controls (`tmnpy.kb`). The UI can be self-hosted (see [UI Documentation](https://github.com/tufts-tsp/tmnt-app) for details) or can be accessed at [tsp.cs.tufts.edu/tmnt](https://tsp.cs.tufts.edu/tmnt), where you can test out the tool and create a user profile and save your threat models.
 
 ## Using TMNT
 
@@ -17,7 +14,7 @@ cd tmnt
 pip install .
 ```
 
-To run the UI, please refer to the [UI README](ui/README.md).
+To run the UI, please refer to the [UI Documentation](https://github.com/tufts-tsp/tmnt-app).
 
 ## TMNT Development
 
