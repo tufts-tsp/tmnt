@@ -1,0 +1,6 @@
+[submodule "tmnpy"]
+	path = tmnpy
+	url = git@github.com:tufts-tsp/tmnpy.git
+[submodule "tmnt-app"]
+	path = tmnt-app
+	url = git@github.com:tufts-tsp/tmnt-app.git

@@ -1,0 +1,231 @@
+TM:
+  type: object
+  required:
+    - name
+    - description
+  properties:
+    name:
+      type: string
+      description: Model name, required for identifying the threat model.
+    description:
+      type: string
+      description: Detailed description of the model's purpose and scope.
+    # I am a bit confused about the components
+    # In tm.py, I do not see a __components[] variable that the methods are appending to
+    # Are we adding all elements, assets, actors, threats, etc to __components?
+    # Or are we adding them to the _elements, _actors, _assets lists defined in class TM?
+    components:
+      type: array
+      description: List of components part of the threat model.
+      items:
+        $ref: "#/definitions/Component"
+    findings:
+      type: array
+      description: Collection of findings derived from the threat analysis.
+      items:
+        $ref: "#/definitions/Finding"
+    assumptions:
+      type: array
+      description: Assumptions made during the model's construction. These can influence the threat analysis.
+      items:
+        type: string
+    flows:
+      type: array
+      items:
+        $ref: "#/definitions/Flow"
+    elements:
+      type: array
+      items:
+        $ref: "#/definitions/Element"
+    actors:
+      type: array
+      items:
+        $ref: "#/definitions/Actor"
+    assets:
+      type: array
+      items:
+        $ref: "#/definitions/Asset"
+    threats:
+      type: array
+      items:
+        $ref: "#/definitions/Threat"
+    boundaries:
+      type: array
+      items:
+        $ref: "#/definitions/Boundary"
+    data:
+      type: array
+      items:
+        $ref: "#/definitions/Data"
+
+definitions:
+  Property:
+    type: string
+    enum:
+      - HIGH
+      - LOW
+      - NONE
+
+  Security-Property:
+    type: object
+    properties:
+      confidentiality:
+        $ref: "#/definitions/Property"
+      integrity:
+        $ref: "#/definitions/Property"
+      availability:
+        $ref: "#/definitions/Property"
+      authenticity:
+        $ref: "#/definitions/Property"
+      non_repudiation:
+        $ref: "#/definitions/Property"
+      authorizatoin:
+        $ref: "#/definitions/Property"
+
+  Machine:
+    type: string
+    enum:
+      - PHYSICAL
+      - VIRTUAL
+      - CONTAINER
+      - SERVERLESS
+
+  DATASTORE_TYPE:
+    type: string
+    enum:
+      - UNKNOWN
+      - FILE_SYSTEM
+      - SQL
+      - LDAP
+      - BUCKET
+      - OTHER
+
+  Element:
+    type: object
+    description: "The basic primitive of a threat model, which can be an asset, control, flow, or threat"
+    properties:
+      name:
+        type: string
+        description: "The name of the element"
+      desc:
+        type: string
+        description: "A short description about the element that helps to identify it's purpose and role within the threat model"
+      parent:
+        $ref: "#/definitions/Element"
+      children:
+        type: array
+        items:
+          $ref: "#/definitions/Element"
+      security_property:
+        $ref: "#/definitions/Security-Property"
+
+  Actor:
+    type: Element
+    description: "a person or organization that is represented in the threat model"
+    properties:
+      name:
+        type: string
+      actor_type:
+        type: string
+        description: "Options: Individual, Organization ... User can specify"
+      physical_access:
+        type: boolean
+        description: "Does this actor have physical access to the system?"
+
+  Asset:
+    allOf:
+      - $ref: "#/definitions/Component"
+    type: Component
+    properties:
+      name:
+        type: string
+      open_ports:
+        type: array
+        items:
+          type: integer
+      trust_boundaries:
+        type: array
+        items:
+          $ref: "#/definitions/Boundary"
+      machine:
+        $ref: "#/definitions/Machine"
+
+  ExternalEntity:
+    allOf:
+      - $ref: "#/definitions/Asset"
+    type: Asset
+    properties:
+      physical_access:
+        type: boolean
+
+  Datastore:
+    allOf:
+      - $ref: "#/definitions/Asset"
+    type: Asset
+    properties:
+      ds_type:
+        $ref: "#/definitions/DATASTORE_TYPE"
+
+  Process:
+    allOf:
+      - $ref: "#/definitions/Asset"
+    type: Asset
+
+  Boundary:
+    allOf:
+      - $ref: "#/definitions/Element"
+    type: Element
+    properties:
+      boundary_owner:
+        type: string
+
+  Component:
+    allOf:
+      - $ref: "#/definitions/Element"
+    type: Element
+    data:
+      type: array
+      items:
+        $ref: "#/definitions/Data"
+
+  # controls omitted for now because it already has its own schema
+
+  Data:
+    allOf:
+      - $ref: "#/definitions/Element"
+    type: Element
+    properties:
+      name:
+        type: string
+      is_pii:
+        type: boolean
+      is_phi:
+        type: boolean
+      format:
+        type: string
+      is_credentials:
+        type: boolean
+      lifetime:
+        type: string
+
+  # findings omitted for now because it already has its own schema
+
+  Flow:
+  allOf:
+    - $ref: "#/definitions/Component"
+  type: Component
+  properties:
+    name:
+      type: string
+    src:
+      $ref: "#/definitions/Element"
+    dst:
+      $ref: "#/definitions/Element"
+    path:
+      type: array
+      items:
+        $ref: "#/definitions/Element"
+    authentication:
+      type: string
+    multifactor_authentication:
+      type: boolean
